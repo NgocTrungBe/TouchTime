@@ -8,7 +8,7 @@ import AuthStack from './AuthStack';
 import AppStack from './AppStack';
 
 const Routes = () => {
-  const [user, setUser] = useState();
+  const [user, setUser] = useState("trung");
   
   return (
       <NavigationContainer independent={true}>

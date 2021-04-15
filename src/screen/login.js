@@ -3,7 +3,8 @@ import React, { Component } from 'react';
 import { useState } from 'react';
 import { View,StyleSheet,Text, TextInput, Dimensions, TouchableOpacity } from 'react-native';
 
-
+import Main from './Main';
+import AppStack from '../navigation/AppStack';
 const {width,height} = Dimensions.get("window");
 
 

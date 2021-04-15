@@ -6,9 +6,8 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import Main from '../screen/Main';
 const appStack = createStackNavigator();
-const AppStack = () => {
-  const [user, setUser] = useState('');
 
+const AppStack = () => {
   return (
     <appStack.Navigator screenOptions={{
         headerShown:false
