@@ -28,8 +28,9 @@ const chats = [
     ],
     uid: 'rrrrrrrrrrrrrrrrrrrr',
   },
+   
   {
-    count: 0,
+    count: 1,
     createdAt: '23/12/1999',
     messages: [
       {
@@ -38,8 +39,85 @@ const chats = [
         uid: 'rrrrrrrrrrrrrrrrrrrr',
       },
     ],
-    uid: 'r',
+    uid: 'rrrrrrrrrrrrrrrrrrrr',
   },
+  {
+    count: 2,
+    createdAt: '23/12/1999',
+    messages: [
+      {
+        createdAt: '23/12/2000',
+        content: 'hello',
+        uid: 'rrrrrrrrrrrrrrrrrrrr',
+      },
+    ],
+    uid: 'rrrrrrrrrrrrrrrrrrrr',
+  },
+   
+  {
+    count: 3,
+    createdAt: '23/12/1999',
+    messages: [
+      {
+        createdAt: '23/12/2000',
+        content: 'hello',
+        uid: 'rrrrrrrrrrrrrrrrrrrr',
+      },
+    ],
+    uid: 'rrrrrrrrrrrrrrrrrrrr',
+  },
+   
+  {
+    count: 4,
+    createdAt: '23/12/1999',
+    messages: [
+      {
+        createdAt: '23/12/2000',
+        content: 'hello',
+        uid: 'rrrrrrrrrrrrrrrrrrrr',
+      },
+    ],
+    uid: 'rrrrrrrrrrrrrrrrrrrr',
+  },
+   
+  {
+    count: 5,
+    createdAt: '23/12/1999',
+    messages: [
+      {
+        createdAt: '23/12/2000',
+        content: 'hello',
+        uid: 'hhhh',
+      },
+    ],
+    uid: 'hhhh',
+  },
+  {
+    count: 6,
+    createdAt: '23/12/1999',
+    messages: [
+      {
+        createdAt: '23/12/2000',
+        content: 'hello',
+        uid: 'hhhh',
+      },
+    ],
+    uid: 'hhhh',
+  },
+  {
+    count: 7,
+    createdAt: '23/12/1999',
+    messages: [
+      {
+        createdAt: '23/12/2000',
+        content: 'hello',
+        uid: 'hhhh',
+      },
+    ],
+    uid: 'hhhh',
+  },
+ 
+ 
 ];
 const Main = ({navigation}) => {
   const [userPhotoURL, setUserPhotoURL] = useState();
@@ -48,12 +126,12 @@ const Main = ({navigation}) => {
     <View>
       <AppHeader></AppHeader>
       <View>
-      <FlatList
+      <FlatList style={{marginTop:height / 15}}
+        showsVerticalScrollIndicator ={false}
         data={chats}
-        keyExtractor={item => item.uid}
+        keyExtractor={(item) => item.count}
         renderItem={({item}) => {
-        
-          return <ChatList key={item.uid} item={item} photoURL={userPhotoURL}></ChatList>;
+          return <ChatList key={item.count} item={item} photoURL={userPhotoURL} navigation={navigation}></ChatList>;
         }}></FlatList>
       </View>
     </View>
