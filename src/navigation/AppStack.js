@@ -18,4 +18,6 @@ const AppStack = () => {
     </appStack.Navigator>
   );
 };
+
+
 export default AppStack;

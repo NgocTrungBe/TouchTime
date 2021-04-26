@@ -9,20 +9,21 @@ const {width,height} = Dimensions.get("window");
 
 import Fire from '../Database/Fire';
 
-const Login = ({navigation}) => {
+const Register = ({navigation}) => {
    
     const [email,setEmail] = useState();
     const [password,setPassword] = useState();
-    const [isLogin,setIsLogin] = useState(false);
+    const [isSuccess,setIsSuccess] = useState(false);
 
-    const login =() =>{
-
+    const register =() =>{
+           
+        console.log(email,password);
            if(email!= "" && password != ""){
-               Fire.signIn(email,password)
-               setIsLogin(true);
-               if(isLogin){
-                 navigation.navigate("Main");
-                 setIsLogin(false);
+               Fire.signUp(email,password);
+               setIsSuccess(true);
+               if(isSuccess){
+                 navigation.navigate("Login");
+                 setIsSuccess(false);
                }
            }
            
@@ -40,15 +41,9 @@ const Login = ({navigation}) => {
               <TextInput onChangeText={(password) => setPassword(password)} style={styles.input} secureTextEntry={true} placeholder="Mật Khẩu..."></TextInput>
           </View>
           <View style={styles.buttonView}>
-              <TouchableOpacity style={styles.loginButton}  onPress={()=> login()}>
-                  <Text style={styles.loginButtonText}>Login</Text>
+              <TouchableOpacity style={styles.loginButton}  onPress={()=> register()}>
+                  <Text style={styles.loginButtonText}>Register</Text>
               </TouchableOpacity>
-              <TouchableOpacity  onPress={()=> {
-                  navigation.navigate("Register");
-              }}>
-                  <Text >Register</Text>
-              </TouchableOpacity>
-              
           </View>
       </View>
    );
@@ -85,8 +80,7 @@ const styles = StyleSheet.create({
         borderRadius:5
     },
     buttonView:{
-        alignItems:"center",
-        flexDirection:"column"
+        alignItems:"center"
     },
     loginButton:{
         width:width-20,
@@ -104,4 +98,4 @@ const styles = StyleSheet.create({
     
 
 });
-export default Login;
+export default Register;

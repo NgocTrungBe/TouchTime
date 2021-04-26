@@ -1,83 +1,110 @@
-import React, { Component, useEffect } from 'react';
-import { useState } from 'react';
-import { FlatList, View ,StyleSheet, Text,Dimensions, TouchableOpacity} from 'react-native';
+import React, {Component, useEffect} from 'react';
+import {useState} from 'react';
+import {
+  FlatList,
+  View,
+  StyleSheet,
+  Text,
+  Dimensions,
+  TouchableOpacity,
+} from 'react-native';
 import {Avatar} from 'react-native-elements';
-
+import Feather from 'react-native-vector-icons/Feather';
+import Fire from '../Database/Fire';
+import database from '@react-native-firebase/database';
+import {canInstrument} from 'babel-jest';
 const {width, height} = Dimensions.get('window');
 
-const users = [
-    {
-      displayName: 'Ngọc Trung',
-      phoneNumber: '0352392573',
-      photoURL:
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT30xbUecoLTy0M3y13vT5cOOTCFPQlA5MZRA&usqp=CAU',
-      uid: 'rrrrrrrrrrrrrrrrrrrr',
-    },
-    {
-      displayName: 'Trinh',
-      phoneNumber: '0352392573',
-      photoURL:
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT30xbUecoLTy0M3y13vT5cOOTCFPQlA5MZRA&usqp=CAU',
-      uid: 'hhhh',
-    },
-];
+const ChatList = ({item, navigation}) => {
+  const [users, setUsers] = useState([]);
+  const [userID, setUserID] = useState();
+  const [userName, setUserName] = useState();
+  const [userPhoto, setUserPhoto] = useState();
+  const [isLoadData, setIsLoadData] = useState(false);
+  useEffect(() => {
+    const userRef = database().ref('users');
+    userRef.on('value', snapshot => {
+      const users = snapshot.val();
+      const userList = [];
 
-const ChatList = ({item,photoURL,navigation}) => {
-  const [userID,setUserID] = useState();
-  const [userName,setUserName] = useState();
-  const [userPhoto,setUserPhoto]= useState();
-   
-  useEffect(()=>{
-    users.map((userItem) => {
-        if (userItem.uid ===  item.uid){
-            setUserID(userItem.uid);
-            setUserName(userItem.displayName);
-            setUserPhoto(userItem.photoURL);
-        } 
-       })
-  },[])
-   return(
-      <TouchableOpacity key={userID} onPress={()=> navigation.navigate("Chat")}>
-         <View style={styles.wrapper}>
-         <Avatar rounded size={50} source={{uri:userPhoto}}></Avatar>
-         <View style={styles.content}>
-             <Text style={styles.userName}>{userName}</Text>
-             <Text style={styles.lastMess}>hhhhhhhhhhhhhhhhhhhhhh</Text>
-         </View>
-       </View>
-       </TouchableOpacity>
-   );
-   
+      for (let item in users) {
+        userList.push(users[item]);
+      }
+      // userList.map((userItem, index) => {
+      //   if (userItem.id === item.uid) {
+      //     setUserID(userItem.id);
+      //     setUserName(userItem.userName);
+      //     setUserPhoto(userItem.photoURL);
+      //     console.log(userItem.photoURL)
+      //   }
 
-}
+      //   // get all users
+      //     setUserID(userItem.id);
+      //     setUserName(userItem.userName);
+      //     setUserPhoto(userItem.photoURL);
+      // });
+      setUsers(userList);
+    });
+  }, []);
+  return (
+     <View>
+       {
+        users.map((item,index) =>{
+         
+         return(
+           <TouchableOpacity key={index}
+         
+           onPress={() =>
+           
+        
+             navigation.navigate('Chat', {
+               userName: item.userName,
+               userPhoto: item.photoURL,
+               userID: item.id,
+             })
+
+           }>
+           <View style={styles.wrapper}>
+             <Avatar rounded size={50} source={{uri: item.photoURL}}></Avatar>
+             <View style={styles.content}>
+               <Text style={styles.userName}>{item.userName}</Text>
+               <Text style={styles.lastMess}>hhhhhhhhhhhhhhhhhhhhhh</Text>
+             </View>
+           </View>
+         </TouchableOpacity>
+         ); 
+ 
+        })
+       }
+     </View>
+        
+     
+  );
+};
 
 const styles = StyleSheet.create({
-    wrapper: {
-    width:  width,
-    padding:10,
-    flexDirection:"row",
-    alignItems:"center",
-    borderWidth:0.2,
-    borderColor:"grey"
-
-
-       
-    },
-    content:{
-        flexDirection:"column",
-        justifyContent:"center"
-    },
-    userName:{
-           marginLeft:20,
-           fontSize:18,
-           fontWeight:"500",
-           color:"grey"
-    },
-    lastMess:{
-           marginLeft:20,
-           fontSize:15,
-           color:"grey"
-    }
-   
-  });
+  wrapper: {
+    width: width,
+    padding: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 0.2,
+    borderColor: 'grey',
+  },
+  content: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
+  userName: {
+    marginLeft: 20,
+    fontSize: 18,
+    fontWeight: '500',
+    color: 'grey',
+  },
+  lastMess: {
+    marginLeft: 20,
+    fontSize: 15,
+    color: 'grey',
+  },
+});
 export default ChatList;
