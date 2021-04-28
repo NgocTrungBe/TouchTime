@@ -1,45 +1,36 @@
 import React, {Component} from 'react';
 import {useState} from 'react';
-import {FlatList, View, StyleSheet,Dimensions} from 'react-native';
-import AppHeader from '../components/AppHeader';
+import {FlatList, View, StyleSheet, Dimensions} from 'react-native';
+
+import {NavigationContainer} from '@react-navigation/native';
+
+import {createStackNavigator} from '@react-navigation/stack';
+import Feather from 'react-native-vector-icons/Feather';
+
 import ChatList from '../components/ChatList';
-const {width, height} = Dimensions.get('window');
 
+import Friend from './Friend';
+import Home from './Home';
+import Chat from './chat';
+import HomeTabs from './Home';
+import AppHeader from '../components/AppHeader';
 
-
-const chats = [
-  {
-    createdAt: '23/12/1999',
-    messages: [
-      {
-        createdAt: '23/12/2000',
-        content: 'hello',
-        uid: 'e9wAcaVSUDNQEqEKPHz9wuIJeI82',
-      },
-    ],
-    uid: 'e9wAcaVSUDNQEqEKPHz9wuIJeI82',
-  },
-];
-
+const main = createStackNavigator();
 const Main = ({navigation}) => {
-  const [chatList,setChatList] = useState();
-  
   return (
-    <View>
-      <AppHeader></AppHeader>
-      <View>
-      <FlatList style={{marginTop:height / 15}}
-        showsVerticalScrollIndicator ={false}
-        data={chats}
-        keyExtractor={(item) => item.uid}
-        renderItem={({item}) => {
-          return <ChatList key={item.count} item={item} navigation={navigation}></ChatList>;
-        }}></FlatList>
-      </View>
-    </View>
+    <main.Navigator>
+      <main.Screen name="Home" component={HomeTabs}
+       options={{
+         header:() =>{
+           return <AppHeader></AppHeader>
+         }
+       }}
+       />
+      <main.Screen name="Chat" component={Chat} />
+      <main.Screen name = "ChatList" component={ChatList}/>
+      
+    </main.Navigator>
   );
 };
-const styles = StyleSheet.create({
-  
-});
+
 export default Main;

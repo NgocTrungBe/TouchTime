@@ -6,6 +6,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import Main from '../screen/Main';
 import Chat from '../screen/chat';
+import Home from '../screen/Home';
 const appStack = createStackNavigator();
 
 const AppStack = () => {
@@ -13,9 +14,13 @@ const AppStack = () => {
     <appStack.Navigator screenOptions={{
         headerShown:false
     }}>
-      <appStack.Screen name="Main" component={Main}></appStack.Screen>
-      <appStack.Screen name="Chat" component={Chat}></appStack.Screen>
+     <appStack.Screen name="Main" component={Main}></appStack.Screen>
+    <appStack.Screen name="Home" component={Home}></appStack.Screen>
+  
     </appStack.Navigator>
+  
+
+    
   );
 };
 

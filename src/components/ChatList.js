@@ -13,69 +13,34 @@ import Feather from 'react-native-vector-icons/Feather';
 import Fire from '../Database/Fire';
 import database from '@react-native-firebase/database';
 import {canInstrument} from 'babel-jest';
+
 const {width, height} = Dimensions.get('window');
 
-const ChatList = ({item, navigation}) => {
-  const [users, setUsers] = useState([]);
-  const [userID, setUserID] = useState();
-  const [userName, setUserName] = useState();
-  const [userPhoto, setUserPhoto] = useState();
-  const [isLoadData, setIsLoadData] = useState(false);
-  useEffect(() => {
-    const userRef = database().ref('users');
-    userRef.on('value', snapshot => {
-      const users = snapshot.val();
-      const userList = [];
+const ChatItem = ({users, navigation}) => {
 
-      for (let item in users) {
-        userList.push(users[item]);
-      }
-      // userList.map((userItem, index) => {
-      //   if (userItem.id === item.uid) {
-      //     setUserID(userItem.id);
-      //     setUserName(userItem.userName);
-      //     setUserPhoto(userItem.photoURL);
-      //     console.log(userItem.photoURL)
-      //   }
-
-      //   // get all users
-      //     setUserID(userItem.id);
-      //     setUserName(userItem.userName);
-      //     setUserPhoto(userItem.photoURL);
-      // });
-      setUsers(userList);
-    });
-  }, []);
   return (
      <View>
-       {
-        users.map((item,index) =>{
+       <TouchableOpacity key={users.id}
          
-         return(
-           <TouchableOpacity key={index}
+         onPress={() =>
          
-           onPress={() =>
-           
-        
-             navigation.navigate('Chat', {
-               userName: item.userName,
-               userPhoto: item.photoURL,
-               userID: item.id,
-             })
+      
+           navigation.navigate('Chat', {
+             userName: users.userName,
+             userPhoto: users.photoURL,
+             userID: users.id,
+           })
 
-           }>
-           <View style={styles.wrapper}>
-             <Avatar rounded size={50} source={{uri: item.photoURL}}></Avatar>
-             <View style={styles.content}>
-               <Text style={styles.userName}>{item.userName}</Text>
-               <Text style={styles.lastMess}>hhhhhhhhhhhhhhhhhhhhhh</Text>
-             </View>
+         }
+         >
+         <View style={styles.wrapper}>
+           <Avatar rounded size={50} source={{uri: users.photoURL}}></Avatar>
+           <View style={styles.content}>
+             <Text style={styles.userName}>{users.userName}</Text>
+             <Text style={styles.lastMess}>hhhhhhhhhhhhhhhhhhhhhh</Text>
            </View>
-         </TouchableOpacity>
-         ); 
- 
-        })
-       }
+         </View>
+       </TouchableOpacity>
      </View>
         
      
@@ -107,4 +72,51 @@ const styles = StyleSheet.create({
     color: 'grey',
   },
 });
+
+
+const ChatList =({navigation}) =>{
+
+  const [users, setUsers] = useState([]);
+  const [userID, setUserID] = useState();
+  const [userName, setUserName] = useState();
+  const [userPhoto, setUserPhoto] = useState();
+  const [isLoadData, setIsLoadData] = useState(false);
+  useEffect(() => {
+    const userRef = database().ref('users');
+    userRef.on('value', snapshot => {
+      const users = snapshot.val();
+      const userList = [];
+
+      for (let item in users) {
+        userList.push(users[item]);
+      }
+      // userList.map((userItem, index) => {
+      //   if (userItem.id === item.uid) {
+      //     setUserID(userItem.id);
+      //     setUserName(userItem.userName);
+      //     setUserPhoto(userItem.photoURL);
+      //     console.log(userItem.photoURL)
+      //   }
+
+      //   // get all users
+      //     setUserID(userItem.id);
+      //     setUserName(userItem.userName);
+      //     setUserPhoto(userItem.photoURL);
+      // });
+      setUsers(userList);
+    });
+  }, []);
+   
+  return(
+    <FlatList style={{marginTop:height / 15}}
+    showsVerticalScrollIndicator ={false}
+    data={users}
+    keyExtractor={(item) => item.id}
+    renderItem={({item}) => {
+      return <ChatItem key={item.key} users={item} navigation={navigation}></ChatItem>;
+    }}></FlatList>
+  );
+}
+
 export default ChatList;
+
