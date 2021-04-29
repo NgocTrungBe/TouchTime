@@ -18,7 +18,11 @@ const {width, height} = Dimensions.get('window');
 
 const Home = ({navigation}) => {
   return (
+    <View>
+       <AppHeader></AppHeader>
        <ChatList navigation={navigation}></ChatList>
+    </View>
+
   );
 };
 

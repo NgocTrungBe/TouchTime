@@ -1,8 +1,10 @@
 import React, {Component, useState, useEffect, useCallback} from 'react';
+import { View } from 'react-native';
 import {GiftedChat} from 'react-native-gifted-chat';
+import ChatHeader from '../components/ChatHeader';
 
 import Fire from '../Database/Fire';
-const Chat = ({route}) => {
+const Chat = ({route,navigation}) => {
   const {userName, userPhoto, userID} = route.params;
 
 
@@ -30,6 +32,9 @@ const Chat = ({route}) => {
   // }, [])
 
   return (
+    <>
+    <ChatHeader userName={userName} photoURL={userPhoto} navigation={navigation}></ChatHeader> 
+    
     <GiftedChat
       messages={messages}
       onSend={messages => Fire.send(messages,userID)}
@@ -37,6 +42,9 @@ const Chat = ({route}) => {
         getUser()
       }
     />
+  
+  </>
+   
   );
 };
 export default Chat;

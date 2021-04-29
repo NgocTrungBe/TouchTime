@@ -86,23 +86,9 @@ const ChatList =({navigation}) =>{
     userRef.on('value', snapshot => {
       const users = snapshot.val();
       const userList = [];
-
       for (let item in users) {
         userList.push(users[item]);
       }
-      // userList.map((userItem, index) => {
-      //   if (userItem.id === item.uid) {
-      //     setUserID(userItem.id);
-      //     setUserName(userItem.userName);
-      //     setUserPhoto(userItem.photoURL);
-      //     console.log(userItem.photoURL)
-      //   }
-
-      //   // get all users
-      //     setUserID(userItem.id);
-      //     setUserName(userItem.userName);
-      //     setUserPhoto(userItem.photoURL);
-      // });
       setUsers(userList);
     });
   }, []);

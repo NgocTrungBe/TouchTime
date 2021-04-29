@@ -10,7 +10,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import Fire from '../Database/Fire';
 const {width, height} = Dimensions.get('window');
 
-const AppHeader = () => {
+const FriendHeader = () => {
   return (
     <View style={styles.wrapper}>
       <View style={styles.Header}>
@@ -22,13 +22,9 @@ const AppHeader = () => {
             size={25}></Feather>
           <Text style={styles.appLogo}>TouchTime</Text>
         </View>
-        <Feather style={styles.searchButton} onPress={()=>{
-          Fire.getFriend();
-        }} name="search" size={23}></Feather>
-    
         <Feather
           style={styles.searchButton}
-          name="log-out"
+          name="user-plus"
           size={23}
           onPress={() => {
              Fire.signOut();
@@ -72,4 +68,4 @@ const styles = StyleSheet.create({
     color: '#ffffff',
   },
 });
-export default AppHeader;
+export default FriendHeader;

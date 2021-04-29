@@ -20,14 +20,16 @@ const Main = ({navigation}) => {
   return (
     <main.Navigator>
       <main.Screen name="Home" component={HomeTabs}
-       options={{
-         header:() =>{
-           return <AppHeader></AppHeader>
-         }
-       }}
+            options={{
+              headerShown:false
+            }}
        />
-      <main.Screen name="Chat" component={Chat} />
-      <main.Screen name = "ChatList" component={ChatList}/>
+      <main.Screen
+       options={{
+         headerShown:false
+       }}
+       name="Chat" component={Chat} />
+      <main.Screen  name = "ChatList" component={ChatList}/>
       
     </main.Navigator>
   );

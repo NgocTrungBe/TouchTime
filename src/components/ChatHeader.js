@@ -6,17 +6,19 @@ import Feather from 'react-native-vector-icons/Feather';
 
 const {width, height} = Dimensions.get('window');
 
-const ChatHeader = ({photoURL,userName}) => {
+const ChatHeader = ({navigation,photoURL,userName}) => {
 
   return (
     <View style={styles.wrapper}>
       <View style={styles.Header}>
         <View style={styles.leftHeader}>
-          <Feather  style={styles.backButton} name="arrow-left" size={23}></Feather>
-          <Avatar rounded size={35} source={{uri:photoURL}}></Avatar>
+          <Feather  style={styles.backButton} name="arrow-left" size={23} onPress={()=>{
+            navigation.pop();
+          }}></Feather>
+          <Avatar rounded size={40} source={{uri:photoURL}}></Avatar>
           <Text style={styles.userName}>{userName}</Text>
         </View>
-       <Feather style={styles.searchButton} name="search" size={23}></Feather>
+
       </View>
     </View>
   );
@@ -31,7 +33,7 @@ const styles = StyleSheet.create({
   Header: {
 
     width: width,
-    height: height / 10,
+    height: height / 13,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -46,7 +48,7 @@ const styles = StyleSheet.create({
   },
 
   userName:{
-      marginLeft:5,
+      marginLeft:10,
       fontSize:17,
       fontWeight:"bold",
       color:"#ffffff"
