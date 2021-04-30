@@ -18,7 +18,7 @@ const ListFriend = ({friend,navigation}) =>{
          }
          >
          <View style={styles.wrapper}>
-           <Avatar rounded size={50} source={{uri:friend.photoURL}}></Avatar>
+           <Avatar rounded size={37} source={{uri:friend.photoURL}}></Avatar>
            <View style={styles.content}>
              <Text style={styles.userName}>{friend.userName}</Text>
            </View>
@@ -34,11 +34,9 @@ const ListFriend = ({friend,navigation}) =>{
 const styles = StyleSheet.create({
   wrapper: {
     width: width,
-    padding: 10,
+    paddingBottom:15,
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 0.2,
-    borderColor: 'grey',
   },
   content: {
     flexDirection: 'column',

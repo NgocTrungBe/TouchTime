@@ -13,10 +13,11 @@ import Feather from 'react-native-vector-icons/Feather';
 import Fire from '../Database/Fire';
 import database from '@react-native-firebase/database';
 import {canInstrument} from 'babel-jest';
+import { set } from 'react-native-reanimated';
 
 const {width, height} = Dimensions.get('window');
 
-const ChatItem = ({users, navigation}) => {
+const ChatItem = ({users,lastMess, navigation}) => {
 
   return (
      <View>
@@ -37,7 +38,7 @@ const ChatItem = ({users, navigation}) => {
            <Avatar rounded size={50} source={{uri: users.photoURL}}></Avatar>
            <View style={styles.content}>
              <Text style={styles.userName}>{users.userName}</Text>
-             <Text style={styles.lastMess}>hhhhhhhhhhhhhhhhhhhhhh</Text>
+             <Text style={styles.lastMess}>{lastMess}</Text>
            </View>
          </View>
        </TouchableOpacity>
@@ -53,8 +54,6 @@ const styles = StyleSheet.create({
     padding: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 0.2,
-    borderColor: 'grey',
   },
   content: {
     flexDirection: 'column',
@@ -64,7 +63,7 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     fontSize: 18,
     fontWeight: '500',
-    color: 'grey',
+    color: '#191970',
   },
   lastMess: {
     marginLeft: 20,
@@ -78,28 +77,35 @@ const ChatList =({navigation}) =>{
 
   const [users, setUsers] = useState([]);
   const [userID, setUserID] = useState();
+  const [lastMessage,setLastMessage] = useState();
   const [userName, setUserName] = useState();
   const [userPhoto, setUserPhoto] = useState();
   const [isLoadData, setIsLoadData] = useState(false);
   useEffect(() => {
-    const userRef = database().ref('users');
-    userRef.on('value', snapshot => {
-      const users = snapshot.val();
-      const userList = [];
-      for (let item in users) {
-        userList.push(users[item]);
+    const userID = Fire.getUid();
+    Fire.getUserByID(Fire.getFriendId).then(friendIDList => {
+      if (friendIDList) {
+          friendIDList.forEach(friendID => {
+              Fire.FindRoom(userID,friendID,roomID =>{
+                  Fire.getLastMess(roomID,lastMess =>{
+                       Fire.getFriend(friendIDList).then(userList=>{
+                         setUsers(userList)
+                         setLastMessage(lastMess);
+                       })
+                  });
+              })
+          });
       }
-      setUsers(userList);
     });
   }, []);
    
   return(
-    <FlatList style={{marginTop:height / 15}}
+    <FlatList style={{marginTop:height / 13,marginLeft:7}}
     showsVerticalScrollIndicator ={false}
     data={users}
     keyExtractor={(item) => item.id}
     renderItem={({item}) => {
-      return <ChatItem key={item.key} users={item} navigation={navigation}></ChatItem>;
+      return <ChatItem key={item.key} users={item} lastMess={lastMessage} navigation={navigation}></ChatItem>;
     }}></FlatList>
   );
 }

@@ -30,7 +30,7 @@ const Friend = ({navigation}) => {
       <FriendHeader></FriendHeader>
       {friends ? (
         <FlatList
-          style={{marginTop: height / 15}}
+          style={{marginTop: height / 15,padding:20}}
           showsVerticalScrollIndicator={false}
           data={friends}
           keyExtractor={item => item.id}

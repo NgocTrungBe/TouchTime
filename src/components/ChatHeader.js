@@ -26,12 +26,12 @@ const ChatHeader = ({navigation,photoURL,userName}) => {
 
 const styles = StyleSheet.create({
   wrapper: {
-    flex: 1,
     position:"relative",
-    zIndex:20
+    zIndex:20,
+    backgroundColor:"red"
   },
   Header: {
-
+    
     width: width,
     height: height / 13,
     flexDirection: 'row',

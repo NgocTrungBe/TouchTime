@@ -64,27 +64,45 @@ class Fire {
     }
 
     send = (messages, friendID) => {
-        const roomsRef = database().ref('rooms');
-        roomsRef.on('value', snapshot => {
-            let userID = this.getUid();
-            let idFriend = friendID;
-            if (snapshot == 'null') {
-                this.createRooms(userID, idFriend);
-                roomsRef.off();
-            } else {
-                let id = this.getRoomId(snapshot, userID, friendID);
-                const chatRef = database().ref('messages/' + id);
-                messages.forEach(item => {
-                    const message = {
-                        text: item.text,
-                        timestamp: firebase.database.ServerValue.TIMESTAMP,
-                        user: item.user,
-                    };
-                    chatRef.push(message);
+        const userID = this.getUid();
+        this.checkNullRoom(friendID).then((isChecked) => {
+            if (isChecked === "true") {
+                this.createRooms(userID, friendID);
+                this.FindRoom(userID, friendID, roomID => {
+                    this.sendMessages(messages, roomID)
                 });
             }
-        });
+            if (isChecked === "false") {
+                this.checkExistedRoom(userID, friendID).then((data) => {
+                    if (data.isChecked === "false") {
+                        this.createRooms(userID, friendID);
+                        this.FindRoom(userID, friendID, roomID => {
+                            this.sendMessages(messages, roomID)
+                        });
+                    }
+                    if (data.isChecked === "true") {
+                        this.sendMessages(messages, data.roomID)
+                    }
+                })
+            }
+        })
+
+
     };
+
+    sendMessages = (messages, roomID) => {
+        const chatRef = database().ref('messages/' + roomID);
+        messages.forEach(item => {
+            const message = {
+                text: item.text,
+                timestamp: firebase.database.ServerValue.TIMESTAMP,
+                user: item.user,
+            };
+            chatRef.push(message);
+            //chatRef.off();
+        });
+
+    }
 
     parse = message => {
         const { user, text, timestamp } = message.val();
@@ -101,13 +119,29 @@ class Fire {
     getMess = (callback, friendID, userID) => {
         const roomsRef = database().ref('rooms');
         roomsRef.on('value', snapshot => {
-            let roomID = this.getRoomId(snapshot, userID, friendID);
-            const chatRef = database().ref('messages/' + roomID);
-            chatRef.on('child_added', snapshot => callback(this.parse(snapshot)));
-
+            this.FindRoom(userID, friendID, roomID => {
+                const chatRef = database().ref('messages/' + roomID);
+                chatRef.on('child_added', snapshot => callback(this.parse(snapshot)));
+            });
         });
 
     };
+
+    getLastMess = (roomID, callback) => {
+
+        const roomsRef = database().ref('messages/' + roomID);
+        roomsRef.on('value', snapshot => {
+            const messages = snapshot.val();
+            const lastMessID = Object.keys(messages)[0];
+            for (let id in messages) {
+
+                callback(messages[lastMessID].text)
+
+            }
+        });
+
+    }
+
     signIn = (email, passWord) => {
         auth().signInWithEmailAndPassword(email, passWord);
     };
@@ -153,25 +187,60 @@ class Fire {
 
     // rooms
     createRooms = (userId, friendID) => {
+        const isSuccess = "true";
         const room = {
             userID: userId,
             friendID: friendID,
         };
-
-        const onChange = database().ref('rooms').push(room);
-        return () => {
-            database.off(onChange);
-        };
+        const roomsRef = database().ref('rooms');
+        roomsRef.push(room);
+        roomsRef.off();
+        return isSuccess;
     };
-    getRoomId = (room, userID, friendID) => {
-        let _id;
-        room.forEach(item => {
-            if (item.val().userID == userID && item.val().friendID == friendID) {
-                _id = item.key;
+    checkNullRoom = (friendID) => {
+        const roomsRef = database().ref('rooms');
+        return new Promise((resolve, reject) => {
+            roomsRef.on('value', snapshot => {
+                let userID = this.getUid();
+                let idFriend = friendID;
+                if (snapshot.val() == null) {
+                    return resolve("true");
+                } else return resolve("false");
+            });
+        })
+    }
+    checkExistedRoom = (userID, friendID) => {
+
+        const roomsRef = database().ref('rooms');
+        return new Promise((resolve, reject) => {
+            roomsRef.on('value', snapshot => {
+                const rooms = snapshot.val();
+                for (let id in rooms) {
+                    if (rooms[id].userID === userID && rooms[id].friendID === friendID) {
+
+                        return resolve({ isChecked: "true", roomID: id });
+                    }
+                    return resolve({ isChecked: "false", snapshot: id });
+                }
+            });
+        })
+
+
+
+    }
+    FindRoom = (userID, friendID, callback) => {
+        const roomsRef = database().ref('rooms');
+        roomsRef.on('value', snapshot => {
+            const rooms = snapshot.val();
+            for (let id in rooms) {
+                if (rooms[id].userID === userID && rooms[id].friendID === friendID) {
+                    return callback(id);
+                }
             }
         });
-        return _id;
     };
+
+
 
     // friends 
 

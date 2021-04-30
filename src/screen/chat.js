@@ -27,15 +27,12 @@ const Chat = ({route,navigation}) => {
    
   }, []);
 
-  // const onSend = useCallback((messages = []) => {
-  //   setMessages(previousMessages => GiftedChat.append(previousMessages, messages))
-  // }, [])
-
   return (
     <>
     <ChatHeader userName={userName} photoURL={userPhoto} navigation={navigation}></ChatHeader> 
     
     <GiftedChat
+      showAvatarForEveryMessage ={true}
       messages={messages}
       onSend={messages => Fire.send(messages,userID)}
       user={
@@ -43,7 +40,7 @@ const Chat = ({route,navigation}) => {
       }
     />
   
-  </>
+   </>
    
   );
 };
