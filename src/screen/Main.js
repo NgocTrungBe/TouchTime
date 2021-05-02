@@ -14,6 +14,7 @@ import Home from './Home';
 import Chat from './chat';
 import HomeTabs from './Home';
 import AppHeader from '../components/AppHeader';
+import SearchFriend from './SearchFriend';
 
 const main = createStackNavigator();
 const Main = ({navigation}) => {
@@ -30,7 +31,11 @@ const Main = ({navigation}) => {
        }}
        name="Chat" component={Chat} />
       <main.Screen  name = "ChatList" component={ChatList}/>
-      
+      <main.Screen
+       options={{
+         title:"Thêm bạn bè"
+       }}
+       name="SearchFriend" component={SearchFriend} />
     </main.Navigator>
   );
 };

@@ -23,7 +23,7 @@ const AppHeader = () => {
           <Text style={styles.appLogo}>TouchTime</Text>
         </View>
         <Feather style={styles.searchButton} onPress={()=>{
-          Fire.createRooms("e9wAcaVSUDNQEqEKPHz9wuIJeI82","O2DU5rhHVVdxbKXgxKYMTwrARLQ2")
+          Fire.SearchUser('abc123@gmail.com');
         }} name="search" size={23}></Feather>
     
         <Feather

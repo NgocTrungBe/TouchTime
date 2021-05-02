@@ -10,7 +10,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import Fire from '../Database/Fire';
 const {width, height} = Dimensions.get('window');
 
-const FriendHeader = () => {
+const FriendHeader = ({navigation}) => {
   return (
     <View style={styles.wrapper}>
       <View style={styles.Header}>
@@ -27,7 +27,7 @@ const FriendHeader = () => {
           name="user-plus"
           size={23}
           onPress={() => {
-             Fire.signOut();
+                navigation.navigate("SearchFriend") 
           }}></Feather>
       </View>
     </View>

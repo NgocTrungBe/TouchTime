@@ -59,8 +59,18 @@ class Fire {
             }
             return listID;
         }
-
-
+    }
+    getWaitingFriendId = (userList) => {
+        if (userList) {
+            const listID = [];
+            const data = userList.listFriend;
+            for (let id in data) {
+                if (data[id].isActive === "false") {
+                    listID.push(data[id].friendID)
+                }
+            }
+            return listID;
+        }
     }
 
     send = (messages, friendID) => {
@@ -134,9 +144,7 @@ class Fire {
             const messages = snapshot.val();
             const lastMessID = Object.keys(messages)[0];
             for (let id in messages) {
-
                 callback(messages[lastMessID].text)
-
             }
         });
 
@@ -152,6 +160,7 @@ class Fire {
                 this.createUser(
                     this.getUid(),
                     'Ngoc Trung',
+                    email,
                     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT30xbUecoLTy0M3y13vT5cOOTCFPQlA5MZRA&usqp=CAU',
                 );
             })
@@ -175,11 +184,12 @@ class Fire {
         return uid;
     };
 
-    createUser = (id, userName, photoURL) => {
+    createUser = (id, userName, email, photoURL) => {
         database()
             .ref('users/' + id)
             .update({
                 userName: userName,
+                email: email,
                 photoURL: photoURL,
                 id: id,
             });
@@ -248,12 +258,28 @@ class Fire {
         const isActive = "false";
         const userID = this.getUid();
         const friendRef = database().ref('users/' + userID + '/listFriend');
-
         const friend = {
             friendID: friendID,
             isActive: isActive
         }
         friendRef.push(friend);
+    }
+
+    //Search user
+
+    SearchUser = (email) => {
+        const userRef = database().ref('users');
+        return new Promise((resolve, reject) => {
+            userRef.on('value', snapshot => {
+                snapshot.forEach((item) => {
+                    if (item.val().Email === email) {
+                        return resolve(item.val())
+                    } else {
+                        return resolve(null)
+                    }
+                });
+            });
+        })
     }
 }
 
