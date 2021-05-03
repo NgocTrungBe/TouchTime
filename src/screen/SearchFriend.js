@@ -12,8 +12,7 @@ const SearchFriend = () => {
   const [users, setUser] = useState([]);
   const [email, setEmail] = useState();
   function Search() {
-    Fire.SearchUser(email).then(userItem => {
-      console.log(userItem)
+    Fire.SearchUser(email).then((userItem,error) => {
       if (userItem != 'nul') {
         const user = [];
         user.push(userItem);
@@ -32,6 +31,7 @@ const SearchFriend = () => {
             Keyboard.dismiss();
           }}
           autoFocus={false}
+          value ={email}
           autoCompleteType={'off'}
           onChangeText={email => setEmail(email)}
           style={styles.textInput}
@@ -41,6 +41,8 @@ const SearchFriend = () => {
           name="search"
           onPress={() => {
             Search();
+            setEmail("");
+            Keyboard.dismiss();
           }}></Feather>
       </View>
 
@@ -56,7 +58,8 @@ const SearchFriend = () => {
                 <View style={styles.content}>
                   <Text style={styles.userName}>{user.userName}</Text>
                   <TouchableOpacity style={styles.addFriendButton} onPress={() =>{
-                      Fire.addFriend(user.id)
+          
+                    Fire.addFriend(user.id)
                   }}>
                     <Text style={styles.buttonTitle}>Kết bạn</Text>
                   </TouchableOpacity>
@@ -65,7 +68,7 @@ const SearchFriend = () => {
             );
           } else
             return (
-              <View style={styles.notFoundView}>
+              <View  style={styles.notFoundView}>
                 <Text style={styles.notFoundMess}>
                   Không tìm thấy người dùng!
                 </Text>

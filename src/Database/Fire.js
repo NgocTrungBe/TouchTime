@@ -97,7 +97,7 @@ class Fire {
     this.checkNullRoom(friendID).then(isChecked => {
       if (isChecked === 'true') {
         this.createRooms(userID, friendID);
-        this.FindRoom(userID, friendID, roomID => {
+        this.getRoomID(userID, friendID, roomID => {
           this.sendMessages(messages, roomID);
         });
       }
@@ -105,7 +105,7 @@ class Fire {
         this.checkExistedRoom(userID, friendID).then(data => {
           if (data.isChecked === 'false') {
             this.createRooms(userID, friendID);
-            this.FindRoom(userID, friendID, roomID => {
+            this.getRoomID(userID, friendID, roomID => {
               this.sendMessages(messages, roomID);
             });
           }
@@ -160,7 +160,6 @@ class Fire {
       for (let id in messages) {
          roomIDList.forEach((roomID) =>{
             for(let item in messages[id]){
-              console.log(messages[id][item])
               callback(messages[id][item].text)
             }
          })
@@ -302,9 +301,9 @@ class Fire {
   addFriend = friendID => {
     const isActive = 'false';
     const userID = this.getUid();
-    const friendRef = database().ref('users/' + userID + '/listFriend');
+    const friendRef = database().ref('users/' + friendID + '/listFriend');
     const friend = {
-      friendID: friendID,
+      friendID: userID,
       isActive: isActive,
     };
     friendRef.push(friend);
@@ -317,11 +316,8 @@ class Fire {
     return new Promise((resolve, reject) => {
       userRef.on('value', snapshot => {
         snapshot.forEach(item => {
-          console.log(typeof(email))
           if (item.val().Email === email) {
             return resolve(item.val());
-          } else {
-            return resolve(null);
           }
         });
       });
