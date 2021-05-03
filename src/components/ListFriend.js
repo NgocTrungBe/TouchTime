@@ -7,6 +7,7 @@ const {width, height} = Dimensions.get('window');
 const ListFriend = ({friend,navigation}) =>{
     return(
       <View>
+        
         <TouchableOpacity key={friend.id}
          onPress={() =>
            navigation.navigate('Chat', {

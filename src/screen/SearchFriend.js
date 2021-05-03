@@ -13,6 +13,7 @@ const SearchFriend = () => {
   const [email, setEmail] = useState();
   function Search() {
     Fire.SearchUser(email).then(userItem => {
+      console.log(userItem)
       if (userItem != 'nul') {
         const user = [];
         user.push(userItem);
@@ -40,11 +41,10 @@ const SearchFriend = () => {
           name="search"
           onPress={() => {
             Search();
-            setEmail('');
           }}></Feather>
       </View>
 
-      {users.length ? (
+      {users.length > 0 ? (
         users.map(user => {
           if (user) {
             return (
@@ -56,7 +56,7 @@ const SearchFriend = () => {
                 <View style={styles.content}>
                   <Text style={styles.userName}>{user.userName}</Text>
                   <TouchableOpacity style={styles.addFriendButton} onPress={() =>{
-                    Fire.addFriend(user.id)
+                      Fire.addFriend(user.id)
                   }}>
                     <Text style={styles.buttonTitle}>Kết bạn</Text>
                   </TouchableOpacity>
@@ -75,6 +75,8 @@ const SearchFriend = () => {
       ) : (
         <View></View>
       )}
+
+      
     </View>
   );
 };

@@ -76,33 +76,41 @@ const styles = StyleSheet.create({
 const ChatList =({navigation}) =>{
 
   const [users, setUsers] = useState([]);
-  const [userID, setUserID] = useState();
   const [lastMessage,setLastMessage] = useState();
-  const [userName, setUserName] = useState();
-  const [userPhoto, setUserPhoto] = useState();
+  const [refreshing, setRefreshing] = useState(false);
   const [isLoadData, setIsLoadData] = useState(false);
   useEffect(() => {
+    getData();
+  }, []);
+  const getData = () =>{
     const userID = Fire.getUid();
     Fire.getUserByID(Fire.getFriendId).then(friendIDList => {
       if (friendIDList) {
-          friendIDList.forEach(friendID => {
-              Fire.FindRoom(userID,friendID,roomID =>{
-                  Fire.getLastMess(roomID,lastMess =>{
-                       Fire.getFriend(friendIDList).then(userList=>{
-                         setUsers(userList)
-                         setLastMessage(lastMess);
-                       })
-                  });
-              })
-          });
+          Fire.FindRoom(userID,friendIDList,data =>{
+            Fire.getFriend(data.friendIDList).then(userList=>{
+              setUsers(userList)
+              setRefreshing(false);
+            })
+            Fire.getLastMess(data.roomIDList,lastMess =>{
+                  setLastMessage(lastMess)
+            });
+          })
+       //  });
       }
     });
-  }, []);
-   
+  }
+  const handleRefresh =() =>{
+        setRefreshing(true)
+        getData();
+        
+  }
+
   return(
     <FlatList style={{marginTop:height / 13,marginLeft:7}}
     showsVerticalScrollIndicator ={false}
     data={users}
+    refreshing={refreshing}
+    onRefresh ={handleRefresh}
     keyExtractor={(item) => item.id}
     renderItem={({item}) => {
       return <ChatItem key={item.key} users={item} lastMess={lastMessage} navigation={navigation}></ChatItem>;
