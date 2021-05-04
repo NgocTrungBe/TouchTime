@@ -28,24 +28,20 @@ const Chat = ({ route, navigation }) => {
 
     }, []);
 
-    return ( <
-        >
-        <
-        ChatHeader userName = { userName }
+    return ( 
+        <>
+        <ChatHeader userName = { userName }
         photoURL = { userPhoto }
         navigation = { navigation } > < /ChatHeader> 
 
-        <
-        GiftedChat showAvatarForEveryMessage = { true }
+        <GiftedChat showAvatarForEveryMessage = { true }
         messages = { messages }
         onSend = { messages => Fire.send(messages, userID) }
         user = {
             getUser()
-        }
-        />
+        }/>
 
-        <
-        />
+        </>
 
     );
 };

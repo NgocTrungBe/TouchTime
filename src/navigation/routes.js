@@ -8,6 +8,7 @@ import AuthStack from './AuthStack';
 import AppStack from './AppStack';
 
 import Fire from '../Database/Fire';
+import CheckFirstLogin from '../components/CheckFirstLogin';
 
 const Routes = () => {
 
@@ -29,7 +30,7 @@ const Routes = () => {
     return ( 
       <NavigationContainer independent ={true}> 
 
-           { user ? <AppStack/> : <AuthStack/> } 
+           { user ? <AppStack/> : <CheckFirstLogin/> } 
       </NavigationContainer>
     );
 };

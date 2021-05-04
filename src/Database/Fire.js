@@ -90,6 +90,8 @@ class Fire {
 
     userRef.update({
       isActive: 'true',
+    }).then(()=>{
+      this.addAcceptedFriendToUser(userID,friendID)
     });
   };
   send = (messages, friendID) => {
@@ -209,6 +211,7 @@ class Fire {
         Email: email,
         photoURL: photoURL,
         id: id,
+        firstLogin:"true"
       });
   };
 
@@ -301,6 +304,16 @@ class Fire {
   addFriend = friendID => {
     const isActive = 'false';
     const userID = this.getUid();
+    const friendRef = database().ref('users/' + friendID + '/listFriend');
+    const friend = {
+      friendID: userID,
+      isActive: isActive,
+    };
+    friendRef.push(friend);
+  };
+ 
+  addAcceptedFriendToUser =(userID, friendID) => {
+    const isActive = 'true';
     const friendRef = database().ref('users/' + friendID + '/listFriend');
     const friend = {
       friendID: userID,
