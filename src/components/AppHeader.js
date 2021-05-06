@@ -23,9 +23,7 @@ const AppHeader = () => {
           <Text style={styles.appLogo}>TouchTime</Text>
         </View>
         <Feather style={styles.searchButton} onPress={()=>{
-              Fire.getKeyWaitingFriend("72JBtw0vUZcw4VwN7H1LbFDefJ33").then((waitingFriendKey) =>{
-      console.log(waitingFriendKey)
-     })
+           Fire.checkFirstLogin();
            
         }} name="search" size={23}></Feather>
     

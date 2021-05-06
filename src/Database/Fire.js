@@ -43,6 +43,19 @@ class Fire {
     });
   };
 
+  checkFirstLogin =() =>{
+    const userID = this.getUid();
+    const userRef = database().ref('users/' + userID);
+    return new Promise((resolve, reject) => {
+      userRef.on('value', snapshot => {
+       if(snapshot != null){
+        const isFirstLogin = snapshot.val().isFirstLogin;
+        return resolve("true");
+       }
+      });
+    });
+  }
+
   getFriendId = userList => {
     if (userList) {
       const listID = [];
@@ -158,7 +171,6 @@ class Fire {
     const roomsRef = database().ref('messages/');
     roomsRef.on('value', snapshot => {
       const messages = snapshot.val();
-      const lastMessID = Object.keys(messages)[0];
       for (let id in messages) {
          roomIDList.forEach((roomID) =>{
             for(let item in messages[id]){
@@ -178,9 +190,9 @@ class Fire {
       .then(() => {
         this.createUser(
           this.getUid(),
-          'Ngoc Trung',
+          '',
           email,
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT30xbUecoLTy0M3y13vT5cOOTCFPQlA5MZRA&usqp=CAU',
+          '',
         );
       })
       .catch(error => {
@@ -212,6 +224,16 @@ class Fire {
         photoURL: photoURL,
         id: id,
         firstLogin:"true"
+      });
+  };
+  updateUser = (userName,photoURL) => {
+    const uid = this.getUid();
+    database()
+      .ref('users/' + uid)
+      .update({
+        userName: userName,
+        photoURL:photoURL,
+        firstLogin:"false"
       });
   };
 

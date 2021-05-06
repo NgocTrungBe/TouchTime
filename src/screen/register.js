@@ -17,7 +17,6 @@ const Register = ({navigation}) => {
 
     const register =() =>{
            
-        console.log(email,password);
            if(email!= "" && password != ""){
                Fire.signUp(email,password);
                setIsSuccess(true);

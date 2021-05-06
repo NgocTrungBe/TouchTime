@@ -4,8 +4,13 @@ import { Text } from 'react-native';
 import { View ,StyleSheet,Dimensions} from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 const {width, height} = Dimensions.get('window');
-const CheckFirstLogin =() =>{
-    const [userName,setUserName] = useState();
+const SetUserName =({navigation}) =>{
+  const [userName,setUserName] = useState();
+  const setUserNameHandle= () =>{
+    if(userName != ''){
+      navigation.navigate("SetAvatar",{userName:userName})
+    }
+  }
   return(
       <View style ={styles.wrapper}>
          <Text style={styles.appLogo}>Touch Time</Text>
@@ -15,8 +20,7 @@ const CheckFirstLogin =() =>{
              <Text style={styles.suggestions}>Hãy nhập vào tên người dùng</Text>
              <TextInput placeholder="..." onChangeText={(userName) => setUserName(userName)} style={styles.userNameInput}></TextInput>
          </View>
-    
-             <TouchableOpacity style={styles.nextButton}><Text
+             <TouchableOpacity style={styles.nextButton} onPress={setUserNameHandle}><Text
              style={styles.buttonTitle}>Tiếp tục</Text></TouchableOpacity>
          
       </View>
@@ -93,4 +97,4 @@ const styles = StyleSheet.create({
         
      }
   });
-export default CheckFirstLogin;
+export default SetUserName;
