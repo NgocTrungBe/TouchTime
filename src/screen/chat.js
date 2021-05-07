@@ -25,14 +25,14 @@ const Chat = ({ route, navigation }) => {
 
     useEffect(() => {
         getMessages();
-
+    
     }, []);
 
     return ( 
         <>
         <ChatHeader userName = { userName }
         photoURL = { userPhoto }
-        navigation = { navigation } > < /ChatHeader> 
+        navigation = { navigation }></ChatHeader> 
 
         <GiftedChat showAvatarForEveryMessage = { true }
         messages = { messages }

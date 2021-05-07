@@ -82,9 +82,13 @@ const ChatList =({navigation}) =>{
   useEffect(() => {
     getData();
   }, []);
+
+
+
+
   const getData = () =>{
     const userID = Fire.getUid();
-    Fire.getUserByID(Fire.getFriendId).then(friendIDList => {
+    Fire.getFriendListID(Fire.getFriendId).then(friendIDList => {
       if (friendIDList) {
           Fire.FindRoom(userID,friendIDList,data =>{
             Fire.getFriend(data.friendIDList).then(userList=>{

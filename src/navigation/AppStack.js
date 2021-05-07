@@ -18,12 +18,8 @@ const AppStack = () => {
   useEffect(() => {
   
       Fire.checkFirstLogin().then(response=>{
-        if(response ==="true"){
-          setIsFirstLogin(response)
-        }
-        else{
-          setIsFirstLogin("false");
-        }
+        setIsFirstLogin(response)
+         
       })
 
     // setTimeout(() => {
@@ -34,7 +30,7 @@ const AppStack = () => {
   return (
     <appStack.Navigator screenOptions={{
         headerShown:false
-    }} initialRouteName={isFirstLogin ==="false" ? "Main" :"SetUserName"} >
+    }} initialRouteName={isFirstLogin ==="false" ? "SetUserName" :"Main"} >
      <appStack.Screen name="Main" component={Main}></appStack.Screen>
      <appStack.Screen name="SetAvatar" component={SetAvatar}></appStack.Screen>
      <appStack.Screen name="SetUserName" component={SetUserName}></appStack.Screen>

@@ -31,7 +31,7 @@ class Fire {
     }
   };
 
-  getUserByID = callback => {
+  getFriendListID = callback => {
     const userID = this.getUid();
     const userRef = database().ref('users/' + userID);
     return new Promise((resolve, reject) => {
@@ -48,9 +48,9 @@ class Fire {
     const userRef = database().ref('users/' + userID);
     return new Promise((resolve, reject) => {
       userRef.on('value', snapshot => {
-       if(snapshot != null){
-        const isFirstLogin = snapshot.val().isFirstLogin;
-        return resolve("true");
+       if(snapshot){
+        const isFirstLogin = snapshot.val().firstLogin;
+        return resolve(isFirstLogin);
        }
       });
     });
@@ -158,13 +158,13 @@ class Fire {
   };
 
   getMess = (callback, friendID, userID) => {
-    const roomsRef = database().ref('rooms');
-    roomsRef.on('value', snapshot => {
       this.getRoomID(userID, friendID, roomID => {
         const chatRef = database().ref('messages/' + roomID);
         chatRef.on('child_added', snapshot => callback(this.parse(snapshot)));
+        return() => database.database().ref('messages/' + roomID).off('value',chatRef);
       });
-    });
+       
+      
   };
 
   getLastMess = (roomIDList, callback) => {
@@ -234,6 +234,10 @@ class Fire {
         userName: userName,
         photoURL:photoURL,
         firstLogin:"false"
+      }).then(()=>{
+        return true;
+      }).catch(error=>{
+          return error;
       });
   };
 

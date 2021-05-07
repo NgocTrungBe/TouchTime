@@ -27,13 +27,7 @@ const AppHeader = () => {
            
         }} name="search" size={23}></Feather>
     
-        <Feather
-          style={styles.searchButton}
-          name="log-out"
-          size={23}
-          onPress={() => {
-             Fire.signOut();
-          }}></Feather>
+     
       </View>
     </View>
   );

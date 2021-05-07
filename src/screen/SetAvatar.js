@@ -4,20 +4,35 @@ import { Text } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import { View ,StyleSheet,Dimensions,Image} from 'react-native';
 import {launchImageLibrary} from 'react-native-image-picker';
+import Fire from '../Database/Fire';
 
 const {width, height} = Dimensions.get('window');
 const SetAvatar =({route,navigation}) =>{
   const [imageUri,setImageUri] = useState();
+  const [base64Code,setBase64Code] = useState();
+  const [isDisable,setIsDisable] = useState(true);
+  const [buttonColor,setButtonColor] = useState("grey");
   const {userName} =  route.params;
   const chooseImageHandle=() =>{
      launchImageLibrary({maxWidth:width-130,height:120,mediaType:"photo",includeBase64:true},response =>{
-        if(response) setImageUri(response.uri);
-        console.log(userName)
-        //console.log(response.base64)
-
+        if(response.didCancel != true) {
+          setImageUri(response.uri);
+          setBase64Code(response.base64);
+          setButtonColor("#edeeeb")
+          setIsDisable(false)
+        }
      })
   }
+  const updateUser = () =>{
+   if(userName != "" && base64Code != ""){
+    Fire.updateUser(userName,base64Code);
+    setTimeout(()=>{
+         navigation.navigate("Main");
+    },3000)
+   }
+  }
   return(
+     
       <View style ={styles.wrapper}>
          <View style ={styles.content}>
              <Text style={styles.contentTitle}>Ảnh đại diện của bạn</Text>
@@ -27,9 +42,8 @@ const SetAvatar =({route,navigation}) =>{
                  <Feather onPress={chooseImageHandle} name="plus" style={styles.addImageBtn}></Feather>
              </View>
          </View>
-             <TouchableOpacity style={styles.nextButton}><Text
-             style={styles.buttonTitle}>Tiếp tục</Text></TouchableOpacity>
-         
+         <TouchableOpacity disabled={isDisable} style={[styles.nextButton,{backgroundColor:buttonColor}]} onPress={updateUser}><Text
+        style={styles.buttonTitle}>Tiếp tục</Text></TouchableOpacity>
       </View>
     )
 }
@@ -94,7 +108,7 @@ const styles = StyleSheet.create({
         elevation:20,
         padding:10,
         borderRadius:5,
-        backgroundColor:"#edeeeb",
+        //backgroundColor:"#edeeeb",
         alignItems:"center",
         
      },

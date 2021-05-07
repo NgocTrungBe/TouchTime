@@ -3,7 +3,7 @@ import {useState} from 'react';
 import {FlatList, View, StyleSheet, Dimensions} from 'react-native';
 
 import {NavigationContainer} from '@react-navigation/native';
-
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import {createStackNavigator} from '@react-navigation/stack';
 import Feather from 'react-native-vector-icons/Feather';
 
@@ -15,28 +15,30 @@ import Chat from './chat';
 import HomeTabs from './Home';
 import AppHeader from '../components/AppHeader';
 import SearchFriend from './SearchFriend';
+import DrawerContent from '../components/DrawerContent';
 
 const main = createStackNavigator();
+const Drawer = createDrawerNavigator();
 const Main = ({navigation}) => {
   return (
-    <main.Navigator>
-      <main.Screen name="Home" component={HomeTabs}
+    <Drawer.Navigator drawerContent= {props => <DrawerContent {...props}/>} >
+      <Drawer.Screen name="Home" component={HomeTabs}
             options={{
               headerShown:false
             }}
        />
-      <main.Screen
+      <Drawer.Screen
        options={{
          headerShown:false
        }}
        name="Chat" component={Chat} />
-      <main.Screen  name = "ChatList" component={ChatList}/>
-      <main.Screen
+      <Drawer.Screen  name = "ChatList" component={ChatList}/>
+      <Drawer.Screen
        options={{
          title:"Thêm bạn bè"
        }}
        name="SearchFriend" component={SearchFriend} />
-    </main.Navigator>
+    </Drawer.Navigator>
   );
 };
 
