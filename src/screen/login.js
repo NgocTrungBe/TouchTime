@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
          backgroundColor:"#ffffff"
     },
     logo:{
-        marginTop:height-700,
+        marginTop:height/10,
         height:height/7,
         alignItems:"center"
     },

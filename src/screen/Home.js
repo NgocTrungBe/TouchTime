@@ -1,5 +1,5 @@
 import React, {Component, useEffect, useState} from 'react';
-import {View, FlatList, Dimensions} from 'react-native';
+import {View, FlatList, Dimensions,Alert,BackHandler} from 'react-native';
 import Fire from '../Database/Fire';
 import database from '@react-native-firebase/database';
 import AppHeader from '../components/AppHeader';
@@ -11,12 +11,28 @@ import ChatList from '../components/ChatList';
 import Chat from './chat';
 import Friend from './Friend';
 
+
 const chatStack = createStackNavigator();
 const tab = createBottomTabNavigator();
 
 const {width, height} = Dimensions.get('window');
 
 const Home = ({navigation}) => {
+
+ const onBackPress = () => {
+   BackHandler.exitApp(); 
+   return true;
+}
+
+  useEffect(()=>{
+    BackHandler.addEventListener('hardwareBackPress',onBackPress);
+
+    return ()=>{
+    BackHandler.removeEventListener('hardwareBackPress',onBackPress);
+    }
+
+
+  },[])
   return (
     <View>
        <AppHeader></AppHeader>

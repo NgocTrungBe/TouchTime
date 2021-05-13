@@ -23,7 +23,7 @@ const AppHeader = () => {
           <Text style={styles.appLogo}>TouchTime</Text>
         </View>
         <Feather style={styles.searchButton} onPress={()=>{
-           Fire.checkFirstLogin();
+           Fire.getUserInfo();
            
         }} name="search" size={23}></Feather>
     

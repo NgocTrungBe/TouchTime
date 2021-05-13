@@ -107,6 +107,24 @@ class Fire {
       this.addAcceptedFriendToUser(userID,friendID)
     });
   };
+
+  getUserInfo =() =>{
+    const userID = this.getUid();
+    const userRef = database().ref('users/' + userID);
+    return new Promise((resolve, reject) => {
+      userRef.on('value', snapshot => {
+         if(snapshot != 'null'){
+          const photoURL = snapshot.val().photoURL;
+         const userName = snapshot.val().userName;
+         const email = snapshot.val().Email;
+         const friendList = this.getFriendId(snapshot.val()).length;
+         const waitingAcceptFriend = this.getWaitingFriendId(snapshot.val()).length;
+         return resolve({userName,email,photoURL,friendList,waitingAcceptFriend});
+         }
+      });
+    });
+  }
+
   send = (messages, friendID) => {
     const userID = this.getUid();
     this.checkNullRoom(friendID).then(isChecked => {
@@ -321,7 +339,6 @@ class Fire {
           friendIDList.push(list)
       }
      }
-    console.log(friendIDList)
     return friendIDList;
   }
 

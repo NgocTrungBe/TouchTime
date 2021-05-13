@@ -9,37 +9,39 @@ import Home from '../screen/Home';
 import Fire from '../Database/Fire';
 import SetAvatar from '../screen/SetAvatar';
 import SetUserName from '../screen/setUserName';
+import { ActivityIndicator } from 'react-native';
 
 const appStack = createStackNavigator();
 
 const AppStack = () => {
    
-  const [isFirstLogin,setIsFirstLogin] = useState();
+
+  const [isLoading,setIsLoading] = useState(true);
+  const [routeName,setRouteName] = useState();
   useEffect(() => {
   
       Fire.checkFirstLogin().then(response=>{
-        setIsFirstLogin(response)
-         
+       setRouteName(response);
+       setIsLoading(false);
       })
-
+    
     // setTimeout(() => {
     //   setIsLoader(false);
     //   if()
     // }, 700);
   },[]);
   return (
-    <appStack.Navigator screenOptions={{
+  
+      isLoading == false ?
+      <appStack.Navigator screenOptions={{
         headerShown:false
-    }} initialRouteName={isFirstLogin ==="false" ? "SetUserName" :"Main"} >
+    }} initialRouteName= {routeName === "false" ? "Main" : "SetUserName" }>
      <appStack.Screen name="Main" component={Main}></appStack.Screen>
-     <appStack.Screen name="SetAvatar" component={SetAvatar}></appStack.Screen>
      <appStack.Screen name="SetUserName" component={SetUserName}></appStack.Screen>
+     <appStack.Screen name="SetAvatar" component={SetAvatar}></appStack.Screen>
+  
     <appStack.Screen name="Home" component={Home}></appStack.Screen>
-  
-    </appStack.Navigator>
-  
-
-    
+    </appStack.Navigator> : <View style={{flex:1,justifyContent:"center",alignItems:"center",backgroundColor:"#edeeeb"}}><ActivityIndicator size="small"  color="red"></ActivityIndicator></View>
   );
 };
 

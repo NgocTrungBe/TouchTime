@@ -24,7 +24,7 @@ const Friend = ({navigation}) => {
   }, []);
 
   const getFriendData = () => {
-    Fire.getUserByID(Fire.getFriendId).then(userID => {
+    Fire.getFriendListID(Fire.getFriendId).then(userID => {
       if (userID) {
         Fire.getFriend(userID).then(userList => {
           setFriends(userList);
@@ -34,7 +34,7 @@ const Friend = ({navigation}) => {
     });
   };
   const getWaitingFriendData = () => {
-    Fire.getUserByID(Fire.getWaitingFriendId).then(userID => {
+    Fire.getFriendListID(Fire.getWaitingFriendId).then(userID => {
       if (userID) {
         Fire.getFriend(userID).then(userList => {
           setWaitingFriends(userList);
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginLeft: width - 380,
+    marginLeft: width/40,
     marginTop: height / 10,
     padding: 10,
     borderRadius: 10,
