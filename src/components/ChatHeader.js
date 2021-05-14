@@ -7,7 +7,6 @@ import Feather from 'react-native-vector-icons/Feather';
 const {width, height} = Dimensions.get('window');
 
 const ChatHeader = ({navigation,photoURL,userName}) => {
-
   return (
     <View style={styles.wrapper}>
       <View style={styles.Header}>

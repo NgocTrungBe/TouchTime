@@ -84,7 +84,7 @@ const Friend = ({navigation}) => {
             <Text style={styles.title}>Bạn bè</Text>
           </View>
           <FlatList
-            style={{padding: 20, backgroundColor: '#fff5ee'}}
+            style={{padding: 20,backgroundColor:"#ffffff"}}
             showsVerticalScrollIndicator={false}
             data={friends}
             keyExtractor={item => item.id}

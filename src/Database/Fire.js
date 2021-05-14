@@ -95,17 +95,17 @@ class Fire {
     });
   };
 
-  acceptWaitingFriend = (friendID) => {
+  acceptWaitingFriend = (waitingFriendKey,friendID) => {
     const userID = this.getUid();
     const userRef = database().ref(
-      'users/' + userID + '/listFriend/' + friendID,
+      'users/' + userID + '/listFriend/' + waitingFriendKey,
     );
-
     userRef.update({
       isActive: 'true',
-    }).then(()=>{
-      this.addAcceptedFriendToUser(userID,friendID)
-    });
+    })
+   
+    this.addAcceptedFriendToUser(userID,friendID)
+    
   };
 
   getUserInfo =() =>{
@@ -119,7 +119,7 @@ class Fire {
          const email = snapshot.val().Email;
          const friendList = this.getFriendId(snapshot.val()).length;
          const waitingAcceptFriend = this.getWaitingFriendId(snapshot.val()).length;
-         return resolve({userName,email,photoURL,friendList,waitingAcceptFriend});
+         return resolve({userName,email,photoURL,friendList,waitingAcceptFriend,userID});
          }
       });
     });
@@ -164,6 +164,7 @@ class Fire {
   };
 
   parse = message => {
+  
     const {user, text, timestamp} = message.val();
     const {key: _id} = message;
     const createdAt = new Date(timestamp);
@@ -179,6 +180,7 @@ class Fire {
       this.getRoomID(userID, friendID, roomID => {
         const chatRef = database().ref('messages/' + roomID);
         chatRef.on('child_added', snapshot => callback(this.parse(snapshot)));
+    
         return() => database.database().ref('messages/' + roomID).off('value',chatRef);
       });
        
@@ -289,7 +291,7 @@ class Fire {
       roomsRef.on('value', snapshot => {
         const rooms = snapshot.val();
         for (let id in rooms) {
-          if (rooms[id].userID === userID && rooms[id].friendID === friendID) {
+          if ((rooms[id].userID === userID && rooms[id].friendID === friendID) || (rooms[id].userID === friendID && rooms[id].friendID === userID) ) {
             return resolve({isChecked: 'true', roomID: id});
           }
           return resolve({isChecked: 'false', snapshot: id});
@@ -356,6 +358,8 @@ class Fire {
   };
  
   addAcceptedFriendToUser =(userID, friendID) => {
+
+    console.log(friendID)
     const isActive = 'true';
     const friendRef = database().ref('users/' + friendID + '/listFriend');
     const friend = {

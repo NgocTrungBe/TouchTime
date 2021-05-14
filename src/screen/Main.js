@@ -27,11 +27,7 @@ const Main = ({navigation}) => {
               headerShown:false
             }}
        />
-      <Drawer.Screen
-       options={{
-         headerShown:false
-       }}
-       name="Chat" component={Chat} />
+     
       <Drawer.Screen  name = "ChatList" component={ChatList}/>
       <Drawer.Screen
        options={{

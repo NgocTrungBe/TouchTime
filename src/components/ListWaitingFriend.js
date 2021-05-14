@@ -15,7 +15,7 @@ const ListWaitingFriend = ({friend, navigation}) => {
 
    function AcceptWaitingFriend(){
       Fire.getKeyWaitingFriend(friend.id).then((waitingFriendKey) =>{
-        Fire.acceptWaitingFriend(waitingFriendKey);
+        Fire.acceptWaitingFriend(waitingFriendKey,friend.id);
      })
   }
 

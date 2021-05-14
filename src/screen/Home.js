@@ -24,15 +24,15 @@ const Home = ({navigation}) => {
    return true;
 }
 
-  useEffect(()=>{
-    BackHandler.addEventListener('hardwareBackPress',onBackPress);
+  // useEffect(()=>{
+  //   BackHandler.addEventListener('hardwareBackPress',onBackPress);
 
-    return ()=>{
-    BackHandler.removeEventListener('hardwareBackPress',onBackPress);
-    }
+  //   return ()=>{
+  //   BackHandler.removeEventListener('hardwareBackPress',onBackPress);
+  //   }
 
 
-  },[])
+  // },[])
   return (
     <View>
        <AppHeader></AppHeader>

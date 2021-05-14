@@ -18,24 +18,23 @@ import { set } from 'react-native-reanimated';
 const {width, height} = Dimensions.get('window');
 
 const ChatItem = ({users,lastMess, navigation}) => {
+ 
 
   return (
      <View>
        <TouchableOpacity key={users.id}
          
          onPress={() =>
-         
-      
            navigation.navigate('Chat', {
-             userName: users.userName,
-             userPhoto: users.photoURL,
-             userID: users.id,
+            friendUserName: users.userName,
+            friendAvatar: 'data:image/png;base64,'+ users.photoURL,
+            friendID: users.id,
            })
 
          }
          >
          <View style={styles.wrapper}>
-           <Avatar rounded size={50} source={{uri: users.photoURL}}></Avatar>
+           <Avatar rounded size={50} source={{uri: 'data:image/png;base64,'+ users.photoURL}}></Avatar>
            <View style={styles.content}>
              <Text style={styles.userName}>{users.userName}</Text>
              <Text style={styles.lastMess}>{lastMess}</Text>

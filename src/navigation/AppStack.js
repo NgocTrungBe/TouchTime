@@ -39,7 +39,7 @@ const AppStack = () => {
      <appStack.Screen name="Main" component={Main}></appStack.Screen>
      <appStack.Screen name="SetUserName" component={SetUserName}></appStack.Screen>
      <appStack.Screen name="SetAvatar" component={SetAvatar}></appStack.Screen>
-  
+    <appStack.Screen name="Chat" component={Chat}></appStack.Screen>
     <appStack.Screen name="Home" component={Home}></appStack.Screen>
     </appStack.Navigator> : <View style={{flex:1,justifyContent:"center",alignItems:"center",backgroundColor:"#edeeeb"}}><ActivityIndicator size="small"  color="red"></ActivityIndicator></View>
   );
