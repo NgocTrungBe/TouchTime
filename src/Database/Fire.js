@@ -128,21 +128,21 @@ class Fire {
   send = (messages, friendID) => {
     const userID = this.getUid();
     this.checkNullRoom(friendID).then(isChecked => {
-      if (isChecked === 'true') {
+      if (isChecked === "true") {
         this.createRooms(userID, friendID);
         this.getRoomID(userID, friendID, roomID => {
           this.sendMessages(messages, roomID);
         });
       }
-      if (isChecked === 'false') {
+      if (isChecked === "false") {
         this.checkExistedRoom(userID, friendID).then(data => {
-          if (data.isChecked === 'false') {
+          if (data.isChecked === "false") {
             this.createRooms(userID, friendID);
             this.getRoomID(userID, friendID, roomID => {
               this.sendMessages(messages, roomID);
             });
           }
-          if (data.isChecked === 'true') {
+          if (data.isChecked === "true") {
             this.sendMessages(messages, data.roomID);
           }
         });
@@ -164,7 +164,7 @@ class Fire {
   };
 
   parse = message => {
-  
+
     const {user, text, timestamp} = message.val();
     const {key: _id} = message;
     const createdAt = new Date(timestamp);
@@ -308,7 +308,7 @@ class Fire {
       const rooms = snapshot.val();
         for (let id in rooms) {
           listID.forEach(item => {
-            if (rooms[id].userID === userID && rooms[id].friendID === item) {
+            if ((rooms[id].userID === userID && rooms[id].friendID === item) || (rooms[id].userID === item && rooms[id].friendID === userID) ) {
                   friendIDList.push(item)
                   roomIDList.push(id);
             }
@@ -324,7 +324,7 @@ class Fire {
     roomsRef.on('value', snapshot => {
         const rooms = snapshot.val();
         for (let id in rooms) {
-            if (rooms[id].userID === userID && rooms[id].friendID === friendID) {
+            if ((rooms[id].userID === userID && rooms[id].friendID === friendID) || (rooms[id].userID === friendID && rooms[id].friendID === userID) ) {
                 return callback(id);
             }
         }

@@ -44,8 +44,10 @@ const Chat = ({route, navigation}) => {
    })
    
     Fire.getMess(
+    
       messages =>
         setMessages(previousMessages =>
+       
           GiftedChat.append(previousMessages, messages),
         ),
       friendID,
