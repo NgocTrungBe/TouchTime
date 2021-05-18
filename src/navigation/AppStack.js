@@ -19,8 +19,8 @@ const AppStack = () => {
   const [isLoading,setIsLoading] = useState(true);
   const [routeName,setRouteName] = useState();
   useEffect(() => {
-  
       Fire.checkFirstLogin().then(response=>{
+        console.log(response)
        setRouteName(response);
        setIsLoading(false);
       })
@@ -35,7 +35,7 @@ const AppStack = () => {
       isLoading == false ?
       <appStack.Navigator screenOptions={{
         headerShown:false
-    }} initialRouteName= {routeName === "false" ? "Main" : "SetUserName" }>
+    }} initialRouteName= {routeName === "false" ? "Main" : "SetUser" }>
      <appStack.Screen name="Main" component={Main}></appStack.Screen>
      <appStack.Screen name="SetUserName" component={SetUserName}></appStack.Screen>
      <appStack.Screen name="SetAvatar" component={SetAvatar}></appStack.Screen>

@@ -23,7 +23,9 @@ const AppHeader = () => {
           <Text style={styles.appLogo}>TouchTime</Text>
         </View>
         <Feather style={styles.searchButton} onPress={()=>{
-           Fire.getUserInfo();
+         
+         Fire.SearchUser('lyly@gmail.com');
+        
            
         }} name="search" size={23}></Feather>
     

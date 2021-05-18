@@ -1,7 +1,6 @@
 import React, { Component, useEffect } from 'react';
 import { useState } from 'react';
 import { View } from 'react-native';
-import Login from '../screen/login';
 import Main from '../screen/Main';
 import { NavigationContainer } from '@react-navigation/native';
 import AuthStack from './AuthStack';
