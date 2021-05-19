@@ -6,7 +6,7 @@ import Main from '../screen/Main';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import Login from '../screen/Login';
-import Register from '../screen/register';
+import Register from '../screen/Register';
 const authStack = createStackNavigator();
 const AuthStack = () => {
   const [user, setUser] = useState('');
