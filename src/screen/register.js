@@ -11,6 +11,8 @@ import {
 import Fire from '../Database/Fire';
 import Feather from 'react-native-vector-icons/Feather';
 import * as Animatable from 'react-native-animatable';
+import {checkInvalidEmail} from '../Asset/Contants';
+import {checkInvalidPassword} from '../Asset/Contants';
 import LinearGradient from 'react-native-linear-gradient';
 const {width, height} = Dimensions.get('window');
 
@@ -22,6 +24,9 @@ const Register = ({navigation}) => {
     check_textInputChange: false,
     secureTextEntry: true,
     confirmSecureTextEntry: true,
+    invalidEmail: false,
+    invalidPassword: false,
+    isCorrectConfirmPassword:false
 
   });
 
@@ -39,32 +44,66 @@ const Register = ({navigation}) => {
   };
 
   const handleEmailChange = val => {
+    const isChecked = checkSpecialSymbols(val);
     if (val.length !== 0) {
       setData({
         ...data,
         email: val,
         check_textInputChange: true,
       });
+      if (isChecked) {
+        setData({
+          ...data,
+          email: val,
+          invalidEmail: isChecked,
+        });
+      } else {
+        setData({
+          ...data,
+          email: val,
+          invalidEmail: false,
+        });
+      }
     } else {
       setData({
         ...data,
         email: val,
         check_textInputChange: false,
+        invalidEmail: false,
       });
     }
   };
   const handlePasswordChange = val => {
+    const isChecked = checkSpecialSymbols(val);
     if (val.length !== 0) {
       setData({
         ...data,
         password: val,
         secureTextEntry: true,
       });
+
+      if (isChecked) {
+        setData({
+          ...data,
+          invalidPassword: isChecked,
+        });
+      } else if (val.length < 6) {
+        setData({
+          ...data,
+          invalidPassword: true,
+        });
+      } else {
+        setData({
+          ...data,
+          invalidPassword: false,
+        });
+      }
     } else {
       setData({
         ...data,
         password: val,
         secureTextEntry: false,
+        invalidPassword: false,
       });
     }
   };
@@ -121,6 +160,12 @@ const Register = ({navigation}) => {
             </Animatable.View>
           ) : null}
         </View>
+        {data.invalidEmail ? (
+          <Animatable.View animation="fadeInLeft" duration={200}>
+            <Text style={styles.errMessage}>Email không hợp lệ!</Text>
+          </Animatable.View>
+        ) : null}
+
         <Text style={styles.password}>Mật Khẩu</Text>
         <View style={styles.registerView}>
           <Feather size={20} name="lock"></Feather>
@@ -132,14 +177,18 @@ const Register = ({navigation}) => {
             autoCapitalize="none"></TextInput>
           <TouchableOpacity onPress={updateSecureTextEntry}>
             {data.secureTextEntry ? (
-              <Feather size={20} name="eye"></Feather>
+                <Feather size={20} name="eye-off"></Feather>
             ) : (
-              <Feather size={20} name="eye-off"></Feather>
+              <Feather size={20} name="eye"></Feather>
             )}
           </TouchableOpacity>
         </View>
+        {data.invalidPassword ? (
+          <Animatable.View animation="fadeInLeft" duration={200}>
+            <Text style={styles.errMessage}>Mật khẩu không hợp lệ!</Text>
+          </Animatable.View>
+        ) : null}
         <Text style={styles.confirmPassword}>Xác Nhận Mật Khẩu</Text>
-
         <View style={styles.registerView}>
           <Feather size={20} name="lock"></Feather>
           <TextInput
@@ -156,6 +205,11 @@ const Register = ({navigation}) => {
             )}
           </TouchableOpacity>
         </View>
+        {data.isCorrectConfirmPassword ? (
+          <Animatable.View animation="fadeInLeft" duration={200}>
+            <Text style={styles.errMessage}>Mật khẩu không hợp lệ!</Text>
+          </Animatable.View>
+        ) : null}
 
         <View style={styles.buttonView}>
           <LinearGradient
@@ -188,7 +242,7 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
   },
   footer: {
-    flex: 5,
+    height:height/1.4,
     backgroundColor: '#fff',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,

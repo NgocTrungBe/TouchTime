@@ -9,7 +9,7 @@ import Login from '../screen/Login';
 import Register from '../screen/Register';
 const authStack = createStackNavigator();
 const AuthStack = () => {
-  const [user, setUser] = useState('');
+
   
   return (
       <authStack.Navigator screenOptions={{

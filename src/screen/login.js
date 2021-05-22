@@ -12,6 +12,8 @@ import Fire from '../Database/Fire';
 import Feather from 'react-native-vector-icons/Feather';
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
+import {checkInvalidEmail} from '../Asset/Contants';
+import {checkInvalidPassword} from '../Asset/Contants';
 import Main from './Main';
 const {width, height} = Dimensions.get('window');
 
@@ -21,6 +23,9 @@ const Login = ({navigation}) => {
     password: '',
     check_textInputChange: false,
     secureTextEntry: true,
+    invalidEmail: false,
+    invalidPassword: false,
+
   });
   const login = () => {
     if (email != '' && password != '') {
@@ -34,32 +39,39 @@ const Login = ({navigation}) => {
   };
 
   const handleEmailChange = val => {
+    const isChecked = checkInvalidEmail(val);
     if (val.length !== 0) {
       setData({
         ...data,
         email: val,
         check_textInputChange: true,
+        invalidEmail:isChecked
       });
     } else {
       setData({
         ...data,
         email: val,
         check_textInputChange: false,
+        invalidEmail: false,
       });
     }
   };
   const handlePasswordChange = val => {
+    const isChecked = checkInvalidPassword(val);
     if (val.length !== 0) {
       setData({
         ...data,
         password: val,
         secureTextEntry: true,
+        invalidPassword: isChecked,
       });
+
     } else {
       setData({
         ...data,
         password: val,
         secureTextEntry: false,
+        invalidPassword: false,
       });
     }
   };
@@ -69,6 +81,8 @@ const Login = ({navigation}) => {
       secureTextEntry: !data.secureTextEntry,
     });
   };
+
+
   const navigateRegister = () => {
     navigation.navigate('Register');
   };
@@ -85,6 +99,7 @@ const Login = ({navigation}) => {
           <Feather size={20} name="users"></Feather>
           <TextInput
             onChangeText={val => handleEmailChange(val)}
+            onEndEditing ={(e) => checkInvalidEmail(e.nativeEvent.text)}
             style={styles.input}
             placeholder="Tài Khoản"
             autoCapitalize="none"></TextInput>
@@ -94,6 +109,11 @@ const Login = ({navigation}) => {
             </Animatable.View>
           ) : null}
         </View>
+        {data.invalidEmail? (
+          <Animatable.View animation="fadeInLeft" duration={200}>
+            <Text style={styles.errMessage}>Email không hợp lệ!</Text>
+          </Animatable.View>
+        ) : null}
         <Text style={styles.password}>Mật Khẩu</Text>
         <View style={styles.loginView}>
           <Feather size={20} name="lock"></Feather>
@@ -110,18 +130,23 @@ const Login = ({navigation}) => {
             )}
           </TouchableOpacity>
         </View>
-       
+        {data.invalidPassword ? (
+          <Animatable.View animation="fadeInLeft" duration={200}>
+            <Text style={styles.errMessage}>Mật khẩu không hợp lệ! (vd: Abc12345678)</Text>
+          </Animatable.View>
+        ) : null}
+
         <View style={styles.buttonView}>
-          <LinearGradient
-            style={styles.signInButton}
-            colors={['#C576F6', '#C576F6', '#C576F6']}>
-            <Text style={styles.signInButtonText}>Đăng Nhập</Text>
-          </LinearGradient>
+          <TouchableOpacity onPress={() => checkInvalidEmail(data.email)}>
+            <LinearGradient
+              style={styles.signInButton}
+              colors={['#C576F6', '#C576F6', '#C576F6']}>
+              <Text style={styles.signInButtonText}>Đăng Nhập</Text>
+            </LinearGradient>
+          </TouchableOpacity>
           <View style={styles.signUpAction}>
             <Text style={styles.signUpTitle}>Bạn chưa có tài khoản?</Text>
-            <TouchableOpacity
-              onPress={navigateRegister}
-             >
+            <TouchableOpacity onPress={navigateRegister}>
               <Text style={styles.signUpButtonText}>Đăng Ký</Text>
             </TouchableOpacity>
           </View>
@@ -142,12 +167,13 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
   },
   footer: {
-    flex: 5,
+    height: height / 1.5,
     backgroundColor: '#fff',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     paddingHorizontal: 20,
     paddingVertical: 30,
+    elevation: 20,
   },
   logo: {
     color: '#fff',
@@ -204,17 +230,21 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
   },
-  signUpAction:{
-    marginTop:30,
-    flexDirection:"row",
-    justifyContent:"center",
-    alignItems:"center"
+  signUpAction: {
+    marginTop: 30,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  signUpTitle:{
-    marginRight:7,
+  signUpTitle: {
+    marginRight: 7,
     color: 'grey',
     fontSize: 18,
     fontWeight: '500',
-  }
+  },
+  errMessage: {
+    marginTop: 5,
+    color: 'red',
+  },
 });
 export default Login;

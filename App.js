@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React from 'react';
+import React  from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 
@@ -29,15 +29,20 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 import Splash from './src/components/Splash';
 import Routes from './src/navigation/routes';
+import Start from './src/screen/Start';
 
 const MainStack = createStackNavigator();
 const App = () => {
+  
+ 
+
   return (
     <NavigationContainer>
       <MainStack.Navigator screenOptions={{
           headerShown:false
       }} initialRouteName={Splash}>
         <MainStack.Screen name="Splash" component={Splash}></MainStack.Screen>
+        <MainStack.Screen name="Start" component={Start} ></MainStack.Screen>
         <MainStack.Screen name="Routes" component={Routes}></MainStack.Screen>
       </MainStack.Navigator>
     </NavigationContainer>
