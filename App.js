@@ -9,35 +9,20 @@
 import React  from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
-
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import {createStore} from 'redux';
+import {Provider} from 'react-redux';
+import rootReducer from './src/redux/Reducers/index';
 import Splash from './src/components/Splash';
 import Routes from './src/navigation/routes';
 import Start from './src/screen/Start';
 
 const MainStack = createStackNavigator();
+const store = createStore(rootReducer);
 const App = () => {
   
- 
-
   return (
-    <NavigationContainer>
+     <Provider store={store}>
+        <NavigationContainer>
       <MainStack.Navigator screenOptions={{
           headerShown:false
       }} initialRouteName={Splash}>
@@ -46,9 +31,8 @@ const App = () => {
         <MainStack.Screen name="Routes" component={Routes}></MainStack.Screen>
       </MainStack.Navigator>
     </NavigationContainer>
+     </Provider>
   );
 };
-
-const styles = StyleSheet.create({});
 
 export default App;

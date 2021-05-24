@@ -17,7 +17,7 @@ import {checkInvalidPassword} from '../Asset/Contants';
 import Main from './Main';
 const {width, height} = Dimensions.get('window');
 
-const Login = ({navigation}) => {
+const Login = ({navigation,SignIn}) => {
   const [data, setData] = useState({
     email: '',
     password: '',
@@ -27,9 +27,10 @@ const Login = ({navigation}) => {
     invalidPassword: false,
 
   });
-  const login = () => {
-    if (email != '' && password != '') {
-      Fire.signIn(email, password);
+  const [isLogin,setIsLogin] = useState();
+  const handleLogin = () => {
+    if (data.email != '' && data.password != '') {
+      SignIn(data.email,data.password);
       setIsLogin(true);
       if (isLogin) {
         navigation.navigate('Main');
@@ -82,16 +83,15 @@ const Login = ({navigation}) => {
     });
   };
 
-
   const navigateRegister = () => {
-    navigation.navigate('Register');
+    navigation.navigate('RegisterContainer');
   };
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="#C576F6" barStyle="light-content"></StatusBar>
-      <View style={styles.header}>
+      <Animatable.View animation="fadeInDownBig" style={styles.header}>
         <Text style={styles.logo}>Welcome!</Text>
-      </View>
+      </Animatable.View>
 
       <Animatable.View animation="fadeInUpBig" style={styles.footer}>
         <Text style={styles.email}>Email</Text>
@@ -137,7 +137,7 @@ const Login = ({navigation}) => {
         ) : null}
 
         <View style={styles.buttonView}>
-          <TouchableOpacity onPress={() => checkInvalidEmail(data.email)}>
+          <TouchableOpacity onPress={handleLogin}>
             <LinearGradient
               style={styles.signInButton}
               colors={['#C576F6', '#C576F6', '#C576F6']}>

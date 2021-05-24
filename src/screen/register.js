@@ -32,38 +32,27 @@ const Register = ({navigation}) => {
 
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const register = () => {
-    if (email != '' && password != '') {
-      Fire.signUp(email, password);
+  const handleRegister = () => {
+    if (data.email != '' && data.password != '') {
+      Fire.signUp(data.email, data.password);
       setIsSuccess(true);
       if (isSuccess) {
-        navigation.navigate('Login');
+        navigation.navigate('LoginContainer');
         setIsSuccess(false);
       }
     }
   };
 
+ 
   const handleEmailChange = val => {
-    const isChecked = checkSpecialSymbols(val);
+    const isChecked = checkInvalidEmail(val);
     if (val.length !== 0) {
       setData({
         ...data,
         email: val,
         check_textInputChange: true,
+        invalidEmail:isChecked
       });
-      if (isChecked) {
-        setData({
-          ...data,
-          email: val,
-          invalidEmail: isChecked,
-        });
-      } else {
-        setData({
-          ...data,
-          email: val,
-          invalidEmail: false,
-        });
-      }
     } else {
       setData({
         ...data,
@@ -74,30 +63,15 @@ const Register = ({navigation}) => {
     }
   };
   const handlePasswordChange = val => {
-    const isChecked = checkSpecialSymbols(val);
+    const isChecked = checkInvalidPassword(val);
     if (val.length !== 0) {
       setData({
         ...data,
         password: val,
         secureTextEntry: true,
+        invalidPassword: isChecked,
       });
 
-      if (isChecked) {
-        setData({
-          ...data,
-          invalidPassword: isChecked,
-        });
-      } else if (val.length < 6) {
-        setData({
-          ...data,
-          invalidPassword: true,
-        });
-      } else {
-        setData({
-          ...data,
-          invalidPassword: false,
-        });
-      }
     } else {
       setData({
         ...data,
@@ -106,19 +80,32 @@ const Register = ({navigation}) => {
         invalidPassword: false,
       });
     }
-  };
+  }
   const handleConfirmPasswordChange = val => {
     if (val.length !== 0) {
-      setData({
-        ...data,
-        confirmPassword: val,
-        confirmSecureTextEntry: true,
-      });
+      if(val == data.password){
+        setData({
+          ...data,
+          confirmPassword: val,
+          confirmSecureTextEntry: true,
+          isCorrectConfirmPassword:false
+        });
+      }
+      else{
+        setData({
+          ...data,
+          confirmPassword: val,
+          confirmSecureTextEntry: true,
+          isCorrectConfirmPassword:true
+        });
+      }
     } else {
       setData({
         ...data,
         confirmPassword: val,
         confirmSecureTextEntry: false,
+
+        isCorrectConfirmPassword:true
       });
     }
   };
@@ -140,10 +127,10 @@ const Register = ({navigation}) => {
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="#C576F6" barStyle="light-content"></StatusBar>
-      <View style={styles.header}>
+      <Animatable.View animation="fadeInDownBig" style={styles.header}>
         <Text style={styles.logo}>Đăng ký</Text>
         <Text style={styles.logo}>Tài khoản của bạn!</Text>
-      </View>
+      </Animatable.View>
 
       <Animatable.View animation="fadeInUpBig" style={styles.footer}>
         <Text style={styles.email}>Email</Text>
@@ -212,11 +199,13 @@ const Register = ({navigation}) => {
         ) : null}
 
         <View style={styles.buttonView}>
+          <TouchableOpacity onPress={handleRegister}>
           <LinearGradient
             style={styles.signUpButton}
             colors={['#C576F6', '#C576F6', '#C576F6']}>
             <Text style={styles.signUpButtonText}>Tạo Tài Khoản</Text>
           </LinearGradient>
+          </TouchableOpacity>
           <View style={styles.backAction}>
             <Feather  color='#ea2a2a' size={18} name="chevrons-left"></Feather>
             <TouchableOpacity onPress={backToLogin}>
@@ -316,7 +305,10 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
 
-
+  errMessage: {
+    marginTop: 5,
+    color: 'red',
+  },
  
 });
 export default Register;
