@@ -14,8 +14,8 @@ import Home from './Home';
 import Chat from './chat';
 import HomeTabs from './Home';
 import AppHeader from '../components/AppHeader';
-import SearchFriend from './SearchFriend';
 import DrawerContent from '../components/DrawerContent';
+import SearchUserContainer from '../redux/Containers/AppContainer/SearchUserContainer';
 
 const main = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -33,7 +33,7 @@ const Main = ({navigation}) => {
        options={{
          title:"Thêm bạn bè"
        }}
-       name="SearchFriend" component={SearchFriend} />
+       name="SearchUserContainer" component={SearchUserContainer} />
     </Drawer.Navigator>
   );
 };

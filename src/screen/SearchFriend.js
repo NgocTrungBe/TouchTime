@@ -1,78 +1,64 @@
 import React, {Component, useEffect, useState} from 'react';
 import {TouchableOpacity} from 'react-native';
 import {TextInput} from 'react-native';
-import {View, Text, StyleSheet, Dimensions, Keyboard,BackHandler} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Dimensions,
+
+  BackHandler,
+} from 'react-native';
 import {Avatar} from 'react-native-elements';
 import Feather from 'react-native-vector-icons/Feather';
+import SearchFriendHeader from '../components/SearchHeader';
 import Fire from '../Database/Fire';
 import Friend from './Friend';
 const {width, height} = Dimensions.get('window');
 
-const SearchFriend = () => {
+const SearchFriend = props => {
   const [users, setUser] = useState([]);
-  const [email, setEmail] = useState();
+
   const [isSendRequest, setIsSendRequest] = useState(false);
-  function Search() {
-    Fire.SearchUser(email).then((userItem, error) => {
-      if (userItem != 'nul') {
-        const user = [];
-        user.push(userItem);
-        setUser(user);
-      }
-    });
-    
-    
-  }
+  
 
   return (
     <View style={styles.wrapper}>
-      <View style={styles.searchView}>
-        <TextInput
-          multiline={true}
-          blurOnSubmit={true}
-          onSubmitEditing={() => {
-            Keyboard.dismiss();
-          }}
-          autoFocus={false}
-          value={email}
-          autoCompleteType={'off'}
-          onChangeText={email => setEmail(email)}
-          style={styles.textInput}
-          placeholder="email..."></TextInput>
-        <Feather
-          style={styles.searchButton}
-          name="search"
-          onPress={() => {
-            Search();
-            setEmail('');
-            Keyboard.dismiss();
-          }}></Feather>
-      </View>
-
-      {users.length > 0 ? (
-        users.map(user => {
+       <SearchFriendHeader {...props}></SearchFriendHeader>
+    
+      {props.appData.searchData.length > 0 ? (
+        props.appData.searchData.map(user => {
           if (user) {
             return (
-              <View key={user.id} style={styles.friendView}>
+              <View key={user.user.id} style={styles.friendView}>
                 <Avatar
                   rounded
                   size={70}
-                  source={{uri: 'data:image/png;base64,' +user.photoURL}}></Avatar>
+                  source={{
+                    uri: 'data:image/png;base64,' + user.user.photoURL,
+                  }}></Avatar>
                 <View style={styles.content}>
-                  <Text style={styles.userName}>{user.userName}</Text>
-                  {isSendRequest == false ? (
-                    <TouchableOpacity
-                      style={styles.addFriendButton}
-                      onPress={() => {
-                        Fire.addFriend(user.id);
-                        setIsSendRequest(true);
-                        //setUser([]);
-                      }}>
-                      <Text style={styles.buttonTitle}>Kết bạn</Text>
-                    </TouchableOpacity>
+                  <Text style={styles.userName}>{user.user.userName}</Text>
+                  {user.isActive == undefined ? (
+                    isSendRequest == false ? (
+                      <TouchableOpacity
+                        style={styles.addFriendButton}
+                        onPress={() => {
+                          props.AddFriend(user.user.id);
+                          setIsSendRequest(true);
+                        }}>
+                        <Text style={styles.buttonTitle}>Kết bạn</Text>
+                      </TouchableOpacity>
+                    ) : (
+                      <Text style={styles.sendRequest}>
+                        Đã gửi lời kết bạn
+                      </Text>
+                    )
                   ) : (
                     <Text style={styles.sendRequest}>
-                      Đã gửi lời mời Kết bạn
+                      {user.isActive == 'false'
+                        ? 'Đã gửi lời kết bạn'
+                        : 'Bạn bè'}
                     </Text>
                   )}
                 </View>
@@ -99,35 +85,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
   },
-  textInput: {
-    marginLeft: 10,
-    height: 45,
-    width: '85%',
-    fontSize: 20,
-    color: 'grey',
-    borderRightWidth: 1,
-    borderRightColor: 'grey',
-  },
-  searchButton: {
-    width: '15%',
-    textAlign: 'center',
-    fontSize: 20,
-    color: 'grey',
-  },
-  searchView: {
-    width: width - 50,
-    height: 45,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 10,
-    marginLeft: width - 366,
-    padding: 5,
-    backgroundColor: '#ededf0',
-    borderRadius: 10,
-    elevation: 20,
-  },
-
+ 
   friendView: {
     width: width - 90,
     padding: 15,
@@ -164,13 +122,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
   },
-  sendRequest:{
+  sendRequest: {
     marginTop: 5,
     padding: 8,
 
-    color:"red"
-  }
-  ,
+    color: 'red',
+  },
   notFoundView: {
     marginTop: 20,
     marginLeft: 28,

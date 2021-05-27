@@ -9,15 +9,17 @@
 import React  from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import {createStore} from 'redux';
+import {createStore,applyMiddleware} from 'redux';
 import {Provider} from 'react-redux';
+
 import rootReducer from './src/redux/Reducers/index';
 import Splash from './src/components/Splash';
 import Routes from './src/navigation/routes';
 import Start from './src/screen/Start';
+import thunk from 'redux-thunk';
 
 const MainStack = createStackNavigator();
-const store = createStore(rootReducer);
+const store = createStore(rootReducer,applyMiddleware(thunk));
 const App = () => {
   
   return (

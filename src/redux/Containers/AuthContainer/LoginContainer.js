@@ -9,10 +9,13 @@ class LoginContainer extends Component {
     constructor(props){
         super(props);
     }
-   render(){
-         const {SignIn} = this.props;
+   
+   render(){       
+          
+        
+        
     return (
-        <Login navigation={this.props.navigation} SignIn={SignIn}></Login>
+        <Login {...this.props}></Login>
       );
    };
 
@@ -20,17 +23,16 @@ class LoginContainer extends Component {
 
 }
 const mapStateToProps =(state) =>{
-
     return state;
  }
 
 const mapDisPatchToProps = (dispatch,props) =>{
     return {
         SignIn: (email,password) =>{
-            dispatch(Actions.logIn(email,password));
+            dispatch(Actions.logInRequest(email,password));
         }
     }
 }
 
 
-export default connect(null,mapDisPatchToProps)(LoginContainer);
+export default connect(mapStateToProps,mapDisPatchToProps)(LoginContainer);

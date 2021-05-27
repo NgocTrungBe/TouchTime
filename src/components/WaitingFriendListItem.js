@@ -11,7 +11,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import Fire from '../Database/Fire';
 const {width, height} = Dimensions.get('window');
 
-const ListWaitingFriend = ({friend, navigation}) => {
+const WaitingFriendListItem = ({friend, navigation}) => {
 
    function AcceptWaitingFriend(){
       Fire.getKeyWaitingFriend(friend.id).then((waitingFriendKey) =>{
@@ -20,8 +20,9 @@ const ListWaitingFriend = ({friend, navigation}) => {
   }
 
   return (
+   
     <View key={friend.id} style={styles.friendView}>
-      <Avatar rounded size={60} source={{uri: friend.photoURL}}></Avatar>
+      <Avatar rounded size={60} source={{uri:'data:image/png;base64,'+ friend.photoURL}}></Avatar>
       <View style={styles.content}>
         <View style={styles.titleView}>
           <Text style={styles.userName}>{friend.userName}</Text>
@@ -115,4 +116,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default ListWaitingFriend;
+export default WaitingFriendListItem;

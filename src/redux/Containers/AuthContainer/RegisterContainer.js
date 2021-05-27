@@ -1,7 +1,6 @@
 import React, {Component, useState} from 'react';
 import {connect} from 'react-redux';
-
-
+import * as Actions from '../../Actions/AuthActions'; 
 import Register from '../../../screen/Register';
 
 
@@ -10,9 +9,10 @@ class RegisterContainer extends Component {
         super(props);
     }
    render(){
-         const {SignUp} = this.props;
+    
+         const {SignUp,auth} = this.props;
     return (
-        <Register navigation={this.props.navigation} SignUp={SignUp}></Register>
+        <Register signUpData ={auth.signUpData} navigation={this.props.navigation} SignUp={SignUp}></Register>
       );
    };
 
@@ -27,10 +27,10 @@ const mapStateToProps =(state) =>{
 const mapDisPatchToProps = (dispatch,props) =>{
     return {
         SignUp: (email,password) =>{
-            dispatch(Actions.signUp(email,password));
+            dispatch(Actions.signUpRequest(email,password));
         }
     }
 }
 
 
-export default connect(null,mapDisPatchToProps)(RegisterContainer);
+export default connect(mapStateToProps,mapDisPatchToProps)(RegisterContainer);

@@ -10,6 +10,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import ChatList from '../components/ChatList';
 import Chat from './chat';
 import Friend from './Friend';
+import { StatusBar } from 'react-native';
 
 
 const chatStack = createStackNavigator();
@@ -35,6 +36,7 @@ const Home = ({navigation}) => {
   // },[])
   return (
     <View>
+        <StatusBar backgroundColor="#ad69d4" barStyle="light-content"></StatusBar>
        <AppHeader></AppHeader>
        <ChatList navigation={navigation}></ChatList>
     </View>

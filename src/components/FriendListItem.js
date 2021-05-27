@@ -4,7 +4,7 @@ import {Avatar} from 'react-native-elements';
 import Feather from 'react-native-vector-icons/Feather';
 const {width, height} = Dimensions.get('window');
 
-const ListFriend = ({friend,navigation}) =>{
+const FriendListItem = ({friend,navigation}) =>{
 
     
     return(
@@ -61,4 +61,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default ListFriend;
+export default FriendListItem;

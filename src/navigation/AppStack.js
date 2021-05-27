@@ -7,9 +7,8 @@ import Main from '../screen/Main';
 import Chat from '../screen/chat';
 import Home from '../screen/Home';
 import Fire from '../Database/Fire';
-import SetAvatar from '../screen/SetAvatar';
-import SetUserName from '../screen/setUserName';
 import { ActivityIndicator } from 'react-native';
+import UpdateUserContainer from '../redux/Containers/AuthContainer/UpdateUserContainer';
 
 const appStack = createStackNavigator();
 
@@ -17,24 +16,28 @@ const AppStack = () => {
    
 
   const [isLoading,setIsLoading] = useState(true);
+  const [userID,setUserID] = useState();
   const [routeName,setRouteName] = useState();
   useEffect(() => {
-
+      
       Fire.checkFirstLogin().then(response=>{
-       setRouteName(response);
+       setRouteName(response.isFirstLogin);
+       setUserID(response.userID);
        setIsLoading(false);
       })
-    
+      
+       return() =>{
+         Fire.offCheckFirstLogin(Fire.checkFirstLogin(),userID);
+       }
   },[]);
   return (
   
       isLoading == false ?
       <appStack.Navigator screenOptions={{
         headerShown:false
-    }} initialRouteName= {routeName === "false" ? "Main" : "SetUserName" }>
+    }} initialRouteName= {(routeName === "false") ? "Main" : "UpdateUserContainer" }>
      <appStack.Screen name="Main" component={Main}></appStack.Screen>
-     <appStack.Screen name="SetUserName" component={SetUserName}></appStack.Screen>
-     <appStack.Screen name="SetAvatar" component={SetAvatar}></appStack.Screen>
+     <appStack.Screen name="UpdateUserContainer" component={UpdateUserContainer}></appStack.Screen>
     <appStack.Screen name="Chat" component={Chat}></appStack.Screen>
     <appStack.Screen name="Home" component={Home}></appStack.Screen>
     </appStack.Navigator> : <View style={{flex:1,justifyContent:"center",alignItems:"center",backgroundColor:"#edeeeb"}}><ActivityIndicator size="small"  color="red"></ActivityIndicator></View>

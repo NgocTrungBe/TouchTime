@@ -11,6 +11,7 @@ import Fire from '../Database/Fire';
 const {width, height} = Dimensions.get('window');
 
 const AppHeader = () => {
+ 
   return (
     <View style={styles.wrapper}>
       <View style={styles.Header}>
@@ -24,7 +25,7 @@ const AppHeader = () => {
         </View>
         <Feather style={styles.searchButton} onPress={()=>{
          
-         Fire.SearchUser('lyly@gmail.com');
+        getWaitingFriendData();
         
            
         }} name="search" size={23}></Feather>

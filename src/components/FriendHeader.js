@@ -12,7 +12,7 @@ const {width, height} = Dimensions.get('window');
 
 const FriendHeader = ({navigation}) => {
   return (
-    <View style={styles.wrapper}>
+    <View>
       <View style={styles.Header}>
         <View style={styles.leftHeader}>
           <Feather
@@ -27,7 +27,7 @@ const FriendHeader = ({navigation}) => {
           name="user-plus"
           size={23}
           onPress={() => {
-                navigation.navigate("SearchFriend") 
+                navigation.navigate("SearchUserContainer") 
           }}></Feather>
       </View>
     </View>
@@ -35,10 +35,7 @@ const FriendHeader = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  wrapper: {
-    flex: 1,
  
-  },
   Header: {
     width: width,
     height: height / 13,

@@ -7,8 +7,7 @@ import AuthStack from './AuthStack';
 import AppStack from './AppStack';
 
 import Fire from '../Database/Fire';
-import SetUserName from '../screen/setUserName';
-import SetAvatar from '../screen/SetAvatar';
+
 
 const Routes = () => {
 

@@ -7,6 +7,7 @@ import {
   Dimensions,
   TouchableOpacity,
   StatusBar,
+  Modal
 } from 'react-native';
 import Fire from '../Database/Fire';
 import Feather from 'react-native-vector-icons/Feather';
@@ -16,7 +17,7 @@ import {checkInvalidPassword} from '../Asset/Contants';
 import LinearGradient from 'react-native-linear-gradient';
 const {width, height} = Dimensions.get('window');
 
-const Register = ({navigation}) => {
+const Register = ({navigation,SignUp,signUpData}) => {
   const [data, setData] = useState({
     email: '',
     password: '',
@@ -30,16 +31,39 @@ const Register = ({navigation}) => {
 
   });
 
-  const [isSuccess, setIsSuccess] = useState(false);
-
+  const [modalVisible, setModalVisible] = useState(false);
+  const [signUpTitle,setSignUpTitle] = useState('');
+  const [signUpMessage,setSignUpMessage] = useState('');
+  const showModal = () => {
+    setModalVisible(true);
+    setTimeout(() => {
+      setModalVisible(false);
+    }, 1200);
+  };
   const handleRegister = () => {
     if (data.email != '' && data.password != '') {
-      Fire.signUp(data.email, data.password);
-      setIsSuccess(true);
-      if (isSuccess) {
-        navigation.navigate('LoginContainer');
-        setIsSuccess(false);
+      SignUp(data.email, data.password);
+      if(signUpData != undefined){
+        if(signUpData.isSignUpSuccess ==true ){
+          setSignUpTitle("Ooops!");
+          setSignUpTitle("Đăng ký thành công");
+          showModal();
+        }
+        else{
+          setSignUpTitle("Ooops!");
+          if(signUpData.error.code == "auth/email-already-in-use"){
+            setSignUpMessage("Email này đã được sử dụng!")
+            
+          }
+          if(signUpData.error.code == "auth/invalid-email"){
+            setSignUpMessage("Email này không đúng")
+          }
+        
+          showModal();
+        }
+         
       }
+
     }
   };
 
@@ -216,6 +240,19 @@ const Register = ({navigation}) => {
          
         </View>
       </Animatable.View>
+      <Modal
+        animationType="fadeInUpBig"
+        transparent
+        visible={modalVisible}>
+        <View style={styles.modal} >
+        <Text style={styles.modalTitle}>
+            {signUpTitle}
+          </Text>
+          <Text style={styles.modalMessage}>
+            {signUpMessage}
+          </Text>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -309,6 +346,28 @@ const styles = StyleSheet.create({
     marginTop: 5,
     color: 'red',
   },
+  modal:{
+    marginTop:height/3,
+    marginLeft:width/8,
+    width:width/1.3,
+    height:200,
+    alignItems:"center",
+    borderRadius:10,
+    backgroundColor:"#ffffff",
+    elevation:10
+    
+  },
+  modalTitle:{
+    marginTop:20,
+     color:"#ad69d4",
+     fontSize:28,
+     fontWeight:"bold"
+  },
+  modalMessage:{
+    marginTop:50,
+    fontSize:16,
+    color:"#ad69d4",
+  }
  
 });
 export default Register;

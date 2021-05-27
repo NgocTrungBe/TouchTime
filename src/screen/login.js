@@ -7,6 +7,8 @@ import {
   Dimensions,
   TouchableOpacity,
   StatusBar,
+  Alert,
+  Modal
 } from 'react-native';
 import Fire from '../Database/Fire';
 import Feather from 'react-native-vector-icons/Feather';
@@ -15,9 +17,11 @@ import LinearGradient from 'react-native-linear-gradient';
 import {checkInvalidEmail} from '../Asset/Contants';
 import {checkInvalidPassword} from '../Asset/Contants';
 import Main from './Main';
+import { set } from 'react-native-reanimated';
 const {width, height} = Dimensions.get('window');
 
-const Login = ({navigation,SignIn}) => {
+const Login = (props) => {
+
   const [data, setData] = useState({
     email: '',
     password: '',
@@ -27,17 +31,28 @@ const Login = ({navigation,SignIn}) => {
     invalidPassword: false,
 
   });
-  const [isLogin,setIsLogin] = useState();
+  const [modalVisible, setModalVisible] = useState(false);
+  const showModal = () => {
+    setModalVisible(true);
+    setTimeout(() => {
+      setModalVisible(false);
+    }, 1200);
+  };
   const handleLogin = () => {
     if (data.email != '' && data.password != '') {
-      SignIn(data.email,data.password);
-      setIsLogin(true);
-      if (isLogin) {
-        navigation.navigate('Main');
-        setIsLogin(false);
+      
+      props.SignIn(data.email,data.password);   
+     
+      if(props.auth.isLoginSuccess != undefined){
+      
+        if(props.auth.isLoginSuccess === false){
+          showModal();
+         
+        }
       }
     }
   };
+  
 
   const handleEmailChange = val => {
     const isChecked = checkInvalidEmail(val);
@@ -84,7 +99,7 @@ const Login = ({navigation,SignIn}) => {
   };
 
   const navigateRegister = () => {
-    navigation.navigate('RegisterContainer');
+    props.navigation.navigate('RegisterContainer');
   };
   return (
     <View style={styles.container}>
@@ -137,7 +152,8 @@ const Login = ({navigation,SignIn}) => {
         ) : null}
 
         <View style={styles.buttonView}>
-          <TouchableOpacity onPress={handleLogin}>
+       
+          <TouchableOpacity disabled={(data.invalidEmail == false || data.invalidPassword) == false ? true : false }   onPress={handleLogin}>
             <LinearGradient
               style={styles.signInButton}
               colors={['#C576F6', '#C576F6', '#C576F6']}>
@@ -151,7 +167,22 @@ const Login = ({navigation,SignIn}) => {
             </TouchableOpacity>
           </View>
         </View>
+      
       </Animatable.View>
+      <Modal
+        animationType="fadeInUpBig"
+        transparent
+        visible={modalVisible}>
+        <View style={styles.modal} >
+        <Text style={styles.modalTitle}>
+            Ooops!
+          </Text>
+          <Text style={styles.modalMessage}>
+            Tài khoản hoặc mật khẩu không đúng!
+          </Text>
+        </View>
+      </Modal>
+   
     </View>
   );
 };
@@ -246,5 +277,28 @@ const styles = StyleSheet.create({
     marginTop: 5,
     color: 'red',
   },
+  modal:{
+    marginTop:height/3,
+    marginLeft:width/8,
+    width:width/1.3,
+    height:200,
+    alignItems:"center",
+    borderRadius:10,
+    backgroundColor:"#ffffff",
+    elevation:10
+    
+  },
+  modalTitle:{
+    marginTop:20,
+     color:"#ad69d4",
+     fontSize:28,
+     fontWeight:"bold"
+  },
+  modalMessage:{
+    marginTop:50,
+    fontSize:16,
+    color:"#ad69d4",
+  }
+
 });
 export default Login;

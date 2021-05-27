@@ -3,11 +3,13 @@ import {useEffect} from 'react';
 import {useState} from 'react';
 import {View, StyleSheet, Text, ActivityIndicator} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Fire from '../Database/Fire';
 
 const Splash = ({navigation}) => {
   const [isLoader, setIsLoader] = useState(true);
  
   useEffect(() => {
+    //Fire.signOut();
     getFirstRunApp().then(result =>{
          if(result === "true"){
             setTimeout(() => {

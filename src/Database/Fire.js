@@ -50,12 +50,18 @@ class Fire {
       userRef.on('value', snapshot => {
        if(snapshot){
         const isFirstLogin = snapshot.val().firstLogin;
-        return resolve(isFirstLogin);
+        return resolve({isFirstLogin,userID});
        }
       });
     });
+   
   }
-
+  
+  offCheckFirstLogin=(userRef,userID) =>{
+      database().ref('users/' + userID).off('value',userRef);
+    
+  }
+   
   getFriendId = userList => {
     if (userList) {
       const listID = [];
@@ -201,26 +207,25 @@ class Fire {
     });
   };
   
-  signIn = (email, password) => {
-    auth().signInWithEmailAndPassword(email, password);
+  signIn =  async (email, password) => {
+     try{
+        const login =  await auth().signInWithEmailAndPassword(email, password);
+         return login;
+     }
+     catch(err){
+        return false;
+     }
+    
   };
-  signUp = (email, passWord) => {
-    auth()
-      .createUserWithEmailAndPassword(email, passWord)
-      .then(() => {
-        this.createUser(
-          this.getUid(),
-          '',
-          email,
-          '',
-        );
-      })
-      .catch(error => {
-        if (error.code === 'auth/email-already-in-use') {
-          return "Tài khoản này đã được đăng ký!"
-        }
-        return error;
-      });
+  signUp = async (email, passWord) => {
+       
+    try{
+        const signUpResult =  await auth().createUserWithEmailAndPassword(email, passWord);
+        return signUpResult;
+    }
+    catch(error) {
+       return error;
+    }
   };
   signOut = () => {
     auth().signOut();
@@ -231,6 +236,7 @@ class Fire {
   };
 
   createUser = (id, userName, email, photoURL) => {
+    console.log("Fire đã được gọi" + id)
     database()
       .ref('users/' + id)
       .update({
@@ -333,7 +339,7 @@ class Fire {
        let list = []
       if (data[id].userID === userID && data[id].friendID === friendID) {
           list = data[id].friendID;
-          friendIDList.push(list)
+          friendIDList.push(list);
       }
      }
     return friendIDList;
@@ -349,12 +355,10 @@ class Fire {
       friendID: userID,
       isActive: isActive,
     };
-    friendRef.push(friend);
+    friendRef.push(friend);s
   };
  
   addAcceptedFriendToUser =(userID, friendID) => {
-
-    console.log(friendID)
     const isActive = 'true';
     const friendRef = database().ref('users/' + friendID + '/listFriend');
     const friend = {
@@ -367,13 +371,34 @@ class Fire {
   //Search user
 
   SearchUser = email => {
+    const userID = this.getUid();
     const userRef = database().ref('users');
     return new Promise((resolve, reject) => {
       userRef.on('value', snapshot => {
         snapshot.forEach(item => {
-          if (item.val().Email === email) {
-            return resolve(item.val());
+          if (item.val().Email == email) {
+              const users = [];
+              const listFriend = item.val().listFriend;
+              if(listFriend != undefined){
+                for(let user in listFriend){
+                  if(listFriend[user].friendID == userID && listFriend[user].isActive =="false"){
+                    users.push({user:item.val(),isActive:"false"})
+                  }
+                   if(listFriend[user].friendID == userID && listFriend[user].isActive =="true"){
+                    users.push({user:item.val(),isActive:"true"})
+                 }   
+                }
+                return resolve(users)
+              }
+              else{
+                users.push({user:item.val(),isActive:undefined})
+                return resolve(users)
+              } 
           }
+          else{
+            return resolve(null)
+          }
+          
         });
       });
     });

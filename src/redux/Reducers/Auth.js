@@ -2,6 +2,8 @@ import Fire from '../../Database/Fire';
 
 const initialState = {
 
+
+
 }
 
 const authReducer = (state = initialState, action) => {
@@ -10,11 +12,34 @@ const authReducer = (state = initialState, action) => {
         case "GET_USER":
             return state;
         case "LOG_IN":
-            Fire.signIn(action.email, action.password);
+
+            const newState = {
+                user: action.user,
+                isLoginSuccess: action.isLoginSuccess
+            }
+            return newState;
+
+        case "LOG_OUT":
+
+            // const newState = {...state,
+            //     user: action.user,
+            //     isLoginSuccess: false;
+            // }
+            // return newState;
             return state;
         case "SIGN_UP":
-            Fire.signUp(action.email, action.password);
+
+            return {...state, signUpData: action.signUpData };
+
+        case "CREATE_USER":
+
+            Fire.createUser(action.uid, '', action.email, '');
             return state;
+
+        case "UPDATE_USER":
+            Fire.updateUser(action.userName, action.avatar);
+            return state;
+
         default:
             return state;
     }
