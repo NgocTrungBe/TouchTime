@@ -4,18 +4,17 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 
 
 import FriendHeader from '../components/FriendHeader';
-import WaitingFriendList from '../components/WaitingFriendList';
-import FriendList from '../components/FriendList';
+import FriendListContainer from '../redux/Containers/AppContainer/FriendListContainer';
+import WaitingFriendListContainer from '../redux/Containers/AppContainer/WaitingFriendListContainer';
 
 const friendTab = createMaterialTopTabNavigator();
-const Friend = ({navigation}) => {
- 
+const Friend = (props) => {
   return (
       <>
-       <FriendHeader navigation={navigation}></FriendHeader>
+       <FriendHeader navigation={props.navigation}></FriendHeader>
        <friendTab.Navigator>
-          <friendTab.Screen options={{title:"Bạn Bè"}} name="FriendList" component={FriendList}></friendTab.Screen>
-          <friendTab.Screen options={{title:"Chờ xác nhận"}} name="WaitingFriendList" component={WaitingFriendList}></friendTab.Screen>
+          <friendTab.Screen  options={{title:"Bạn Bè"}} name="FriendListContainer" component={FriendListContainer}></friendTab.Screen>
+          <friendTab.Screen  options={{title:"Chờ xác nhận"}} name="WaitingFriendListContainer" component={WaitingFriendListContainer} ></friendTab.Screen>
        </friendTab.Navigator>
       </>
   );

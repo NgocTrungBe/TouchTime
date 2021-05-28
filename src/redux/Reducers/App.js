@@ -4,7 +4,13 @@ const initialState = {
 
     searchData: {
 
-    }
+    },
+    waitingFriendList: [
+
+    ],
+    friendList: [
+
+    ]
 }
 
 const appReducer = (state = initialState, action) => {
@@ -26,6 +32,23 @@ const appReducer = (state = initialState, action) => {
                     }
                 }
             }
+        case "GET_WAITING_FRIEND":
+            return {
+                ...state,
+                waitingFriendList: action.waitingFriendList
+            }
+
+        case "GET_FRIEND":
+            return {
+                ...state,
+                friendList: action.friendList
+            }
+        case "ACCEPT_FRIEND":
+            return state;
+
+        case "DELETE_WAITING_FRIEND":
+            return state;
+
         default:
             return state;
     }

@@ -11,18 +11,14 @@ import Feather from 'react-native-vector-icons/Feather';
 import Fire from '../Database/Fire';
 const {width, height} = Dimensions.get('window');
 
-const WaitingFriendListItem = ({friend, navigation}) => {
-
-   function AcceptWaitingFriend(){
-      Fire.getKeyWaitingFriend(friend.id).then((waitingFriendKey) =>{
-        Fire.acceptWaitingFriend(waitingFriendKey,friend.id);
-     })
-  }
+const WaitingFriendListItem = ({AcceptFriend,DeleteFriend,friend}) => {
+ 
+ 
 
   return (
    
     <View key={friend.id} style={styles.friendView}>
-      <Avatar rounded size={60} source={{uri:'data:image/png;base64,'+ friend.photoURL}}></Avatar>
+      <Avatar rounded size={65} source={{uri:'data:image/png;base64,'+ friend.photoURL}}></Avatar>
       <View style={styles.content}>
         <View style={styles.titleView}>
           <Text style={styles.userName}>{friend.userName}</Text>
@@ -32,14 +28,13 @@ const WaitingFriendListItem = ({friend, navigation}) => {
         <View style={styles.buttonView}>
           <TouchableOpacity
             style={styles.acceptButton}
-            onPress={() =>{
-              AcceptWaitingFriend();
-            }}
+            onPress={()=>{AcceptFriend(friend.id)}}
           >
             <Text style={styles.acceptBtnTitle}>Xác Nhận</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.deleteButton}
+            onPress={()=>{DeleteFriend(friend.id)}}
          >
           
             <Text style={styles.deleteBtnTitle}>Xóa</Text>
@@ -53,11 +48,12 @@ const WaitingFriendListItem = ({friend, navigation}) => {
 const styles = StyleSheet.create({
   // waiting friend
   friendView: {
-    width: width - 50,
-    padding: 15,
+    marginTop:10,
+    width: width/0.8,
+    padding: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 5,
+  
   },
   content: {
     marginLeft: 5,
@@ -66,20 +62,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   titleView: {
+    marginTop:5,
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
   },
   title: {
     fontSize: 15,
+    marginLeft:4
   },
   userName: {
     marginLeft: 20,
     fontSize: 18,
-    fontWeight: '500',
+    fontWeight: 'bold',
     color: 'black',
   },
   buttonView: {
+    marginTop:4,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -99,7 +98,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     borderRadius:5,
     padding: 8,
-    backgroundColor: '#ededf1',
+    backgroundColor: '#bed8f2',
   },
   acceptBtnTitle: {
     marginLeft: 1,

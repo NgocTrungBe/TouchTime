@@ -106,11 +106,27 @@ class Fire {
     const userRef = database().ref(
       'users/' + userID + '/listFriend/' + waitingFriendKey,
     );
-    userRef.update({
-      isActive: 'true',
-    })
-   
-    this.addAcceptedFriendToUser(userID,friendID)
+    return new Promise((resolve, reject) => {
+      userRef.update({
+        isActive: 'true',
+      }).then(()=>{
+        this.addAcceptedFriendToUser(userID,friendID);
+        return resolve(true);
+      })
+    });
+    
+  };
+
+  deleteWaitingFriend = (waitingFriendKey,friendID) => {
+    const userID = this.getUid();
+    const userRef = database().ref(
+      'users/' + userID + '/listFriend/' + waitingFriendKey,
+    );
+    return new Promise((resolve, reject) => {
+      userRef.remove();
+      return resolve(true);
+      
+    });
     
   };
 

@@ -13,6 +13,7 @@ import Friend from './Friend';
 import { StatusBar } from 'react-native';
 
 
+
 const chatStack = createStackNavigator();
 const tab = createBottomTabNavigator();
 
@@ -65,7 +66,7 @@ const HomeTabs = () =>{
         name="Friends"
         component={Friend}
         options={{
-          tabBarLabel: 'Friends',
+          tabBarLabel: 'Danh Bạ',
           tabBarIcon: ({color, size}) => (
             <Feather name="users" color={color} size={size}></Feather>
           ),

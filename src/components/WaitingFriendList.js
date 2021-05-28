@@ -1,62 +1,50 @@
 import React, {Component, useEffect, useState} from 'react';
 import {View, Text, Dimensions, StyleSheet} from 'react-native';
 import database from '@react-native-firebase/database';
-
-import AppHeader from '../components/AppHeader';
-import FriendListItem from '../components/FriendListItem';
 import Fire from '../Database/Fire';
 import Feather from 'react-native-vector-icons/Feather';
 import {FlatList} from 'react-native';
-import FriendHeader from '../components/FriendHeader';
 import WaitingFriendListItem from '../components/WaitingFriendListItem';
 
 const {width, height} = Dimensions.get('window');
 
-const WaitingFriendList = ({navigation}) => {
-
-  const [waitingFriends, setWaitingFriends] = useState([]);
+const WaitingFriendList = (props) => {
   const [refreshing, setRefreshing] = useState(false);
   const [isActive, setIsActive] = useState();
+ 
+  const {AcceptFriend } = props;
 
   useEffect(() => {
-    getWaitingFriendData();
+   props.GetWaitingFriend();
   }, []);
-
-  const getWaitingFriendData = () => {
-    Fire.getFriendListID(Fire.getWaitingFriendId).then(userID => {
-      if (userID) {
-        Fire.getFriend(userID).then(userList => {
-         if(userList.length >0){
-            setWaitingFriends(userList);
-         }
-          setRefreshing(false);
-        });
-      }
-    });
-  };
 
   const handleRefresh = () => {
     setRefreshing(true);
-    getWaitingFriendData();
+    setTimeout(() => {
+      props.GetWaitingFriend();
+      setRefreshing(false);
+    }, 1000);
+      
   };
   return (
     <View>
-     
-      
-     
           <FlatList
-            style={{padding: 20}}
+            
             showsVerticalScrollIndicator={false}
-            data={waitingFriends}
+            data={props.appData.waitingFriendList}
             refreshing={refreshing}
             onRefresh={handleRefresh}
             keyExtractor={item => item.id}
             renderItem={({item}) => {
               return (
                 <WaitingFriendListItem
+                 AcceptFriend={props.AcceptFriend}  
+                 DeleteFriend ={props.DeleteFriend}
                   key={item.key}
                   friend={item}
-                  navigation={navigation}></WaitingFriendListItem>
+                
+                   navigation={props.navigation}
+                  ></WaitingFriendListItem>
               );
             }}></FlatList>
     

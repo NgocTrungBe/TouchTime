@@ -8,26 +8,24 @@ const FriendListItem = ({friend,navigation}) =>{
 
     
     return(
-      <View>
-        
-        <TouchableOpacity style={{  elevation:20,backgroundColor:"#ffffff"}}  key={friend.id}
+   
+        <TouchableOpacity style={styles.button}  key={friend.id}
          onPress={() =>
            navigation.navigate('Chat', {
             friendUserName: friend.userName,
             friendAvatar: 'data:image/png;base64,'+ friend.photoURL,
             friendID: friend.id,
            })
-
          }
          >
-         <View style={styles.wrapper}>
-           <Avatar rounded size={45} source={{uri:'data:image/png;base64,'+friend.photoURL}}></Avatar>
+         <View style={styles.friendView}>
+           <Avatar rounded size={65} source={{uri:'data:image/png;base64,'+friend.photoURL}}></Avatar>
            <View style={styles.content}>
              <Text style={styles.userName}>{friend.userName}</Text>
            </View>
          </View>
        </TouchableOpacity>
-      </View>
+    
       
 
     );
@@ -35,23 +33,30 @@ const FriendListItem = ({friend,navigation}) =>{
 }
 
 const styles = StyleSheet.create({
-  wrapper: {
+  button:{
+    marginTop:7,
     width: width,
-    paddingBottom:15,
+    height:height/9,
+    backgroundColor:"#ebecec",
+    justifyContent:'center',
+    alignItems:'center',
+  
+
+  },
+  friendView: {
+    marginTop:30,
+    marginLeft:35,
+    marginBottom:30,
+    width: width,
     flexDirection: 'row',
     alignItems: 'center',
-   backgroundColor:"#ffffff",
- 
   },
-  content: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-  },
+
   userName: {
     marginLeft: 20,
     fontSize: 18,
-    fontWeight: '500',
-    color: 'grey',
+    fontWeight: '900',
+    color: '#060606',
   },
   lastMess: {
     marginLeft: 20,

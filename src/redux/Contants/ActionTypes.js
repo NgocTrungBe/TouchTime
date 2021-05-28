@@ -14,3 +14,7 @@ export const UPDATE_USER = "UPDATE_USER";
 
 export const SEARCH_USER = "SEARCH_USER";
 export const ADD_FRIEND = "ADD_FRIEND";
+export const GET_FRIEND = "GET_FRIEND";
+export const GET_WAITING_FRIEND = "GET_WAITING_FRIEND";
+export const ACCEPT_FRIEND = "ACCEPT_FRIEND";
+export const DELETE_WAITING_FRIEND = "DELETE_WAITING_FRIEND";

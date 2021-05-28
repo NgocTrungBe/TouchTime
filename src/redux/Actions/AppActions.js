@@ -33,3 +33,78 @@ export const addFriend = (userID) => {
         userID
     }
 }
+
+export const getWaitingFriendRequest = () => {
+    return (dispatch) => {
+        return Fire.getFriendListID(Fire.getWaitingFriendId).then(userID => {
+            if (userID) {
+                Fire.getFriend(userID).then(userList => {
+                    dispatch(getWaitingFriend(userList));
+                });
+            }
+        });
+    }
+}
+export const getWaitingFriend = (waitingFriendList) => {
+    return {
+        type: ActionTypes.GET_WAITING_FRIEND,
+        waitingFriendList
+    }
+}
+
+
+export const getFriendRequest = () => {
+    return (dispatch) => {
+        return Fire.getFriendListID(Fire.getFriendId).then(userID => {
+            if (userID) {
+                Fire.getFriend(userID).then(userList => {
+                    if (userList.length > 0) {
+                        dispatch(getFriend(userList))
+                    }
+                });
+            }
+        });
+    }
+}
+export const getFriend = (friendList) => {
+    return {
+        type: ActionTypes.GET_FRIEND,
+        friendList
+    }
+}
+
+
+export const acceptFriendRequest = (friendID) => {
+    return (dispatch) => {
+        return Fire.getKeyWaitingFriend(friendID).then((waitingFriendKey) => {
+            Fire.acceptWaitingFriend(waitingFriendKey, friendID).then((result) => {
+                if (result == true) {
+                    dispatch(getWaitingFriendRequest());
+                    dispatch(getFriendRequest());
+                }
+            });
+        });
+    }
+}
+export const acceptFriend = () => {
+    return {
+        type: ActionTypes.ACCEPT_FRIEND,
+    }
+}
+
+export const deleteWaitingFriendRequest = (friendID) => {
+    return (dispatch) => {
+        return Fire.getKeyWaitingFriend(friendID).then((waitingFriendKey) => {
+            Fire.deleteWaitingFriend(waitingFriendKey, friendID).then((result) => {
+                if (result == true) {
+                    dispatch(getWaitingFriendRequest());
+                }
+            });
+        });
+    }
+}
+export const deleteWaitingFriend = () => {
+    return {
+        type: ActionTypes.DELETE_WAITING_FRIEND,
+    }
+}
