@@ -8,6 +8,7 @@ const {width, height} = Dimensions.get('window');
 
 const SearchFriendHeader = (props) => {
   const [email, setEmail] = useState();
+
   function Search() {
     props.SearchUser(email);
   }
@@ -36,6 +37,7 @@ const SearchFriendHeader = (props) => {
           style={styles.searchButton}
           name="search"
           onPress={() => {
+    
             Search();
             setEmail('');
             Keyboard.dismiss();

@@ -1,16 +1,13 @@
 import React, {Component, useEffect, useState} from 'react';
-import {View, FlatList, Dimensions,Alert,BackHandler} from 'react-native';
-import Fire from '../Database/Fire';
-import database from '@react-native-firebase/database';
-import AppHeader from '../components/AppHeader';
-import {NavigationContainer} from '@react-navigation/native';
+import {View, FlatList, Dimensions,Alert,BackHandler,StatusBar} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Feather from 'react-native-vector-icons/Feather';
-import ChatList from '../components/ChatList';
-import Chat from './chat';
 import Friend from './Friend';
-import { StatusBar } from 'react-native';
+import Fire from '../Database/Fire';
+import database from '@react-native-firebase/database';
+import AppHeader from '../components/AppHeader';
+import ChatListContainer from '../redux/Containers/AppContainer/ChatListContainer';
 
 
 
@@ -39,7 +36,7 @@ const Home = ({navigation}) => {
     <View>
         <StatusBar backgroundColor="#ad69d4" barStyle="light-content"></StatusBar>
        <AppHeader></AppHeader>
-       <ChatList navigation={navigation}></ChatList>
+       <ChatListContainer navigation={navigation} ></ChatListContainer>
     </View>
 
   );

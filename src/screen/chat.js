@@ -32,7 +32,6 @@ const Chat = ({route, navigation}) => {
   // }
 
   useLayoutEffect(() => {
-    
     Fire.getUserInfo().then(userData=>{
         if(userData != 'null'){
           setUserID(userData.userID)
@@ -42,20 +41,21 @@ const Chat = ({route, navigation}) => {
          
         }
    })
+
+   Fire.getMess(
+    (messages) =>{
+      setMessages(previousMessages =>
+        GiftedChat.append(previousMessages, messages)
+      )
+    },  friendID
+  );
    
-    Fire.getMess(
-    
-      messages =>
-        setMessages(previousMessages =>
-       
-          GiftedChat.append(previousMessages, messages),
-        ),
-      friendID,
-      Fire.getUid(),
-    );
   }, []);
+    
+  const onSend = useCallback((messages = []) => {
+    //setMessages(previousMessages => GiftedChat.append(previousMessages, messages))
 
-
+  }, []) 
   return (
     <>
       <ChatHeader
@@ -66,7 +66,7 @@ const Chat = ({route, navigation}) => {
       <GiftedChat
         showAvatarForEveryMessage={true}
         messages={messages}
-        onSend={messages => Fire.send(messages, friendID)}
+        onSend={messages =>  Fire.send(messages, friendID)}
         user={{
             _id:userID,
             name:userName,

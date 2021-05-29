@@ -22,6 +22,7 @@ export const searchUserRequest = (email) => {
     }
 }
 export const searchUser = (user) => {
+    console.log("datta")
     return {
         type: ActionTypes.SEARCH_USER,
         user
@@ -106,5 +107,30 @@ export const deleteWaitingFriendRequest = (friendID) => {
 export const deleteWaitingFriend = () => {
     return {
         type: ActionTypes.DELETE_WAITING_FRIEND,
+    }
+}
+
+export const getChatListRequest = (userID) => {
+    return (dispatch) => {
+        Fire.getFriendListID(Fire.getFriendId).then(friendIDList => {
+            if (friendIDList) {
+                Fire.FindRoom(userID, friendIDList, data => {
+
+                    Fire.getLastMess(data.roomIDList, userID, lastMessData => {
+                        dispatch(getChatList(lastMessData))
+                    })
+
+                })
+
+            }
+        })
+    }
+
+}
+
+export const getChatList = (chatList) => {
+    return {
+        type: ActionTypes.GET_CHAT_LIST,
+        chatList
     }
 }

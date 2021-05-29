@@ -10,6 +10,9 @@ const initialState = {
     ],
     friendList: [
 
+    ],
+    chatList: [
+
     ]
 }
 
@@ -48,6 +51,13 @@ const appReducer = (state = initialState, action) => {
 
         case "DELETE_WAITING_FRIEND":
             return state;
+
+        case "GET_CHAT_LIST":
+
+            return {
+                ...state,
+                chatList: action.chatList
+            }
 
         default:
             return state;

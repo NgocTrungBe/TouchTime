@@ -17,27 +17,27 @@ import { set } from 'react-native-reanimated';
 
 const {width, height} = Dimensions.get('window');
 
-const ChatItem = ({users,lastMess, navigation}) => {
+const ChatItem = ({users, navigation}) => {
  
 
   return (
      <View>
-       <TouchableOpacity key={users.id}
+       <TouchableOpacity key={users.userName}
          
          onPress={() =>
            navigation.navigate('Chat', {
             friendUserName: users.userName,
-            friendAvatar: 'data:image/png;base64,'+ users.photoURL,
-            friendID: users.id,
+            friendAvatar:  users.avatar,
+            friendID: users.friendID,
            })
 
          }
          >
          <View style={styles.wrapper}>
-           <Avatar rounded size={50} source={{uri: 'data:image/png;base64,'+ users.photoURL}}></Avatar>
+           <Avatar rounded size={50} source={{uri:  users.avatar}}></Avatar>
            <View style={styles.content}>
              <Text style={styles.userName}>{users.userName}</Text>
-             <Text style={styles.lastMess}>{lastMess}</Text>
+             <Text style={styles.lastMess}>{users.text}</Text>
            </View>
          </View>
        </TouchableOpacity>
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
 });
 
 
-const ChatList =({navigation}) =>{
+const ChatList =(props) =>{
 
   const [users, setUsers] = useState([]);
   const [lastMessage,setLastMessage] = useState();
@@ -86,21 +86,8 @@ const ChatList =({navigation}) =>{
 
 
   const getData = () =>{
-    const userID = Fire.getUid();
-    Fire.getFriendListID(Fire.getFriendId).then(friendIDList => {
-      if (friendIDList) {
-          Fire.FindRoom(userID,friendIDList,data =>{
-            Fire.getFriend(data.friendIDList).then(userList=>{
-              setUsers(userList)
-              setRefreshing(false);
-            })
-            Fire.getLastMess(data.roomIDList,lastMess =>{
-                  setLastMessage(lastMess)
-            });
-          })
-       //  });
-      }
-    });
+    const userID  = Fire.getUid();
+    props.GetChatList(userID);
   }
   const handleRefresh =() =>{
         setRefreshing(true)
@@ -111,12 +98,12 @@ const ChatList =({navigation}) =>{
   return(
     <FlatList style={{marginTop:height / 13,marginLeft:7}}
     showsVerticalScrollIndicator ={false}
-    data={users}
+    data={props.appData.chatList}
     refreshing={refreshing}
     onRefresh ={handleRefresh}
-    keyExtractor={(item) => item.id}
+    keyExtractor={(item) => item.userName}
     renderItem={({item}) => {
-      return <ChatItem key={item.key} users={item} lastMess={lastMessage} navigation={navigation}></ChatItem>;
+      return <ChatItem key={item.key} users={item} navigation={props.navigation}></ChatItem>;
     }}></FlatList>
   );
 }

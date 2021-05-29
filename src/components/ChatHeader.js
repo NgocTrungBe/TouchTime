@@ -12,7 +12,7 @@ const ChatHeader = ({navigation,photoURL,userName}) => {
       <View style={styles.Header}>
         <View style={styles.leftHeader}>
           <Feather  style={styles.backButton} name="arrow-left" size={23} onPress={()=>{
-            navigation.pop();
+            navigation.navigate("Home");
           }}></Feather>
           <Avatar rounded size={40} source={{uri:photoURL}}></Avatar>
           <Text style={styles.userName}>{userName}</Text>

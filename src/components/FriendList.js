@@ -20,8 +20,11 @@ const FriendList = (props) => {
   }, []);
 
   const handleRefresh = () => {
-    setRefreshing(true);
-       props.GetFriend();
+     setRefreshing(true);
+     setTimeout(() => {
+      props.GetFriend();
+      setRefreshing(false);
+    }, 1000);
   };
   return (
     <View>

@@ -43,25 +43,22 @@ class Fire {
     });
   };
 
-  checkFirstLogin =() =>{
+  checkFirstLogin = () => {
     const userID = this.getUid();
     const userRef = database().ref('users/' + userID);
     return new Promise((resolve, reject) => {
       userRef.on('value', snapshot => {
-       if(snapshot){
-        const isFirstLogin = snapshot.val().firstLogin;
-        return resolve({isFirstLogin,userID});
-       }
+        if (snapshot) {
+          const isFirstLogin = snapshot.val().firstLogin;
+          return resolve({isFirstLogin, userID});
+        }
       });
+      return userRef;
     });
-   
-  }
-  
-  offCheckFirstLogin=(userRef,userID) =>{
-      database().ref('users/' + userID).off('value',userRef);
-    
-  }
-   
+  };
+
+
+
   getFriendId = userList => {
     if (userList) {
       const listID = [];
@@ -87,37 +84,38 @@ class Fire {
     }
   };
 
-  getKeyWaitingFriend = ( friendID) => {
-   const userID = this.getUid();
+  getKeyWaitingFriend = friendID => {
+    const userID = this.getUid();
     const userRef = database().ref('users/' + userID + '/listFriend');
     return new Promise((resolve, reject) => {
       userRef.on('value', snapshot => {
         snapshot.forEach(friend => {
           if (friend.val().friendID === friendID) {
-            return resolve(friend.key)
+            return resolve(friend.key);
           }
         });
       });
     });
   };
 
-  acceptWaitingFriend = (waitingFriendKey,friendID) => {
+  acceptWaitingFriend = (waitingFriendKey, friendID) => {
     const userID = this.getUid();
     const userRef = database().ref(
       'users/' + userID + '/listFriend/' + waitingFriendKey,
     );
     return new Promise((resolve, reject) => {
-      userRef.update({
-        isActive: 'true',
-      }).then(()=>{
-        this.addAcceptedFriendToUser(userID,friendID);
-        return resolve(true);
-      })
+      userRef
+        .update({
+          isActive: 'true',
+        })
+        .then(() => {
+          this.addAcceptedFriendToUser(userID, friendID);
+          return resolve(true);
+        });
     });
-    
   };
 
-  deleteWaitingFriend = (waitingFriendKey,friendID) => {
+  deleteWaitingFriend = (waitingFriendKey, friendID) => {
     const userID = this.getUid();
     const userRef = database().ref(
       'users/' + userID + '/listFriend/' + waitingFriendKey,
@@ -125,46 +123,52 @@ class Fire {
     return new Promise((resolve, reject) => {
       userRef.remove();
       return resolve(true);
-      
     });
-    
   };
 
-  getUserInfo =() =>{
+  getUserInfo = () => {
     const userID = this.getUid();
     const userRef = database().ref('users/' + userID);
     return new Promise((resolve, reject) => {
       userRef.on('value', snapshot => {
-         if(snapshot != 'null'){
+        if (snapshot != 'null') {
           const photoURL = snapshot.val().photoURL;
-         const userName = snapshot.val().userName;
-         const email = snapshot.val().Email;
-         const friendList = this.getFriendId(snapshot.val()).length;
-         const waitingAcceptFriend = this.getWaitingFriendId(snapshot.val()).length;
-         return resolve({userName,email,photoURL,friendList,waitingAcceptFriend,userID});
-         }
+          const userName = snapshot.val().userName;
+          const email = snapshot.val().Email;
+          const friendList = this.getFriendId(snapshot.val()).length;
+          const waitingAcceptFriend = this.getWaitingFriendId(snapshot.val())
+            .length;
+          return resolve({
+            userName,
+            email,
+            photoURL,
+            friendList,
+            waitingAcceptFriend,
+            userID,
+          });
+        }
       });
     });
-  }
+  };
 
   send = (messages, friendID) => {
     const userID = this.getUid();
     this.checkNullRoom(friendID).then(isChecked => {
-      if (isChecked === "true") {
+      if (isChecked === 'true') {
         this.createRooms(userID, friendID);
         this.getRoomID(userID, friendID, roomID => {
           this.sendMessages(messages, roomID);
         });
       }
-      if (isChecked === "false") {
+      if (isChecked === 'false') {
         this.checkExistedRoom(userID, friendID).then(data => {
-          if (data.isChecked === "false") {
+          if (data.isChecked === 'false') {
             this.createRooms(userID, friendID);
             this.getRoomID(userID, friendID, roomID => {
               this.sendMessages(messages, roomID);
             });
           }
-          if (data.isChecked === "true") {
+          if (data.isChecked === 'true') {
             this.sendMessages(messages, data.roomID);
           }
         });
@@ -181,12 +185,12 @@ class Fire {
         user: item.user,
       };
       chatRef.push(message);
-      //chatRef.off();
     });
+    return chatRef;
   };
 
   parse = message => {
-
+    //console.log(message.val().text)
     const {user, text, timestamp} = message.val();
     const {key: _id} = message;
     const createdAt = new Date(timestamp);
@@ -198,49 +202,66 @@ class Fire {
     };
   };
 
-  getMess = (callback, friendID, userID) => {
-      this.getRoomID(userID, friendID, roomID => {
-        const chatRef = database().ref('messages/' + roomID);
-        chatRef.on('child_added', snapshot => callback(this.parse(snapshot)));
-    
-        return() => database.database().ref('messages/' + roomID).off('value',chatRef);
+  getMess = (callback, friendID) => {
+    const userID = this.getUid();
+    this.getRoomID(userID, friendID, roomID => {
+      const chatRef = database().ref('messages/' + roomID);
+      chatRef.on('child_added', snapshot => {
+        callback(this.parse(snapshot))
       });
-       
       
-  };
-
-  getLastMess = (roomIDList, callback) => {
-    const roomsRef = database().ref('messages/');
-    roomsRef.on('value', snapshot => {
-      const messages = snapshot.val();
-      for (let id in messages) {
-         roomIDList.forEach((roomID) =>{
-            for(let item in messages[id]){
-              callback(messages[id][item].text)
-            }
-         })
-      }
+      return chatRef;
+      
     });
   };
-  
-  signIn =  async (email, password) => {
-     try{
-        const login =  await auth().signInWithEmailAndPassword(email, password);
-         return login;
-     }
-     catch(err){
-        return false;
-     }
-    
+
+  getLastMess = (roomIDList,userID, callback) => {
+    const currentUserName =  auth().currentUser.uid;
+    const roomsRef = database().ref('messages/');
+    roomsRef.on('value', snapshot => {
+      const data =[];
+      const messages = snapshot.val();
+      for (let id in messages) {
+        roomIDList.forEach(roomID => {
+            if(id == roomID){
+               const listMessage = Object.values(messages[id]);
+               const friendIDInLastMess = listMessage[0].user._id;
+               
+               if(friendIDInLastMess != userID){
+                data.push({userName:listMessage[0].user.name,avatar:listMessage[0].user.avatar,currentUserName:currentUserName,text:listMessage[0].text,friendID:listMessage[0].user._id})
+               }
+               else{
+                 listMessage.map((item)=>{
+                    if(item.user._id != userID){
+                      data.push({userName:item.user.name,avatar:item.avatar,currentUserName:currentUserName,text:listMessage[0].text,friendID:item.user._id})
+                    }
+                 })
+               }
+            }
+        });
+      }
+      callback(data);
+      
+    });
+  };
+
+  signIn = async (email, password) => {
+    try {
+      const login = await auth().signInWithEmailAndPassword(email, password);
+      return login;
+    } catch (err) {
+      return false;
+    }
   };
   signUp = async (email, passWord) => {
-       
-    try{
-        const signUpResult =  await auth().createUserWithEmailAndPassword(email, passWord);
-        return signUpResult;
-    }
-    catch(error) {
-       return error;
+    try {
+      const signUpResult = await auth().createUserWithEmailAndPassword(
+        email,
+        passWord,
+      );
+      return signUpResult;
+    } catch (error) {
+      return error;
     }
   };
   signOut = () => {
@@ -252,7 +273,6 @@ class Fire {
   };
 
   createUser = (id, userName, email, photoURL) => {
-    console.log("Fire đã được gọi" + id)
     database()
       .ref('users/' + id)
       .update({
@@ -260,21 +280,23 @@ class Fire {
         Email: email,
         photoURL: photoURL,
         id: id,
-        firstLogin:"true"
+        firstLogin: 'true',
       });
   };
-  updateUser = (userName,photoURL) => {
+  updateUser = (userName, photoURL) => {
     const uid = this.getUid();
     database()
       .ref('users/' + uid)
       .update({
         userName: userName,
-        photoURL:photoURL,
-        firstLogin:"false"
-      }).then(()=>{
+        photoURL: photoURL,
+        firstLogin: 'false',
+      })
+      .then(() => {
         return true;
-      }).catch(error=>{
-          return error;
+      })
+      .catch(error => {
+        return error;
       });
   };
 
@@ -308,7 +330,10 @@ class Fire {
       roomsRef.on('value', snapshot => {
         const rooms = snapshot.val();
         for (let id in rooms) {
-          if ((rooms[id].userID === userID && rooms[id].friendID === friendID) || (rooms[id].userID === friendID && rooms[id].friendID === userID) ) {
+          if (
+            (rooms[id].userID === userID && rooms[id].friendID === friendID) ||
+            (rooms[id].userID === friendID && rooms[id].friendID === userID)
+          ) {
             return resolve({isChecked: 'true', roomID: id});
           }
           return resolve({isChecked: 'false', snapshot: id});
@@ -317,49 +342,54 @@ class Fire {
     });
   };
 
-  FindRoom = (userID,listID, callback) => {
+  FindRoom = (userID, listID, callback) => {
     const roomsRef = database().ref('rooms');
     roomsRef.on('value', snapshot => {
       const friendIDList = [];
       const roomIDList = [];
       const rooms = snapshot.val();
-        for (let id in rooms) {
-          listID.forEach(item => {
-            if ((rooms[id].userID === userID && rooms[id].friendID === item) || (rooms[id].userID === item && rooms[id].friendID === userID) ) {
-                  friendIDList.push(item)
-                  roomIDList.push(id);
-            }
-          });
-        }
-         
-        callback({friendIDList:friendIDList,roomIDList:roomIDList})
-        
+      for (let id in rooms) {
+        listID.forEach(item => {
+          if (
+            (rooms[id].userID === userID && rooms[id].friendID === item) ||
+            (rooms[id].userID === item && rooms[id].friendID === userID)
+          ) {
+            friendIDList.push(item);
+            roomIDList.push(id);
+          }
+        });
+      }
+
+      callback({friendIDList: friendIDList, roomIDList: roomIDList});
     });
   };
   getRoomID = (userID, friendID, callback) => {
     const roomsRef = database().ref('rooms');
     roomsRef.on('value', snapshot => {
-        const rooms = snapshot.val();
-        for (let id in rooms) {
-            if ((rooms[id].userID === userID && rooms[id].friendID === friendID) || (rooms[id].userID === friendID && rooms[id].friendID === userID) ) {
-                return callback(id);
-            }
+      const rooms = snapshot.val();
+      for (let id in rooms) {
+        if (
+          (rooms[id].userID === userID && rooms[id].friendID === friendID) ||
+          (rooms[id].userID === friendID && rooms[id].friendID === userID)
+        ) {
+          return callback(id);
         }
-    });
-};
-
-  getFriendInRoom = (snapshot,userID,friendID)=> {
-     const friendIDList =[];
-     const data =snapshot.val();
-     for (let id in data) {
-       let list = []
-      if (data[id].userID === userID && data[id].friendID === friendID) {
-          list = data[id].friendID;
-          friendIDList.push(list);
       }
-     }
+    });
+  };
+
+  getFriendInRoom = (snapshot, userID, friendID) => {
+    const friendIDList = [];
+    const data = snapshot.val();
+    for (let id in data) {
+      let list = [];
+      if (data[id].userID === userID && data[id].friendID === friendID) {
+        list = data[id].friendID;
+        friendIDList.push(list);
+      }
+    }
     return friendIDList;
-  }
+  };
 
   // friends
 
@@ -371,10 +401,10 @@ class Fire {
       friendID: userID,
       isActive: isActive,
     };
-    friendRef.push(friend);s
+    friendRef.push(friend);
   };
- 
-  addAcceptedFriendToUser =(userID, friendID) => {
+
+  addAcceptedFriendToUser = (userID, friendID) => {
     const isActive = 'true';
     const friendRef = database().ref('users/' + friendID + '/listFriend');
     const friend = {
@@ -382,6 +412,8 @@ class Fire {
       isActive: isActive,
     };
     friendRef.push(friend);
+
+   
   };
 
   //Search user
@@ -393,28 +425,39 @@ class Fire {
       userRef.on('value', snapshot => {
         snapshot.forEach(item => {
           if (item.val().Email == email) {
-              const users = [];
-              const listFriend = item.val().listFriend;
-              if(listFriend != undefined){
-                for(let user in listFriend){
-                  if(listFriend[user].friendID == userID && listFriend[user].isActive =="false"){
-                    users.push({user:item.val(),isActive:"false"})
-                  }
-                   if(listFriend[user].friendID == userID && listFriend[user].isActive =="true"){
-                    users.push({user:item.val(),isActive:"true"})
-                 }   
+            const users = [];
+            const listFriend = item.val().listFriend;
+            if (listFriend != undefined) {
+              for (let user in listFriend) {
+                if (
+                  listFriend[user].friendID == userID &&
+                  listFriend[user].isActive == 'false'
+                ) {
+                  users.push({user: item.val(), isActive: 'false'});
                 }
-                return resolve(users)
+                if (
+                  listFriend[user].friendID == userID &&
+                  listFriend[user].isActive == 'true'
+                ) {
+                  users.push({user: item.val(), isActive: 'true'});
+                }
+                if (listFriend[user].friendID != userID) {
+                  users.push({user: item.val(), isActive: undefined});
+                }
               }
-              else{
-                users.push({user:item.val(),isActive:undefined})
-                return resolve(users)
-              } 
+              if (users.length >= 2) {
+                let newUser = users.filter(user => {
+                  return user.isActive != undefined;
+                });
+                return resolve(newUser);
+              } else {
+                return resolve(users);
+              }
+            } else {
+              users.push({user: item.val(), isActive: undefined});
+              return resolve(users);
+            }
           }
-          else{
-            return resolve(null)
-          }
-          
         });
       });
     });

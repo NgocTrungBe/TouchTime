@@ -7,11 +7,11 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import {createStackNavigator} from '@react-navigation/stack';
 import Feather from 'react-native-vector-icons/Feather';
 
-import ChatList from '../components/ChatList';
+
 
 import Friend from './Friend';
 import Home from './Home';
-import Chat from './chat';
+import Chat from './Chat';
 import HomeTabs from './Home';
 import AppHeader from '../components/AppHeader';
 import DrawerContent from '../components/DrawerContent';
@@ -28,7 +28,7 @@ const Main = ({navigation}) => {
             }}
        />
      
-      <Drawer.Screen  name = "ChatList" component={ChatList}/>
+      <Drawer.Screen  name = "Chat" component={Chat}/>
       <Drawer.Screen
        options={{
          title:"Thêm bạn bè"

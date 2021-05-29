@@ -10,6 +10,7 @@ class SearchUserContainer extends Component {
         super(props);
     }
    render(){       
+
     return (
         <SearchFriend {...this.props}></SearchFriend>
       );
