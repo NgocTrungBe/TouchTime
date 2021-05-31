@@ -9,32 +9,31 @@ import Feather from 'react-native-vector-icons/Feather';
 
 
 
-import Friend from './Friend';
-import Home from './Home';
+
 import Chat from './Chat';
-import HomeTabs from './Home';
-import AppHeader from '../components/AppHeader';
 import DrawerContent from '../components/DrawerContent';
 import SearchUserContainer from '../redux/Containers/AppContainer/SearchUserContainer';
 
+import HomeTabs from './Home';
+
 const main = createStackNavigator();
-const Drawer = createDrawerNavigator();
+
+
+
 const Main = ({navigation}) => {
   return (
-    <Drawer.Navigator drawerContent= {props => <DrawerContent {...props}/>} >
-      <Drawer.Screen name="Home" component={HomeTabs}
-            options={{
-              headerShown:false
-            }}
-       />
+    <main.Navigator  screenOptions={{animationEnabled:false} }>
+      <main.Screen name="Home" component={HomeTabs} options={{
+        headerShown:false
+      }}/>
      
-      <Drawer.Screen  name = "Chat" component={Chat}/>
-      <Drawer.Screen
+      <main.Screen  name = "Chat" component={Chat}/>
+      <main.Screen
        options={{
          title:"Thêm bạn bè"
        }}
-       name="SearchUserContainer" component={SearchUserContainer} />
-    </Drawer.Navigator>
+       name="SearchUserContainer" component={SearchUserContainer} options={{headerShown:false}} />
+    </main.Navigator>
   );
 };
 

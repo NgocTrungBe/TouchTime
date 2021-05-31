@@ -57,8 +57,6 @@ class Fire {
     });
   };
 
-
-
   getFriendId = userList => {
     if (userList) {
       const listID = [];
@@ -151,25 +149,29 @@ class Fire {
     });
   };
 
-  send = (messages, friendID) => {
+  send = (messages,friendID) => {
     const userID = this.getUid();
-    this.checkNullRoom(friendID).then(isChecked => {
-      if (isChecked === 'true') {
-        this.createRooms(userID, friendID);
-        this.getRoomID(userID, friendID, roomID => {
-          this.sendMessages(messages, roomID);
+    //const friendID = 'aI66n3cQwNYWvjOCoPicWxJt6Yk1';
+    this.checkNullRoom().then(isChecked => {
+      if (isChecked == true) {
+        this.createRooms(userID, friendID, roomID => {
+          if (roomID != undefined) {
+            this.sendMessages(messages, roomID);
+          }
         });
       }
-      if (isChecked === 'false') {
+      if (isChecked == false) {
         this.checkExistedRoom(userID, friendID).then(data => {
-          if (data.isChecked === 'false') {
-            this.createRooms(userID, friendID);
-            this.getRoomID(userID, friendID, roomID => {
-              this.sendMessages(messages, roomID);
-            });
-          }
-          if (data.isChecked === 'true') {
+          console.log(data);
+          if (data.isChecked == true) {
             this.sendMessages(messages, data.roomID);
+          }
+          if (data.isChecked == false) {
+            this.createRooms(userID, friendID, roomID => {
+              if (roomID != undefined) {
+                this.sendMessages(messages, roomID);
+              }
+            });
           }
         });
       }
@@ -178,6 +180,7 @@ class Fire {
 
   sendMessages = (messages, roomID) => {
     const chatRef = database().ref('messages/' + roomID);
+    
     messages.forEach(item => {
       const message = {
         text: item.text,
@@ -186,7 +189,7 @@ class Fire {
       };
       chatRef.push(message);
     });
-    return chatRef;
+    
   };
 
   parse = message => {
@@ -207,41 +210,48 @@ class Fire {
     this.getRoomID(userID, friendID, roomID => {
       const chatRef = database().ref('messages/' + roomID);
       chatRef.on('child_added', snapshot => {
-        callback(this.parse(snapshot))
+        callback(this.parse(snapshot));
       });
-      
-      return chatRef;
-      
     });
   };
 
-  getLastMess = (roomIDList,userID, callback) => {
-    const currentUserName =  auth().currentUser.uid;
+  getLastMess = (roomIDList, userID, callback) => {
+    const currentUserName = auth().currentUser.uid;
     const roomsRef = database().ref('messages/');
     roomsRef.on('value', snapshot => {
-      const data =[];
+      const data = [];
       const messages = snapshot.val();
       for (let id in messages) {
         roomIDList.forEach(roomID => {
-            if(id == roomID){
-               const listMessage = Object.values(messages[id]);
-               const friendIDInLastMess = listMessage[0].user._id;
-               
-               if(friendIDInLastMess != userID){
-                data.push({userName:listMessage[0].user.name,avatar:listMessage[0].user.avatar,currentUserName:currentUserName,text:listMessage[0].text,friendID:listMessage[0].user._id})
-               }
-               else{
-                 listMessage.map((item)=>{
-                    if(item.user._id != userID){
-                      data.push({userName:item.user.name,avatar:item.avatar,currentUserName:currentUserName,text:listMessage[0].text,friendID:item.user._id})
-                    }
-                 })
-               }
+          if (id == roomID) {
+            const listMessage = Object.values(messages[id]);
+            const friendIDInLastMess = listMessage[0].user._id;
+
+            if (friendIDInLastMess != userID) {
+              data.push({
+                userName: listMessage[0].user.name,
+                avatar: listMessage[0].user.avatar,
+                currentUserName: currentUserName,
+                text: listMessage[0].text,
+                friendID: listMessage[0].user._id,
+              });
+            } else {
+              listMessage.map(item => {
+                if (item.user._id != userID) {
+                  data.push({
+                    userName: item.user.name,
+                    avatar: item.avatar,
+                    currentUserName: currentUserName,
+                    text: listMessage[0].text,
+                    friendID: item.user._id,
+                  });
+                }
+              });
             }
+          }
         });
       }
       callback(data);
-      
     });
   };
 
@@ -301,26 +311,25 @@ class Fire {
   };
 
   // rooms
-  createRooms = (userId, friendID) => {
+  createRooms = (userId, friendID, callback) => {
     const isSuccess = 'true';
     const room = {
       userID: userId,
       friendID: friendID,
     };
     const roomsRef = database().ref('rooms');
-    roomsRef.push(room);
+    roomsRef.push(room).then(data => {
+      callback(data.key);
+    });
     roomsRef.off();
-    return isSuccess;
   };
-  checkNullRoom = friendID => {
+  checkNullRoom = () => {
     const roomsRef = database().ref('rooms');
     return new Promise((resolve, reject) => {
       roomsRef.on('value', snapshot => {
-        let userID = this.getUid();
-        let idFriend = friendID;
         if (snapshot.val() == null) {
-          return resolve('true');
-        } else return resolve('false');
+          return resolve(true);
+        } else return resolve(false);
       });
     });
   };
@@ -329,14 +338,28 @@ class Fire {
     return new Promise((resolve, reject) => {
       roomsRef.on('value', snapshot => {
         const rooms = snapshot.val();
+        let isChecked;
+        let roomID;
         for (let id in rooms) {
           if (
-            (rooms[id].userID === userID && rooms[id].friendID === friendID) ||
-            (rooms[id].userID === friendID && rooms[id].friendID === userID)
+            (rooms[id].userID.includes(userID) &&
+              rooms[id].friendID.includes(friendID)) ||
+            (rooms[id].userID.includes(friendID) &&
+              rooms[id].friendID.includes(userID))
           ) {
-            return resolve({isChecked: 'true', roomID: id});
+            isChecked = true;
+            roomID = id;
+            break;
+          } else {
+            continue;
           }
-          return resolve({isChecked: 'false', snapshot: id});
+        }
+        if (isChecked == true) {
+          return resolve({isChecked: isChecked, roomID: roomID});
+        } 
+        if(isChecked == undefined){
+            return resolve({isChecked: false});
+          
         }
       });
     });
@@ -412,8 +435,6 @@ class Fire {
       isActive: isActive,
     };
     friendRef.push(friend);
-
-   
   };
 
   //Search user

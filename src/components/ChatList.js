@@ -78,9 +78,9 @@ const ChatList =(props) =>{
   const [lastMessage,setLastMessage] = useState();
   const [refreshing, setRefreshing] = useState(false);
   const [isLoadData, setIsLoadData] = useState(false);
-  useEffect(() => {
-    getData();
-  }, []);
+  // useEffect(() => {
+  //   getData();
+  // }, []);
 
 
 

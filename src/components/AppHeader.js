@@ -25,8 +25,7 @@ const AppHeader = () => {
         </View>
         <Feather style={styles.searchButton} onPress={()=>{
          
-        getWaitingFriendData();
-        
+         Fire.createRooms('aI66n3cQwNYWvjOCoPicWxJt6Yk1','rZw26hLjbZhmt9PBIAbuZnZ11z12');
            
         }} name="search" size={23}></Feather>
     

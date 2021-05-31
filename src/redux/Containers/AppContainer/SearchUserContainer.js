@@ -9,8 +9,12 @@ class SearchUserContainer extends Component {
     constructor(props){
         super(props);
     }
-   render(){       
 
+    componentDidMount(){
+        console.log("mouted")
+    }
+   render(){       
+    
     return (
         <SearchFriend {...this.props}></SearchFriend>
       );

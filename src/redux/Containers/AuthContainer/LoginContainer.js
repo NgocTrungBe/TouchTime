@@ -2,8 +2,8 @@ import React, {Component, useState} from 'react';
 import {connect} from 'react-redux';
 
 import * as Actions from '../../Actions/AuthActions'; 
-import Login from '../../../screen/Login';
 
+import Login from '../../../screen/Login' 
 
 class LoginContainer extends Component {
     constructor(props){

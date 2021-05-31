@@ -8,7 +8,7 @@ const {width, height} = Dimensions.get('window');
 
 const ChatHeader = ({navigation,photoURL,userName}) => {
   return (
-    <View style={styles.wrapper}>
+
       <View style={styles.Header}>
         <View style={styles.leftHeader}>
           <Feather  style={styles.backButton} name="arrow-left" size={23} onPress={()=>{
@@ -19,18 +19,13 @@ const ChatHeader = ({navigation,photoURL,userName}) => {
         </View>
 
       </View>
-    </View>
+ 
   );
 };
 
 const styles = StyleSheet.create({
-  wrapper: {
-    position:"relative",
-    zIndex:20,
-    backgroundColor:"red"
-  },
+ 
   Header: {
-    
     width: width,
     height: height / 13,
     flexDirection: 'row',
