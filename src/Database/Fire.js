@@ -150,6 +150,7 @@ class Fire {
   };
 
   send = (messages,friendID) => {
+    console.log(messages)
     const userID = this.getUid();
     //const friendID = 'aI66n3cQwNYWvjOCoPicWxJt6Yk1';
     this.checkNullRoom().then(isChecked => {
@@ -180,12 +181,12 @@ class Fire {
 
   sendMessages = (messages, roomID) => {
     const chatRef = database().ref('messages/' + roomID);
-    
     messages.forEach(item => {
       const message = {
         text: item.text,
         timestamp: firebase.database.ServerValue.TIMESTAMP,
         user: item.user,
+        image:item.image
       };
       chatRef.push(message);
     });
@@ -193,15 +194,17 @@ class Fire {
   };
 
   parse = message => {
-    //console.log(message.val().text)
-    const {user, text, timestamp} = message.val();
+   
+    const {user, text, timestamp,image} = message.val();
     const {key: _id} = message;
     const createdAt = new Date(timestamp);
+
     return {
       _id,
       createdAt,
       text,
       user,
+      image
     };
   };
 
