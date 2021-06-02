@@ -9,6 +9,8 @@ import WaitingFriendListContainer from '../redux/Containers/AppContainer/Waiting
 
 const friendTab = createMaterialTopTabNavigator();
 const Friend = (props) => {
+
+
   return (
       <>
        <FriendHeader navigation={props.navigation}></FriendHeader>

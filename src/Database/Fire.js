@@ -149,8 +149,7 @@ class Fire {
     });
   };
 
-  send = (messages,friendID) => {
-    console.log(messages)
+  send = (messages, friendID) => {
     const userID = this.getUid();
     //const friendID = 'aI66n3cQwNYWvjOCoPicWxJt6Yk1';
     this.checkNullRoom().then(isChecked => {
@@ -163,7 +162,6 @@ class Fire {
       }
       if (isChecked == false) {
         this.checkExistedRoom(userID, friendID).then(data => {
-          console.log(data);
           if (data.isChecked == true) {
             this.sendMessages(messages, data.roomID);
           }
@@ -186,16 +184,14 @@ class Fire {
         text: item.text,
         timestamp: firebase.database.ServerValue.TIMESTAMP,
         user: item.user,
-        image:item.image
+        image: item.image,
       };
       chatRef.push(message);
     });
-    
   };
 
   parse = message => {
-   
-    const {user, text, timestamp,image} = message.val();
+    const {user, text, timestamp, image} = message.val();
     const {key: _id} = message;
     const createdAt = new Date(timestamp);
 
@@ -204,7 +200,7 @@ class Fire {
       createdAt,
       text,
       user,
-      image
+      image,
     };
   };
 
@@ -218,43 +214,65 @@ class Fire {
     });
   };
 
-  getLastMess = (roomIDList, userID, callback) => {
-    const currentUserName = auth().currentUser.uid;
-    const roomsRef = database().ref('messages/');
+  getRoomByUser = (userID, callback) => {
+    const roomsRef = database().ref('rooms');
     roomsRef.on('value', snapshot => {
+      const rooms = [];
+      const roomData = snapshot.val();
+      for (let id in roomData) {
+        if (roomData[id].friendID.includes(userID)) {
+          rooms.push({roomID: id, friendID: roomData[id].userID});
+        }
+        if (roomData[id].userID.includes(userID)) {
+          rooms.push({roomID: id, friendID: roomData[id].friendID});
+        }
+      }
+
+      return callback(rooms);
+    });
+  };
+  getFriendInfoInRoom = callback => {
+    const roomsRef = database().ref('users');
+    roomsRef.on('value', snapshot => {
+      const userList = [];
+      const userData = snapshot.val();
+      for (let id in userData) {
+        userList.push(userData[id]);
+      }
+
+      return callback(userList);
+    });
+  };
+  getLastMess = (userID, callback) => {
+    const currentUserName = auth().currentUser.uid;
+    const messRef = database().ref('messages/');
+    messRef.on('value', snapshot => {
       const data = [];
       const messages = snapshot.val();
-      for (let id in messages) {
-        roomIDList.forEach(roomID => {
-          if (id == roomID) {
-            const listMessage = Object.values(messages[id]);
-            const friendIDInLastMess = listMessage[0].user._id;
-
-            if (friendIDInLastMess != userID) {
-              data.push({
-                userName: listMessage[0].user.name,
-                avatar: listMessage[0].user.avatar,
-                currentUserName: currentUserName,
-                text: listMessage[0].text,
-                friendID: listMessage[0].user._id,
-              });
-            } else {
-              listMessage.map(item => {
-                if (item.user._id != userID) {
+      this.getRoomByUser(userID, res => {
+        const roomData = res;
+        this.getFriendInfoInRoom(users => {
+          const userList = users;
+          for (let id in messages) {
+            const messageList = Object.values(messages[id]);
+            for (let room = 0; room < roomData.length; room++) {
+              for (let user = 0; user < userList.length; user++) {
+                if (
+                  id.includes(roomData[room].roomID) &&
+                  roomData[room].friendID.includes(userList[user].id)
+                ) {
                   data.push({
-                    userName: item.user.name,
-                    avatar: item.avatar,
-                    currentUserName: currentUserName,
-                    text: listMessage[0].text,
-                    friendID: item.user._id,
+                    user: userList[user],
+                    text: messageList[0].text,
+                    sender:messageList[0].user.name
                   });
                 }
-              });
+              }
             }
           }
+          callback(data);
         });
-      }
-      callback(data);
+      });
     });
   };
 
@@ -359,10 +377,9 @@ class Fire {
         }
         if (isChecked == true) {
           return resolve({isChecked: isChecked, roomID: roomID});
-        } 
-        if(isChecked == undefined){
-            return resolve({isChecked: false});
-          
+        }
+        if (isChecked == undefined) {
+          return resolve({isChecked: false});
         }
       });
     });
@@ -389,6 +406,28 @@ class Fire {
       callback({friendIDList: friendIDList, roomIDList: roomIDList});
     });
   };
+
+  friendIdRoom = (roomIDList, callback) => {
+    const roomsRef = database().ref('rooms').orderByChild(userID);
+    roomsRef.on('value', snapshot => {
+      const friendIDList = [];
+      const rooms = snapshot.val();
+      for (let id in rooms) {
+        if (rooms[id].friendID != userID || rooms[id].userID != userID) {
+          friendIDList.push(rooms[id].friendID);
+
+          // th1
+          (friendID = '1'), (userID = '2');
+
+          // th2
+          (friendID = '2'), (userID = '1');
+        }
+      }
+
+      callback({friendIDList: friendIDList, roomIDList: roomIDList});
+    });
+  };
+
   getRoomID = (userID, friendID, callback) => {
     const roomsRef = database().ref('rooms');
     roomsRef.on('value', snapshot => {

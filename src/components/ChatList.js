@@ -22,22 +22,22 @@ const ChatItem = ({users, navigation}) => {
 
   return (
      <View>
-       <TouchableOpacity key={users.userName}
+       <TouchableOpacity key={users.user.id}
          
          onPress={() =>
            navigation.navigate('Chat', {
-            friendUserName: users.userName,
-            friendAvatar:  users.avatar,
-            friendID: users.friendID,
+            friendUserName: users.user.name,
+            friendAvatar: 'data:image/png;base64,'+ users.user.photoURL,
+            friendID: users.user.id,
            })
 
          }
          >
          <View style={styles.wrapper}>
-           <Avatar rounded size={50} source={{uri:  users.avatar}}></Avatar>
+           <Avatar rounded size={50} source={{uri:'data:image/png;base64,'+users.user.photoURL}}></Avatar>
            <View style={styles.content}>
-             <Text style={styles.userName}>{users.userName}</Text>
-             <Text style={styles.lastMess}>{users.text}</Text>
+             <Text style={styles.userName}>{users.user.userName}</Text>
+             <Text style={styles.lastMess}>{users.user.userName.includes(users.sender) ? users.sender+":"+ " " + users.text : "Bạn:"+ " " + users.text }</Text>
            </View>
          </View>
        </TouchableOpacity>
@@ -74,13 +74,14 @@ const styles = StyleSheet.create({
 
 const ChatList =(props) =>{
 
+  
   const [users, setUsers] = useState([]);
   const [lastMessage,setLastMessage] = useState();
   const [refreshing, setRefreshing] = useState(false);
   const [isLoadData, setIsLoadData] = useState(false);
-  // useEffect(() => {
-  //   getData();
-  // }, []);
+  useEffect(() => {
+    getData();
+  }, []);
 
 
 
@@ -101,7 +102,7 @@ const ChatList =(props) =>{
     data={props.appData.chatList}
     refreshing={refreshing}
     onRefresh ={handleRefresh}
-    keyExtractor={(item) => item.userName}
+    keyExtractor={(item) => item.user.id}
     renderItem={({item}) => {
       return <ChatItem key={item.key} users={item} navigation={props.navigation}></ChatItem>;
     }}></FlatList>

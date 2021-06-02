@@ -64,29 +64,26 @@ const Chat = ({route, navigation}) => {
     });
   }, [navigation]);
 
-  // useEffect(() => {
-  //   Fire.getUserInfo().then(userData => {
-  //     if (userData != 'null') {
-  //       setUserID(userData.userID);
-  //       setUserName(userData.userName);
-  //       setUserEmail(userData.email);
-  //       setUserPhotoURL(userData.photoURL);
-  //     }
-  //   });
+  useEffect(() => {
+    Fire.getUserInfo().then(userData => {
+      if (userData != 'null') {
+        setUserID(userData.userID);
+        setUserName(userData.userName);
+        setUserEmail(userData.email);
+        setUserPhotoURL(userData.photoURL);
+      }
+    });
 
-  //   const unsubscribe = Fire.getMess(message => {
-  //     console.log(messages.imageBase64);
-  //     setMessages(previousMessages =>
-  //       GiftedChat.append(previousMessages, message),
-  //     );
-  //   }, friendID);
+    const unsubscribe = Fire.getMess(message => {
+      setMessages(previousMessages =>
+        GiftedChat.append(previousMessages, message),
+      );
+    }, friendID);
 
-  //   return () => {
-  //     // const chatRef = database().ref('messages');
-  //     // chatRef.off();
-  //     unsubscribe;
-  //   };
-  // }, []);
+    return () => {
+      unsubscribe;
+    };
+  }, []);
 
   const renderActions = props => {
     return (

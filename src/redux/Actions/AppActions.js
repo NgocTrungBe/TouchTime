@@ -112,18 +112,13 @@ export const deleteWaitingFriend = () => {
 
 export const getChatListRequest = (userID) => {
     return (dispatch) => {
-        Fire.getFriendListID(Fire.getFriendId).then(friendIDList => {
-            if (friendIDList) {
-                Fire.FindRoom(userID, friendIDList, data => {
 
-                    Fire.getLastMess(data.roomIDList, userID, lastMessData => {
-                        dispatch(getChatList(lastMessData))
-                    })
 
-                })
-
-            }
+        Fire.getLastMess(userID, lastMessData => {
+            dispatch(getChatList(lastMessData))
         })
+
+
     }
 
 }
