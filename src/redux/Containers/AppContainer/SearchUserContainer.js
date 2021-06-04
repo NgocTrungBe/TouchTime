@@ -10,9 +10,7 @@ class SearchUserContainer extends Component {
         super(props);
     }
 
-    componentDidMount(){
-        console.log("mouted")
-    }
+    
    render(){       
     
     return (

@@ -4,7 +4,7 @@ import {View} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import Main from '../screen/Main';
-import Home from '../screen/Home';
+import Home from '../screen/HomeTab';
 import Fire from '../Database/Fire';
 import { ActivityIndicator } from 'react-native';
 import UpdateUserContainer from '../redux/Containers/AuthContainer/UpdateUserContainer';

@@ -14,7 +14,7 @@ import Chat from './Chat';
 import DrawerContent from '../components/DrawerContent';
 import SearchUserContainer from '../redux/Containers/AppContainer/SearchUserContainer';
 
-import HomeTabs from './Home';
+import HomeTabs from './HomeTab';
 
 const main = createStackNavigator();
 

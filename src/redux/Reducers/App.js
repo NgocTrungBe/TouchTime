@@ -29,7 +29,6 @@ const appReducer = (state = initialState, action) => {
                 Fire.addFriend(action.userID);
 
                 return {
-                    ...state,
                     searchData: {
 
                     }
@@ -57,6 +56,12 @@ const appReducer = (state = initialState, action) => {
             return {
                 ...state,
                 chatList: action.chatList
+            }
+        case "SET_TABS_VISIBLE":
+
+            return {
+                ...state,
+                visible: !action.isOpenDrawer
             }
 
         default:

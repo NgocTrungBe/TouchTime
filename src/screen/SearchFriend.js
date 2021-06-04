@@ -123,6 +123,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   sendRequest: {
+    marginLeft:15,
     marginTop: 5,
     padding: 8,
 

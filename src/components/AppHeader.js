@@ -5,51 +5,62 @@ import {
   Text,
   Dimensions,
   TouchableOpacity,
+  Image
 } from 'react-native';
+
 import Feather from 'react-native-vector-icons/Feather';
 import Fire from '../Database/Fire';
 const {width, height} = Dimensions.get('window');
 
-const AppHeader = () => {
+const AppHeader = (props) => {
  
+ 
+  
+  const openDrawer =() =>{
+    props.navigation.openDrawer();
+  }
   return (
-    <View style={styles.wrapper}>
+  
       <View style={styles.Header}>
         <View style={styles.leftHeader}>
-          <Feather
+          <Feather onPress={openDrawer}
            
             style={styles.drawerButton}
             name="align-justify"
             size={25}></Feather>
           <Text style={styles.appLogo}>TouchTime</Text>
         </View>
-        <Feather style={styles.searchButton} onPress={()=>{
-         
-         Fire.createRooms('aI66n3cQwNYWvjOCoPicWxJt6Yk1','rZw26hLjbZhmt9PBIAbuZnZ11z12');
-           
-        }} name="search" size={23}></Feather>
+        {/* <Image resizeMode= "cover" style={styles.avatar} source={{uri:'data:image/png;base64,'+users.user.photoURL}} ></Image> */}
     
      
       </View>
-    </View>
+    
   );
 };
 
 const styles = StyleSheet.create({
-  wrapper: {
-    flex: 1,
- 
-  },
+
   Header: {
     width: width,
-    height: height / 13,
+    height: height / 10,
+
+    // width: width/1.1,
+    // height: height / 8,
+ 
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#ad69d4',
+    // borderWidth:0.5,
+    // borderStyle:"solid",
+    borderColor:'#ad69d4',
+    backgroundColor: '#F8F8FF',
+   
+    // borderBottomLeftRadius:20,
+    // borderBottomRightRadius:20,
+     
   },
   leftHeader: {
-    marginLeft: 20,
+    marginLeft: 25,
     width: 160,
     height: height / 13,
     flexDirection: 'row',
@@ -59,14 +70,14 @@ const styles = StyleSheet.create({
   appLogo: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#ad69d4',
   },
   drawerButton: {
-    color: '#ffffff',
+    color: '#ad69d4',
   },
   searchButton: {
     marginRight: 20,
-    color: '#ffffff',
+    color: '#ad69d4',
   },
 });
 export default AppHeader;

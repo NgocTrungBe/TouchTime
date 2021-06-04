@@ -12,13 +12,15 @@ const {width, height} = Dimensions.get('window');
 
 const FriendHeader = ({navigation}) => {
   return (
+
+
     <View>
       <View style={styles.Header}>
         <View style={styles.leftHeader}>
           <Feather
            
             style={styles.drawerButton}
-            name="align-justify"
+            name="list"
             size={25}></Feather>
           <Text style={styles.appLogo}>TouchTime</Text>
         </View>
@@ -35,17 +37,33 @@ const FriendHeader = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
- 
+  wrapper: {
+    flex: 1,
+    flexDirection:'column',
+    alignItems:"center"
+    
+  },
   Header: {
     width: width,
-    height: height / 13,
+    height: height / 10,
+
+    // width: width/1.1,
+    // height: height / 8,
+ 
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#ad69d4',
+    // borderWidth:0.5,
+    // borderStyle:"solid",
+    borderColor:'#ad69d4',
+    backgroundColor: '#F8F8FF',
+   
+    // borderBottomLeftRadius:20,
+    // borderBottomRightRadius:20,
+     
   },
   leftHeader: {
-    marginLeft: 20,
+    marginLeft: 25,
     width: 160,
     height: height / 13,
     flexDirection: 'row',
@@ -55,14 +73,14 @@ const styles = StyleSheet.create({
   appLogo: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#ad69d4',
   },
   drawerButton: {
-    color: '#ffffff',
+    color: '#ad69d4',
   },
   searchButton: {
     marginRight: 20,
-    color: '#ffffff',
+    color: '#ad69d4',
   },
 });
 export default FriendHeader;

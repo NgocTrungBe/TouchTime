@@ -13,6 +13,7 @@ import Fire from '../../Database/Fire';
 export const searchUserRequest = (email) => {
     return (dispatch) => {
         return Fire.SearchUser(email).then(result => {
+            console.log(result)
             if (result != null) {
                 dispatch(searchUser(result));
             } else {
@@ -22,7 +23,7 @@ export const searchUserRequest = (email) => {
     }
 }
 export const searchUser = (user) => {
-    console.log("datta")
+
     return {
         type: ActionTypes.SEARCH_USER,
         user
@@ -59,7 +60,7 @@ export const getFriendRequest = () => {
         return Fire.getFriendListID(Fire.getFriendId).then(userID => {
             if (userID) {
                 Fire.getFriend(userID).then(userList => {
-                    if (userList.length > 0) {
+                    if (userList.length != null) {
                         dispatch(getFriend(userList))
                     }
                 });
@@ -127,5 +128,12 @@ export const getChatList = (chatList) => {
     return {
         type: ActionTypes.GET_CHAT_LIST,
         chatList
+    }
+}
+
+export const setTabsVisible = (isOpenDrawer) => {
+    return {
+        type: ActionTypes.GET_CHAT_LIST,
+        isOpenDrawer
     }
 }

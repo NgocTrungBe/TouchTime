@@ -186,8 +186,12 @@ class Fire {
         user: item.user,
         image: item.image,
       };
-      chatRef.push(message);
+      chatRef.push(message).then(()=>{
+        chatRef.off();
+      });
+     
     });
+    
   };
 
   parse = message => {
@@ -264,7 +268,8 @@ class Fire {
                   data.push({
                     user: userList[user],
                     text: messageList[0].text,
-                    sender:messageList[0].user.name
+                    sender:messageList[0].user.name,
+                    timestamp:messageList[0].timestamp
                   });
                 }
               }
@@ -487,7 +492,9 @@ class Fire {
     return new Promise((resolve, reject) => {
       userRef.on('value', snapshot => {
         snapshot.forEach(item => {
-          if (item.val().Email == email) {
+       
+          if (item.val().Email.includes(email)) {
+           
             const users = [];
             const listFriend = item.val().listFriend;
             if (listFriend != undefined) {
@@ -497,27 +504,27 @@ class Fire {
                   listFriend[user].isActive == 'false'
                 ) {
                   users.push({user: item.val(), isActive: 'false'});
+                  break;
                 }
                 if (
                   listFriend[user].friendID == userID &&
                   listFriend[user].isActive == 'true'
                 ) {
                   users.push({user: item.val(), isActive: 'true'});
+                  break;
                 }
                 if (listFriend[user].friendID != userID) {
                   users.push({user: item.val(), isActive: undefined});
+                  break;
                 }
               }
-              if (users.length >= 2) {
-                let newUser = users.filter(user => {
-                  return user.isActive != undefined;
-                });
-                return resolve(newUser);
-              } else {
+            
                 return resolve(users);
-              }
+              
             } else {
+              
               users.push({user: item.val(), isActive: undefined});
+            
               return resolve(users);
             }
           }

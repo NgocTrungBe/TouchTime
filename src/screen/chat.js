@@ -26,6 +26,7 @@ import {
   Bubble,
   MessageImage,
   MessageText,
+  KeyboardAvoidingView
 } from 'react-native-gifted-chat';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {Avatar} from 'react-native-elements';
@@ -106,7 +107,7 @@ const Chat = ({route, navigation}) => {
   const renderSend = props => {
     return (
       <Send {...props}>
-        <View style={{marginBottom: 10, marginLeft: 13}}>
+        <View style={{marginBottom: 10, marginRight: 8}}>
           <MaterialCommunity
             style={styles.sendButton}
             name="send-circle"
@@ -130,9 +131,9 @@ const Chat = ({route, navigation}) => {
     }
     return <Bubble {...props} />;
   };
-  const closeImage =() => {
-     setImageUri('');
-     setText('');
+  const closeImage = () => {
+    setImageUri('');
+    setText('');
   };
   const handlePickImage = () => {
     launchImageLibrary(
@@ -143,7 +144,6 @@ const Chat = ({route, navigation}) => {
         includeBase64: true,
       },
       response => {
-        
         if (response.didCancel != true) {
           setImageUri(response.uri);
           setBase64Code(response.base64);
@@ -159,12 +159,13 @@ const Chat = ({route, navigation}) => {
           _id: item._id,
           createdAt: item.createdAt,
           text: item.text,
-          user: item.user ? item.user :
-          {
-            _id: userID,
-            name: userName,
-            avatar: 'data:image/png;base64,' + userPhotoURL,
-          } ,
+          user: item.user
+            ? item.user
+            : {
+                _id: userID,
+                name: userName,
+                avatar: 'data:image/png;base64,' + userPhotoURL,
+              },
           image: base64Code ? 'data:image/png;base64,' + base64Code : '',
         },
       ];
@@ -177,16 +178,21 @@ const Chat = ({route, navigation}) => {
   return (
     <>
       {imageUri ? (
-        <Animatable.View duration={800} animation="bounceIn" style={styles.imageView}>
+        <Animatable.View
+          duration={800}
+          animation="bounceIn"
+          style={styles.imageView}>
           <Image style={styles.image} source={{uri: imageUri}}></Image>
-          <TouchableOpacity onPress={closeImage} ><Feather size={30}  style={styles.closeImage} name='x'></Feather></TouchableOpacity>
+          <TouchableOpacity onPress={closeImage}>
+            <Feather size={30} style={styles.closeImage} name="x"></Feather>
+          </TouchableOpacity>
         </Animatable.View>
       ) : null}
 
       <GiftedChat
         showAvatarForEveryMessage={true}
         renderBubble={renderBubble}
-        text = {text}
+        text={text}
         placeholder="....."
         onInputTextChanged={text => setText(text)}
         messages={messages}
@@ -200,8 +206,8 @@ const Chat = ({route, navigation}) => {
           _id: userID,
           name: userName,
           avatar: 'data:image/png;base64,' + userPhotoURL,
-        }}
-      />
+        }}></GiftedChat>
+    
     </>
   );
 };
@@ -214,6 +220,7 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     backgroundColor: '#d0e6fc',
     borderRadius: 20,
+    marginRight: 15,
   },
   sendButton: {
     color: '#C576F6',
@@ -230,16 +237,15 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
   },
-  closeImage:{
-  marginLeft:10,      
-   color:'red'      
-        
+  closeImage: {
+    marginLeft: 10,
+    color: 'red',
   },
   imageView: {
     position: 'relative',
-    top: height / 1.4,
-    alignItems:'center',
-    flexDirection:'row',
+    top: height - height / 3.2,
+    alignItems: 'center',
+    flexDirection: 'row',
     left: 20,
     width: 60,
     height: 60,

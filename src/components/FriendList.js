@@ -27,10 +27,10 @@ const FriendList = (props) => {
     }, 1000);
   };
   return (
-    <View>
+    <View style={styles.wrapper}>
     
-      <View>
-        <FlatList
+    
+        <FlatList 
           showsVerticalScrollIndicator={false}
           data={props.appData.friendList}
           keyExtractor={item => item.id}
@@ -44,12 +44,17 @@ const FriendList = (props) => {
                 navigation={props.navigation}></FriendListItem>
             );
           }}></FlatList>
-      </View>
+      
       
     </View>
   );
 };
 const styles = StyleSheet.create({
+
+  wrapper:{
+    flex:1,
+    backgroundColor:'#F8F8FF',
+  }
  
 });
 export default FriendList;
