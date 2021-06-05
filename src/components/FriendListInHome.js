@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
   //   flex:1,
      width:width,
     height: 90,
-    marginTop:40
+    marginTop:20
  
     
    

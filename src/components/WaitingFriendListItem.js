@@ -53,6 +53,7 @@ const styles = StyleSheet.create({
     padding: 10,
     flexDirection: 'row',
     alignItems: 'center',
+    borderRadius:20,
   
   },
   content: {
@@ -62,7 +63,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   titleView: {
-    marginTop:5,
+
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',

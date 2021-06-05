@@ -5,47 +5,44 @@ import {
   Text,
   Dimensions,
   TouchableOpacity,
+  Image
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import Fire from '../Database/Fire';
 const {width, height} = Dimensions.get('window');
 
-const FriendHeader = ({navigation}) => {
+const FriendHeader = (props) => {
   return (
 
 
-    <View>
-      <View style={styles.Header}>
+    
+    <View style={styles.Header}>
         <View style={styles.leftHeader}>
-          <Feather
-           
-            style={styles.drawerButton}
-            name="list"
-            size={25}></Feather>
+          <View style={styles.avatarView}>
+           <Image resizeMode= "cover" style={styles.avatar} source={{uri:props.photoURL}} ></Image>
+          </View>
+  
           <Text style={styles.appLogo}>TouchTime</Text>
         </View>
+     
         <Feather
-          style={styles.searchButton}
+          style={styles.addFriendButton}
           name="user-plus"
           size={23}
           onPress={() => {
                 navigation.navigate("SearchUserContainer") 
           }}></Feather>
+     
       </View>
-    </View>
+
+  
   );
 };
 
 const styles = StyleSheet.create({
-  wrapper: {
-    flex: 1,
-    flexDirection:'column',
-    alignItems:"center"
-    
-  },
   Header: {
     width: width,
-    height: height / 10,
+    height: height / 9,
 
     // width: width/1.1,
     // height: height / 8,
@@ -64,6 +61,7 @@ const styles = StyleSheet.create({
   },
   leftHeader: {
     marginLeft: 25,
+    marginTop:8,
     width: 160,
     height: height / 13,
     flexDirection: 'row',
@@ -75,12 +73,23 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#ad69d4',
   },
-  drawerButton: {
-    color: '#ad69d4',
-  },
-  searchButton: {
+
+  addFriendButton: {
     marginRight: 20,
     color: '#ad69d4',
   },
+  avatar:{
+    width:32,
+    height:32,
+    borderRadius:10,
+  
+  },
+  avatarView:{
+    width:33,
+    height:33,
+    borderRadius:15,
+    marginRight:20,
+    elevation:20
+  }
 });
 export default FriendHeader;

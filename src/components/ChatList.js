@@ -9,16 +9,16 @@ import {
   TouchableOpacity,
   ScrollView,
   SectionList,
+  TextInput,
 } from 'react-native';
 import {Avatar} from 'react-native-elements';
 import Feather from 'react-native-vector-icons/Feather';
 import Fire from '../Database/Fire';
 import moment from 'moment';
 import database from '@react-native-firebase/database';
-import {canInstrument} from 'babel-jest';
-import {set} from 'react-native-reanimated';
 import {Image} from 'react-native';
 import FriendListInHomeContainer from '../redux/Containers/AppContainer/FriendListInHomeContainer ';
+
 
 const {width, height} = Dimensions.get('window');
 
@@ -64,12 +64,26 @@ const ChatItem = ({users, navigation}) => {
 };
 
 const ChatList = props => {
-  const [users, setUsers] = useState([]);
-  const [lastMessage, setLastMessage] = useState();
+  const [chatData, setChatData] = useState([]);
+  const [filterData, setFilterData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [isLoadData, setIsLoadData] = useState(false);
+  const [keyWord, setKeyWord] = useState('');
+
   useEffect(() => {
-    getData();
+    // getData();
+
+    // if(props.appData.chatList){
+    //   setState({data:props.appData.chatList,
+    //         fullData:props.appData.chatList
+    //   })
+    // }
+
+    const userID = Fire.getUid();
+    Fire.getLastMess(userID, lastMessData => {
+      setChatData(lastMessData);
+      setFilterData(lastMessData);
+    });
   }, []);
 
   const getData = () => {
@@ -81,29 +95,67 @@ const ChatList = props => {
     setTimeout(() => {
       getData();
       setRefreshing(false);
-    }, 1000);
+    }, 800);
   };
-  const renderHeader = () => {
-    return (
-      <View>
-        <FriendListInHomeContainer></FriendListInHomeContainer>
-        <View style={styles.messageTitle}>
-          <Text style={styles.title}>Tin nhắn</Text>
-        </View>
-      </View>
-    );
+  const searchHandle = keyWord => {
+    if (keyWord) {
+      const formatQuery = keyWord.toLowerCase();
+      const dataBackup = chatData;
+      const data = dataBackup.filter(item =>
+        item.user.userName.toLowerCase().match(formatQuery),
+      );
+
+      setFilterData(data);
+      setKeyWord(keyWord);
+    } else {
+      setFilterData(chatData);
+      setKeyWord(keyWord);
+    }
   };
 
   return (
     <View>
       <View style={styles.listView}>
-        <SectionList
-          showsVerticalScrollIndicator={false}
-          sections={[{data: props.appData.chatList}]}
+        <FlatList
+          data={filterData.sort((user1,user2)=>{
+             if(new Date(user1.timestamp) > new Date(user2.timestamp)){
+               return -1;
+             }
+             if(new Date(user1.timestamp) < new Date(user2.timestamp)){
+               return 1;
+             }
+             return 0;
+          })}
           keyExtractor={(item, index) => item + index}
-          renderSectionHeader={renderHeader}
-          bounces={true}
-          pagingEnabled={false}
+          ListHeaderComponent={
+            <View>
+               <View style={styles.searchViewWrapper}>
+               <View style={styles.searchView}>
+                <TextInput
+                  multiline={true}
+                    blurOnSubmit={true}
+                  onSubmitEditing={() => {
+                    Keyboard.dismiss();
+                  }}
+                  value={keyWord}
+                  onChangeText={keyWord => searchHandle(keyWord)}
+                  style={styles.textInput}
+                  placeholder="..."></TextInput>
+                <Feather
+                  style={styles.searchButton}
+                  name="search"
+                ></Feather>
+              </View>
+               </View>
+              
+              <FriendListInHomeContainer navigation={props.navigation}></FriendListInHomeContainer>
+              <View style={styles.messageTitle}>
+                <Text style={styles.title}>Tin nhắn</Text>
+              </View>
+            </View>
+          }
+          bounces
+          showsVerticalScrollIndicator={false}
           renderItem={({item}) => {
             return (
               <ChatItem
@@ -113,7 +165,7 @@ const ChatList = props => {
             );
           }}>
           >
-        </SectionList>
+        </FlatList>
       </View>
     </View>
   );
@@ -122,7 +174,7 @@ const ChatList = props => {
 const styles = StyleSheet.create({
   listView: {
     width: width,
-    height: height / 1.27,
+    height: height / 1.25,
   },
 
   item: {
@@ -155,10 +207,10 @@ const styles = StyleSheet.create({
   },
   userName: {
     marginLeft: 20,
-    fontSize: 18,
+    fontSize: 17,
     width: width / 2,
-    fontWeight: '500',
-    color: '#191970',
+    fontWeight: 'bold',
+    color: '#300100',
   },
   lastMess: {
     marginLeft: 20,
@@ -187,12 +239,45 @@ const styles = StyleSheet.create({
   messageTitle: {
     height: 30,
     marginLeft: 20,
-    marginBottom: 20,
+    marginBottom: 15,
   },
   title: {
     color: '#000000',
-    fontSize: 23,
+    fontSize: 22,
     fontWeight: 'bold',
+  },
+
+  searchViewWrapper: {
+    width:width,
+    marginTop:height/35,
+    alignItems:'center'
+  },
+  searchView: {
+    width: width / 1.15,
+    height: 40,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 5,
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    elevation: 10,
+  },
+
+  textInput: {
+    marginLeft: 10,
+    height: 45,
+    width: '80%',
+    fontSize: 19,
+    color: '#0606',
+  },
+  searchButton: {
+    width: '20%',
+    marginRight: 10,
+    textAlign: 'center',
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'grey',
   },
 });
 

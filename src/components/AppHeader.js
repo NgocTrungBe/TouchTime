@@ -13,24 +13,20 @@ import Fire from '../Database/Fire';
 const {width, height} = Dimensions.get('window');
 
 const AppHeader = (props) => {
- 
- 
+   
+
   
-  const openDrawer =() =>{
-    props.navigation.openDrawer();
-  }
   return (
   
       <View style={styles.Header}>
         <View style={styles.leftHeader}>
-          <Feather onPress={openDrawer}
-           
-            style={styles.drawerButton}
-            name="align-justify"
-            size={25}></Feather>
+        <View style={styles.avatarView}>
+        <Image resizeMode= "cover" style={styles.avatar} source={{uri:props.photoURL}} ></Image>
+      </View>
+  
           <Text style={styles.appLogo}>TouchTime</Text>
         </View>
-        {/* <Image resizeMode= "cover" style={styles.avatar} source={{uri:'data:image/png;base64,'+users.user.photoURL}} ></Image> */}
+     
     
      
       </View>
@@ -42,7 +38,7 @@ const styles = StyleSheet.create({
 
   Header: {
     width: width,
-    height: height / 10,
+    height: height / 9,
 
     // width: width/1.1,
     // height: height / 8,
@@ -61,6 +57,7 @@ const styles = StyleSheet.create({
   },
   leftHeader: {
     marginLeft: 25,
+    marginTop:8,
     width: 160,
     height: height / 13,
     flexDirection: 'row',
@@ -72,12 +69,21 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#ad69d4',
   },
-  drawerButton: {
-    color: '#ad69d4',
+
+
+  avatar:{
+    width:32,
+    height:32,
+    borderRadius:10,
+  
   },
-  searchButton: {
-    marginRight: 20,
-    color: '#ad69d4',
-  },
+  avatarView:{
+    width:33,
+    height:33,
+    borderRadius:15,
+    marginRight:20,
+    elevation:20
+  }
+   
 });
 export default AppHeader;

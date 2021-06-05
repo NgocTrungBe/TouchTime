@@ -10,31 +10,40 @@ import {
 } from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {createDrawerNavigator} from '@react-navigation/drawer';
 import Feather from 'react-native-vector-icons/Feather';
 import Friend from './Friend';
-
-import AppHeader from '../components/AppHeader';
-import ChatListContainer from '../redux/Containers/AppContainer/ChatListContainer';
-import DrawerContent from '../components/DrawerContent';
-
 import Home from './Home';
-const Drawer = createDrawerNavigator();
+import AppHeader from '../components/AppHeader';
+import Fire from '../Database/Fire';
+
 const homeStack = createStackNavigator();
 const tab = createBottomTabNavigator();
 
 const {width, height} = Dimensions.get('window');
 
-const homeDrawer = () => {
-  return (
-    <Drawer.Navigator drawerContent={props => <DrawerContent {...props} />}>
-      <Drawer.Screen name="Home" component={Home} />
-      <Drawer.Screen name="Friend" component={Friend} />
-    </Drawer.Navigator>
-  );
-};
 
-const HomeTabs = ({navigation}) => {
+const HomeTabs = (props) => {
+  const [userName,setUserName] = useState();
+const [email,setEmail] = useState();
+const [photoURL,setPhotoURL] = useState();
+const [friendQuality,setFriendQuality] = useState();
+const [waitingAcceptFriend,setWaitingAcceptFriend] = useState();
+
+
+  useEffect(()=>{
+
+    Fire.getUserInfo().then(userData=>{
+         if(userData != 'null'){
+           setUserName(userData.userName);
+           setEmail(userData.email);
+           setPhotoURL('data:image/png;base64,'+userData.photoURL);
+           setFriendQuality(userData.friendList);
+           setWaitingAcceptFriend(userData.acceptWaitingFriend);
+         }
+    })
+
+},[])
+
   return (
     <tab.Navigator
       tabBarOptions={{
@@ -52,7 +61,7 @@ const HomeTabs = ({navigation}) => {
       }}>
       <tab.Screen
         name="Home"
-        component={homeDrawer}
+    
         options={{
           tabBarIcon: ({focused}) => (
             <View style={{alignItems: 'center', justifyContent: 'center'}}>
@@ -70,10 +79,9 @@ const HomeTabs = ({navigation}) => {
               </Text>
             </View>
           ),
-        }}></tab.Screen>
+        }}>{props => <Home photoURL={photoURL} {...props} ></Home>}</tab.Screen>
       <tab.Screen
         name="Friends"
-        component={Friend}
         options={{
           tabBarIcon: ({focused}) => (
             <View style={{alignItems: 'center', justifyContent: 'center'}}>
@@ -91,7 +99,7 @@ const HomeTabs = ({navigation}) => {
               </Text>
             </View>
           ),
-        }}></tab.Screen>
+        }}>{props => <Friend photoURL={photoURL} {...props} ></Friend>}</tab.Screen>
     </tab.Navigator>
   );
 };

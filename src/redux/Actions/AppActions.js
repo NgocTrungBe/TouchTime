@@ -111,25 +111,25 @@ export const deleteWaitingFriend = () => {
     }
 }
 
-export const getChatListRequest = (userID) => {
-    return (dispatch) => {
+// export const getChatListRequest = (userID) => {
+//     return (dispatch) => {
 
 
-        Fire.getLastMess(userID, lastMessData => {
-            dispatch(getChatList(lastMessData))
-        })
+//         Fire.getLastMess(userID, lastMessData => {
+//             dispatch(getChatList(lastMessData))
+//         })
 
 
-    }
+//     }
 
-}
+// }
 
-export const getChatList = (chatList) => {
-    return {
-        type: ActionTypes.GET_CHAT_LIST,
-        chatList
-    }
-}
+// export const getChatList = (chatList) => {
+//     return {
+//         type: ActionTypes.GET_CHAT_LIST,
+//         chatList
+//     }
+// }
 
 export const setTabsVisible = (isOpenDrawer) => {
     return {

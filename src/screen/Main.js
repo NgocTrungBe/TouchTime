@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {useState} from 'react';
+import {useState,useEffect} from 'react';
 import {FlatList, View, StyleSheet, Dimensions} from 'react-native';
 
 import {NavigationContainer} from '@react-navigation/native';
@@ -10,21 +10,25 @@ import Feather from 'react-native-vector-icons/Feather';
 
 
 
+
 import Chat from './Chat';
-import DrawerContent from '../components/DrawerContent';
+
 import SearchUserContainer from '../redux/Containers/AppContainer/SearchUserContainer';
 
 import HomeTabs from './HomeTab';
+import AppHeader from '../components/AppHeader';
 
 const main = createStackNavigator();
 
 
 
 const Main = ({navigation}) => {
+
+
   return (
-    <main.Navigator  screenOptions={{animationEnabled:false} }>
+    <main.Navigator  screenOptions={{animationEnabled:false}}>
       <main.Screen name="Home" component={HomeTabs} options={{
-        headerShown:false
+      headerShown:false  ,
       }}/>
      
       <main.Screen  name = "Chat" component={Chat}/>

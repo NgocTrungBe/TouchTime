@@ -52,7 +52,8 @@ const FriendList = (props) => {
 const styles = StyleSheet.create({
 
   wrapper:{
-    flex:1,
+    width:width,
+    height:height/1.437,
     backgroundColor:'#F8F8FF',
   }
  

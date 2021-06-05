@@ -6,7 +6,7 @@ import Feather from 'react-native-vector-icons/Feather';
 
 const {width, height} = Dimensions.get('window');
 
-const SearchFriendHeader = (props) => {
+const HomeSearchView = (props) => {
   const [email, setEmail] = useState();
 
   function Search() {
@@ -107,4 +107,4 @@ const styles = StyleSheet.create({
   },
 
 });
-export default SearchFriendHeader;
+export default HomeSearchView;

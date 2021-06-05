@@ -6,11 +6,12 @@ import * as Actions from '../../Actions/AppActions';
 
 
 class FriendListInHomeContainer extends Component {
+
+    
     constructor(props){
         super(props);
     }
    render(){    
-
     return (
         <FriendListInHome {...this.props}></FriendListInHome>
       );
