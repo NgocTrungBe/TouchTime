@@ -17,6 +17,9 @@ import SearchUserContainer from '../redux/Containers/AppContainer/SearchUserCont
 
 import HomeTabs from './HomeTab';
 import AppHeader from '../components/AppHeader';
+import Profile from './Profile';
+import FriendProfile from './FriendProfile';
+
 
 const main = createStackNavigator();
 
@@ -31,12 +34,16 @@ const Main = ({navigation}) => {
       headerShown:false  ,
       }}/>
      
-      <main.Screen  name = "Chat" component={Chat}/>
+      <main.Screen  name = "Chat"  component={Chat} />
+    
       <main.Screen
        options={{
          title:"Thêm bạn bè"
        }}
        name="SearchUserContainer" component={SearchUserContainer} options={{headerShown:false}} />
+
+       <main.Screen name="Profile" component={Profile}></main.Screen>
+       <main.Screen name="FriendProfile" component={FriendProfile} options={{headerShown:false}}></main.Screen>
     </main.Navigator>
   );
 };

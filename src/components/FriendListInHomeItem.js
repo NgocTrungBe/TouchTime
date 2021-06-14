@@ -15,12 +15,12 @@ const FriendListInHomeItem = ({friend, navigation}) => {
   return (
     <TouchableOpacity
       style={styles.button}
-      key={friend.id}
+      key={friend.data.id}
       onPress={() =>
         navigation.navigate('Chat', {
-          friendUserName: friend.userName,
-          friendAvatar: 'data:image/png;base64,' + friend.photoURL,
-          friendID: friend.id,
+          friendUserName: friend.data.userName,
+          friendAvatar: 'data:image/png;base64,' + friend.data.avatar,
+          friendID: friend.data.friendID,
         })
       }>
       <View style={styles.friendView}>
@@ -28,7 +28,7 @@ const FriendListInHomeItem = ({friend, navigation}) => {
           resizeMode="cover"
           style={styles.avatar}
           source={{
-            uri: 'data:image/png;base64,' + friend.photoURL,
+            uri: 'data:image/png;base64,' + friend.data.avatar,
           }}></Image>
         <View style={styles.dot}></View>
       </View>

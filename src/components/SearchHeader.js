@@ -3,17 +3,31 @@ import {View, StyleSheet, Text, TextInput,Dimensions,  Keyboard} from 'react-nat
 import {Avatar} from 'react-native-elements';
 
 import Feather from 'react-native-vector-icons/Feather';
+import Fire from '../Database/Fire';
 
 const {width, height} = Dimensions.get('window');
 
 const HomeSearchView = (props) => {
   const [email, setEmail] = useState();
 
-  function Search() {
-    props.SearchUser(email);
+  const Search = () => {
+    // props.SearchUser(email);
+   
+    if(email){
+      Fire.SearchUser(email).then(user =>{
+        // console.log(user)
+        if(user.length > 0){
+          props.searchFriend(user);
+        }
+       else{
+        props.searchFriend([]);
+       }
+        
+      });
+    }
   }
   return (
-    <View style={styles.wrapper}>
+  
       <View style={styles.Header}>
         <View style={styles.leftHeader}>
           <Feather  style={styles.backButton} name="arrow-left" size={23} onPress={()=>{
@@ -29,7 +43,6 @@ const HomeSearchView = (props) => {
           }}
           autoFocus={false}
           value={email}
-          autoCompleteType={'off'}
           onChangeText={email => setEmail(email)}
           style={styles.textInput}
           placeholder="email..."></TextInput>
@@ -44,23 +57,20 @@ const HomeSearchView = (props) => {
           }}></Feather>
       </View>
       </View>
-    </View>
+    
   );
 };
 
 const styles = StyleSheet.create({
-  wrapper: {
-    position:"relative",
-    zIndex:20,
-    backgroundColor:"red"
-  },
+ 
   Header: {
     
     width: width,
-    height: height / 12,
+    height: height / 9,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#ad69d4',
+    backgroundColor: '#FFFFFF',
+    elevation:10,
   },
   leftHeader:{
       marginLeft:20,
@@ -75,7 +85,7 @@ const styles = StyleSheet.create({
       color:"#ffffff"
   },
   backButton:{
-      color:"#ffffff",
+      color:"#C576F6",
       marginRight:20
   },
   textInput: {
@@ -83,6 +93,7 @@ const styles = StyleSheet.create({
     height: 45,
     width: '80%',
     fontSize: 19,
+     fontFamily:"AntDesign",
     color: '#05375a',
   },
   searchButton: {
@@ -101,7 +112,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
 
     padding: 5,
-    backgroundColor: '#ffffff',
+    backgroundColor:"#F7EEEB",
     borderRadius: 12,
   
   },

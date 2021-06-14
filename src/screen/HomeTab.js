@@ -15,34 +15,48 @@ import Friend from './Friend';
 import Home from './Home';
 import AppHeader from '../components/AppHeader';
 import Fire from '../Database/Fire';
-
+import database from '@react-native-firebase/database';
 const homeStack = createStackNavigator();
 const tab = createBottomTabNavigator();
 
 const {width, height} = Dimensions.get('window');
 
+const HomeTabs = props => {
+  const [userName, setUserName] = useState('');
+  const [email, setEmail] = useState('');
+  const [photoURL, setPhotoURL] = useState();
+  const [friendQuality, setFriendQuality] = useState('');
+  const [waitingAcceptFriend, setWaitingAcceptFriend] = useState('');
 
-const HomeTabs = (props) => {
-  const [userName,setUserName] = useState();
-const [email,setEmail] = useState();
-const [photoURL,setPhotoURL] = useState();
-const [friendQuality,setFriendQuality] = useState();
-const [waitingAcceptFriend,setWaitingAcceptFriend] = useState();
+  useEffect(() => {
 
 
-  useEffect(()=>{
+    // const userID = Fire.getUid();
+    // const userRef = database().ref('users/' + userID);
+    
+    //     userRef.on('value', snapshot => {
+    //         if (snapshot != 'null') {
+    //             const friendList = Fire.getFriendId(snapshot.val()).length;
+    //             const waitingAcceptFriend = Fire.getWaitingFriendId(snapshot.val())
+    //                 .length;
+    //                 setUserName(snapshot.val().userName);
+    //                         setEmail(snapshot.val().email);
+    //                         setPhotoURL('data:image/png;base64,' + snapshot.val().photoURL);
+    //                         setFriendQuality(friendList);
+    //                         setWaitingAcceptFriend(waitingAcceptFriend);
+    //         }
+    //     });
+      // Fire.getUserInfo().then(userData => {
+      //     if (userData != 'null') {
+      //         setUserName(userData.userName);
+      //         setEmail(userData.email);
+      //         setPhotoURL('data:image/png;base64,' + userData.photoURL);
+      //         setFriendQuality(userData.friendList);
+      //         setWaitingAcceptFriend(userData.acceptWaitingFriend);
+      //     }
+      // })
 
-    Fire.getUserInfo().then(userData=>{
-         if(userData != 'null'){
-           setUserName(userData.userName);
-           setEmail(userData.email);
-           setPhotoURL('data:image/png;base64,'+userData.photoURL);
-           setFriendQuality(userData.friendList);
-           setWaitingAcceptFriend(userData.acceptWaitingFriend);
-         }
-    })
-
-},[])
+  }, [])
 
   return (
     <tab.Navigator
@@ -61,7 +75,6 @@ const [waitingAcceptFriend,setWaitingAcceptFriend] = useState();
       }}>
       <tab.Screen
         name="Home"
-    
         options={{
           tabBarIcon: ({focused}) => (
             <View style={{alignItems: 'center', justifyContent: 'center'}}>
@@ -79,7 +92,9 @@ const [waitingAcceptFriend,setWaitingAcceptFriend] = useState();
               </Text>
             </View>
           ),
-        }}>{props => <Home photoURL={photoURL} {...props} ></Home>}</tab.Screen>
+        }}>
+        {props => <Home photoURL={photoURL} {...props}></Home>}
+      </tab.Screen>
       <tab.Screen
         name="Friends"
         options={{
@@ -99,7 +114,9 @@ const [waitingAcceptFriend,setWaitingAcceptFriend] = useState();
               </Text>
             </View>
           ),
-        }}>{props => <Friend photoURL={photoURL} {...props} ></Friend>}</tab.Screen>
+        }}>
+        {props => <Friend photoURL={photoURL} {...props}></Friend>}
+      </tab.Screen>
     </tab.Navigator>
   );
 };

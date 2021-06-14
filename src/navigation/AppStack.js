@@ -1,11 +1,12 @@
-import React, {Component,useState,useEffect} from 'react';
+import React, {Component,useState,useEffect,useLayoutEffect} from 'react';
 import {View} from 'react-native';
-
+import NetInfo from "@react-native-community/netinfo";
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import Main from '../screen/Main';
 import Home from '../screen/HomeTab';
 import Fire from '../Database/Fire';
+import * as LocalDatabase from '../Database/Local';
 import { ActivityIndicator } from 'react-native';
 import UpdateUserContainer from '../redux/Containers/AuthContainer/UpdateUserContainer';
 import ChatListContainer from '../redux/Containers/AppContainer/ChatListContainer';
@@ -13,26 +14,49 @@ import ChatListContainer from '../redux/Containers/AppContainer/ChatListContaine
 const appStack = createStackNavigator();
 
 const AppStack = () => {
-   
+  
+  
+  
 
   const [isLoading,setIsLoading] = useState(true);
-  const [userID,setUserID] = useState();
-  const [routeName,setRouteName] = useState();
+  const [isFirstLogin,setIsFirstLogin] = useState();
   useEffect(() => {
-      
-      Fire.checkFirstLogin().then(response=>{
-       setRouteName(response.isFirstLogin);
-       setUserID(response.userID);
-       setIsLoading(false);
-      })
+  
+     const unsubscribe = NetInfo.addEventListener(state =>{
+        if(state.isConnected == true){
+            const uid = Fire.getUid(); 
+            LocalDatabase.getUid().then(localUid =>{
+            if(uid === localUid){
+              setIsFirstLogin("false");
+              setIsLoading(false);
+              
+            }
+            else{
+              LocalDatabase.updateUid(uid);
+              Fire.checkFirstLogin().then(response=>{
+                setIsFirstLogin(response.isFirstLogin);
+                setIsLoading(false);
+              })
+            }
+          })
+        }
+        else{
+          setIsFirstLogin("false");
+          setIsLoading(false);
+        }
+     });
+      return () =>{
+         unsubscribe;
+      }
       
   },[]);
+  
   return (
   
       isLoading == false ?
       <appStack.Navigator screenOptions={{
         headerShown:false
-    }} initialRouteName= {(routeName === "false") ? "Main" : "UpdateUserContainer" }>
+    }} initialRouteName= {(isFirstLogin === "false") ? "Main" : "UpdateUserContainer" }>
      <appStack.Screen name="Main" component={Main}></appStack.Screen>
      <appStack.Screen name="UpdateUserContainer" component={UpdateUserContainer}></appStack.Screen>
     <appStack.Screen name="ChatContainer" component={ChatListContainer}></appStack.Screen>

@@ -4,19 +4,32 @@ import database from '@react-native-firebase/database';
 
 import FriendListItem from './FriendListItem';
 import Fire from '../Database/Fire';
+import * as LocalDatabase from '../Database/Local';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Feather from 'react-native-vector-icons/Feather';
 import {FlatList} from 'react-native';
 import FriendListInHomeItem from './FriendListInHomeItem';
-import { SectionList } from 'react-native';
+import {SectionList} from 'react-native';
 
 const {width, height} = Dimensions.get('window');
 
 const FriendListInHome = props => {
   const [refreshing, setRefreshing] = useState(false);
   const [isActive, setIsActive] = useState();
+  const [data, setData] = useState([]);
 
   useEffect(() => {
     props.GetFriend();
+    // const userID = Fire.getUid();
+
+    // const unsubscribe = Fire.getAllFriend(userID).then(data => {
+    //   console.log(data.length)
+    //   setData(data);
+    // });
+
+    // return () => {
+    //   unsubscribe;
+    // };
   }, []);
 
   const handleRefresh = () => {
@@ -28,18 +41,17 @@ const FriendListInHome = props => {
   };
   return (
     <View style={styles.wrapper}>
-    
-      <FlatList 
+      <FlatList
         horizontal
         showsHorizontalScrollIndicator={false}
         data={props.appData.friendList}
-        keyExtractor={item => item.id}
+        keyExtractor={(item,index) => item + index}
         refreshing={refreshing}
         onRefresh={handleRefresh}
         renderItem={({item}) => {
           return (
             <FriendListInHomeItem
-              key={item.key}
+              key={item.data.key}
               friend={item}
               navigation={props.navigation}></FriendListInHomeItem>
           );
@@ -49,13 +61,10 @@ const FriendListInHome = props => {
 };
 const styles = StyleSheet.create({
   wrapper: {
-  //   flex:1,
-     width:width,
+    //   flex:1,
+    width: width,
     height: 90,
-    marginTop:20
- 
-    
-   
+    marginTop: 20,
   },
 });
 export default FriendListInHome;

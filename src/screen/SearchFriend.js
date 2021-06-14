@@ -11,23 +11,47 @@ import {
 } from 'react-native';
 import {Avatar} from 'react-native-elements';
 import Feather from 'react-native-vector-icons/Feather';
+import * as Animatable from 'react-native-animatable';
 import SearchFriendHeader from '../components/SearchHeader';
 import Fire from '../Database/Fire';
-import Friend from './Friend';
+import FriendTab from './FriendTab';
 const {width, height} = Dimensions.get('window');
 
 const SearchFriend = props => {
   const [users, setUser] = useState([]);
-
+  const [currentUserName,setCurrentUserName] = useState();
+  const [currentUserEmail,setCurrentUserEmail] = useState();
+  const [currentUserAvatar,setCurrentUserAvatar] = useState();
   const [isSendRequest, setIsSendRequest] = useState(false);
+  const [hasData, setHasData] = useState();
   
+ 
+ 
+  const searchFriend = (user) =>{
+    
+    Fire.getUserInfo().then(user=>{
+         setCurrentUserName(user.userName);
+         setCurrentUserEmail(user.email);
+         setCurrentUserAvatar(user.photoURL);
+    })
 
+    if(user.length >0){
+      setUser(user);
+      setHasData(true)
+      
+    }
+    else{
+     setHasData(false)
+    }
+  
+  }
   return (
     <View style={styles.wrapper}>
-       <SearchFriendHeader {...props}></SearchFriendHeader>
-    
-      {props.appData.searchData.length > 0 ? (
-        props.appData.searchData.map(user => {
+       <SearchFriendHeader searchFriend={searchFriend} {...props}></SearchFriendHeader>
+      
+       {
+        hasData == true ?
+        users.map(user => {
           if (user) {
             return (
               <View key={user.user.id} style={styles.friendView}>
@@ -44,7 +68,7 @@ const SearchFriend = props => {
                       <TouchableOpacity
                         style={styles.addFriendButton}
                         onPress={() => {
-                          props.AddFriend(user.user.id);
+                          props.AddFriend(user.user.id,currentUserName,currentUserEmail,currentUserAvatar);
                           setIsSendRequest(true);
                         }}>
                         <Text style={styles.buttonTitle}>Kết bạn</Text>
@@ -64,18 +88,15 @@ const SearchFriend = props => {
                 </View>
               </View>
             );
-          } else
-            return (
-              <View style={styles.notFoundView}>
+          }
+        }) 
+        : <View style={styles.notFoundView}>
                 <Text style={styles.notFoundMess}>
-                  Không tìm thấy người dùng!
+                   không tìm thấy!
                 </Text>
               </View>
-            );
-        })
-      ) : (
-        <View></View>
-      )}
+       }
+      
     </View>
   );
 };

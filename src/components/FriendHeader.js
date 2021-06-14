@@ -30,7 +30,7 @@ const FriendHeader = (props) => {
           name="user-plus"
           size={23}
           onPress={() => {
-                navigation.navigate("SearchUserContainer") 
+                props.navigation.navigate("SearchUserContainer") 
           }}></Feather>
      
       </View>

@@ -11,17 +11,29 @@ const {width, height} = Dimensions.get('window');
 const WaitingFriendList = (props) => {
   const [refreshing, setRefreshing] = useState(false);
   const [isActive, setIsActive] = useState();
- 
+  const [currentUserName,setCurrentUserName] = useState();
+  const [currentUserEmail,setCurrentUserEmail] = useState();
+  const [currentUserAvatar,setCurrentUserAvatar] = useState();
   const {AcceptFriend } = props;
 
   useEffect(() => {
-   props.GetWaitingFriend();
+    
+    const unsubscribe = Fire.getUserInfo().then(user=>{
+      setCurrentUserName(user.userName);
+      setCurrentUserEmail(user.email);
+      setCurrentUserAvatar(user.photoURL);
+    })
+    props.GetWaitingFriend();
+
+   return ()=>{
+     unsubscribe;
+   }
   }, []);
 
   const handleRefresh = () => {
     setRefreshing(true);
     setTimeout(() => {
-      props.GetWaitingFriend();
+      props.GetWaitingFriend(userID);
       setRefreshing(false);
     }, 1000);
       
@@ -34,13 +46,16 @@ const WaitingFriendList = (props) => {
             data={props.appData.waitingFriendList}
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            keyExtractor={item => item.id}
+            keyExtractor={item => item.friendID}
             renderItem={({item}) => {
               return (
                 <WaitingFriendListItem
                  AcceptFriend={props.AcceptFriend}  
                  DeleteFriend ={props.DeleteFriend}
-                  key={item.key}
+                 currentUserName={currentUserName}
+                 currentUserEmail={currentUserEmail}
+                 currentUserAvatar={currentUserAvatar}
+                  key={item.friendID}
                   friend={item}
                 
                    navigation={props.navigation}

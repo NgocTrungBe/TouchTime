@@ -11,32 +11,32 @@ import Feather from 'react-native-vector-icons/Feather';
 import Fire from '../Database/Fire';
 const {width, height} = Dimensions.get('window');
 
-const WaitingFriendListItem = ({AcceptFriend,DeleteFriend,friend}) => {
- 
- 
-
+const WaitingFriendListItem = ({AcceptFriend,DeleteFriend,friend,currentUserName,currentUserEmail,currentUserAvatar}) => {
   return (
-   
     <View key={friend.id} style={styles.friendView}>
-      <Avatar rounded size={65} source={{uri:'data:image/png;base64,'+ friend.photoURL}}></Avatar>
+      <Avatar
+        rounded
+        size={65}
+        source={{uri: 'data:image/png;base64,' + friend.avatar}}></Avatar>
       <View style={styles.content}>
         <View style={styles.titleView}>
           <Text style={styles.userName}>{friend.userName}</Text>
-          <Text style={styles.title}> đã gửi yêu cầu kết bạn</Text>
+          <Text numberOfLines={1} lineBreakMode="tail" style={styles.title}> đã gửi yêu cầu kết bạn</Text>
         </View>
 
         <View style={styles.buttonView}>
           <TouchableOpacity
             style={styles.acceptButton}
-            onPress={()=>{AcceptFriend(friend.id)}}
-          >
+            onPress={() => {
+              AcceptFriend(friend.friendID, currentUserName,currentUserEmail,currentUserAvatar);
+            }}>
             <Text style={styles.acceptBtnTitle}>Xác Nhận</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.deleteButton}
-            onPress={()=>{DeleteFriend(friend.id)}}
-         >
-          
+            onPress={() => {
+              DeleteFriend(friend.friendID);
+            }}>
             <Text style={styles.deleteBtnTitle}>Xóa</Text>
           </TouchableOpacity>
         </View>
@@ -48,13 +48,12 @@ const WaitingFriendListItem = ({AcceptFriend,DeleteFriend,friend}) => {
 const styles = StyleSheet.create({
   // waiting friend
   friendView: {
-    marginTop:10,
-    width: width/0.8,
+    marginTop: 10,
+    width: width / 0.8,
     padding: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius:20,
-  
+    borderRadius: 20,
   },
   content: {
     marginLeft: 5,
@@ -63,23 +62,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   titleView: {
-
     flexDirection: 'row',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
   title: {
+    width:width/2.3,
     fontSize: 15,
-    marginLeft:4
+    marginLeft: 4,
   },
   userName: {
     marginLeft: 20,
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: 'bold',
     color: 'black',
   },
   buttonView: {
-    marginTop:4,
+    marginTop: 4,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -88,16 +87,16 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginTop: 5,
     padding: 8,
-    borderRadius:5,
-    alignItems:"center",
+    borderRadius: 5,
+    alignItems: 'center',
     backgroundColor: '#ad69d4',
   },
   deleteButton: {
     width: 100,
-    alignItems:"center",
+    alignItems: 'center',
     marginLeft: 20,
     marginTop: 5,
-    borderRadius:5,
+    borderRadius: 5,
     padding: 8,
     backgroundColor: '#bed8f2',
   },
@@ -113,7 +112,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
   },
-
 });
 
 export default WaitingFriendListItem;

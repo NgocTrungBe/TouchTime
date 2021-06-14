@@ -16,11 +16,16 @@ const Routes = () => {
     
     function onAuthStateChanged(user) {
     setUser(user);
+  
     if (initializing) setInitializing(false);
     }
 
     useEffect(() => {
-       Fire.checkAuth(onAuthStateChanged);
+       const unSubscribe = Fire.checkAuth(onAuthStateChanged);
+        
+       return () =>{
+         unSubscribe;
+       }
   }, []);
 
   if (initializing) return null;

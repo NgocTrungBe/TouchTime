@@ -14,24 +14,25 @@ import {
 import {Avatar} from 'react-native-elements';
 import Feather from 'react-native-vector-icons/Feather';
 import Fire from '../Database/Fire';
+import * as LocalDatabase from '../Database/Local';
 import moment from 'moment';
 import database from '@react-native-firebase/database';
 import {Image} from 'react-native';
 import FriendListInHomeContainer from '../redux/Containers/AppContainer/FriendListInHomeContainer ';
-
+import {concat, result} from 'lodash';
+import FriendListInHome from './FriendListInHome';
 
 const {width, height} = Dimensions.get('window');
 
 const ChatItem = ({users, navigation}) => {
   return (
-    <View>
+    <View key={users.id}>
       <TouchableOpacity
         style={styles.item}
-        key={users.user.id}
         onPress={() =>
           navigation.navigate('Chat', {
             friendUserName: users.user.userName,
-            friendAvatar: 'data:image/png;base64,' + users.user.photoURL,
+            friendAvatar: 'data:image/png;base64,' + users.user.avatar,
             friendID: users.user.id,
           })
         }>
@@ -40,11 +41,14 @@ const ChatItem = ({users, navigation}) => {
             resizeMode="cover"
             style={styles.avatar}
             source={{
-              uri: 'data:image/png;base64,' + users.user.photoURL,
+              uri: 'data:image/png;base64,' + users.user.avatar,
             }}></Image>
           <View style={styles.content}>
             <Text style={styles.userName}>{users.user.userName}</Text>
-            <Text style={styles.lastMess}>
+            <Text
+              numberOfLines={1}
+              lineBreakMode="tail"
+              style={styles.lastMess}>
               {users.user.userName.includes(users.sender)
                 ? users.sender.slice(users.sender.lastIndexOf(' ')) +
                   ':' +
@@ -54,7 +58,15 @@ const ChatItem = ({users, navigation}) => {
             </Text>
           </View>
           <Text style={styles.time}>
-            {moment(new Date(users.timestamp)).format('d/M').toString()}
+            {new Date(users.timestamp).getDate() < new Date().getDate()
+              ? new Date(users.timestamp).getDate() +
+                '/' +
+                parseInt(new Date().getMonth() + 1)
+              : new Date(users.timestamp).getHours() +
+                ':' +
+                (new Date(users.timestamp).getMinutes() < 10
+                  ? '0' + new Date(users.timestamp).getMinutes()
+                  : new Date(users.timestamp).getMinutes())}
           </Text>
           <View style={styles.dot}></View>
         </View>
@@ -69,21 +81,22 @@ const ChatList = props => {
   const [refreshing, setRefreshing] = useState(false);
   const [isLoadData, setIsLoadData] = useState(false);
   const [keyWord, setKeyWord] = useState('');
+  const [roomData, setRoomData] = useState([]);
+  const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    // getData();
-
-    // if(props.appData.chatList){
-    //   setState({data:props.appData.chatList,
-    //         fullData:props.appData.chatList
-    //   })
-    // }
-
     const userID = Fire.getUid();
-    Fire.getLastMess(userID, lastMessData => {
-      setChatData(lastMessData);
-      setFilterData(lastMessData);
-    });
+    const unsubscribe = Fire.getChatList(userID, data => {
+       setChatData(data) ;
+       setFilterData(data);
+    })
+
+   
+    return () => {
+      console.log('unmouted chat list')
+      unsubscribe;
+      // && unLocalSubscribe;
+    };
   }, []);
 
   const getData = () => {
@@ -114,26 +127,25 @@ const ChatList = props => {
   };
 
   return (
-    <View>
-      <View style={styles.listView}>
-        <FlatList
-          data={filterData.sort((user1,user2)=>{
-             if(new Date(user1.timestamp) > new Date(user2.timestamp)){
-               return -1;
-             }
-             if(new Date(user1.timestamp) < new Date(user2.timestamp)){
-               return 1;
-             }
-             return 0;
-          })}
-          keyExtractor={(item, index) => item + index}
-          ListHeaderComponent={
-            <View>
-               <View style={styles.searchViewWrapper}>
-               <View style={styles.searchView}>
+    <View style={styles.listView}>
+      <FlatList
+        data={filterData.sort((user1, user2) => {
+          if (new Date(user1.timestamp) > new Date(user2.timestamp)) {
+            return -1;
+          }
+          if (new Date(user1.timestamp) < new Date(user2.timestamp)) {
+            return 1;
+          }
+          return 0;
+        })}
+        keyExtractor={(item, index) => item.id}
+        ListHeaderComponent={
+          <View>
+            <View style={styles.searchViewWrapper}>
+              <View style={styles.searchView}>
                 <TextInput
                   multiline={true}
-                    blurOnSubmit={true}
+                  blurOnSubmit={true}
                   onSubmitEditing={() => {
                     Keyboard.dismiss();
                   }}
@@ -141,32 +153,28 @@ const ChatList = props => {
                   onChangeText={keyWord => searchHandle(keyWord)}
                   style={styles.textInput}
                   placeholder="..."></TextInput>
-                <Feather
-                  style={styles.searchButton}
-                  name="search"
-                ></Feather>
-              </View>
-               </View>
-              
-              <FriendListInHomeContainer navigation={props.navigation}></FriendListInHomeContainer>
-              <View style={styles.messageTitle}>
-                <Text style={styles.title}>Tin nhắn</Text>
+                <Feather style={styles.searchButton} name="search"></Feather>
               </View>
             </View>
-          }
-          bounces
-          showsVerticalScrollIndicator={false}
-          renderItem={({item}) => {
-            return (
-              <ChatItem
-                key={item.key}
-                users={item}
-                navigation={props.navigation}></ChatItem>
-            );
-          }}>
-          >
-        </FlatList>
-      </View>
+
+            <FriendListInHomeContainer navigation={props.navigation}></FriendListInHomeContainer>
+            <View style={styles.messageTitle}>
+              <Text style={styles.title}>Tin nhắn</Text>
+            </View>
+          </View>
+        }
+        bounces
+        showsVerticalScrollIndicator={false}
+        renderItem={({item}) => {
+          return (
+            <ChatItem
+              key={item.id}
+              users={item}
+              navigation={props.navigation}></ChatItem>
+          );
+        }}>
+        >
+      </FlatList>
     </View>
   );
 };
@@ -208,19 +216,26 @@ const styles = StyleSheet.create({
   userName: {
     marginLeft: 20,
     fontSize: 17,
+    height: 20,
     width: width / 2,
-    fontWeight: 'bold',
+    fontWeight: '900',
+    fontFamily: 'AntDesign',
     color: '#300100',
+  
   },
   lastMess: {
+    width: 200,
     marginLeft: 20,
     fontSize: 15,
     color: 'grey',
   },
   time: {
+    position:"absolute",
+    right:10,
+    top:16,
     width: width / 8,
     marginBottom: 20,
-    marginLeft: 20,
+ 
     fontSize: 15,
     color: '#0606',
     fontWeight: 'bold',
@@ -248,9 +263,9 @@ const styles = StyleSheet.create({
   },
 
   searchViewWrapper: {
-    width:width,
-    marginTop:height/35,
-    alignItems:'center'
+    width: width,
+    marginTop: height / 35,
+    alignItems: 'center',
   },
   searchView: {
     width: width / 1.15,

@@ -12,6 +12,8 @@ import {
   Dimensions,
   Image,
   Animated,
+  Platform,
+  KeyboardAvoidingView,
 } from 'react-native';
 import database from '@react-native-firebase/database';
 import ChatHeader from '../components/ChatHeader';
@@ -26,18 +28,24 @@ import {
   Bubble,
   MessageImage,
   MessageText,
-  KeyboardAvoidingView
+  Time,
+
+
 } from 'react-native-gifted-chat';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {Avatar} from 'react-native-elements';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as Animatable from 'react-native-animatable';
+import moment from 'moment';
 import Fire from '../Database/Fire';
 import {TextInput} from 'react-native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import {FlatList, TouchableOpacity} from 'react-native-gesture-handler';
 import {guidGenerator} from '../Asset/Ultils';
 import ChatImageView from '../components/ChatImageView';
+import MessageItem from '../components/MessageItem';
+import { Keyboard } from 'react-native';
+
 const {width, height} = Dimensions.get('window');
 
 const Chat = ({route, navigation}) => {
@@ -63,10 +71,7 @@ const Chat = ({route, navigation}) => {
         />
       ),
     });
-  }, [navigation]);
-
-  useEffect(() => {
-    Fire.getUserInfo().then(userData => {
+    const unGetUser = Fire.getUserInfo().then(userData => {
       if (userData != 'null') {
         setUserID(userData.userID);
         setUserName(userData.userName);
@@ -74,15 +79,30 @@ const Chat = ({route, navigation}) => {
         setUserPhotoURL(userData.photoURL);
       }
     });
+    return ()=>{
+      unGetUser
+    }
+  }, [navigation]);
+
+  useEffect(() => {
+  
+
+    // const unsubscribe = Fire.getMess(message => {
+
+    //   setMessages(previousMessages =>
+    //     GiftedChat.append(previousMessages, message),
+    //   );
+    // }, friendID);
 
     const unsubscribe = Fire.getMess(message => {
-      setMessages(previousMessages =>
-        GiftedChat.append(previousMessages, message),
-      );
+      setMessages(message);
     }, friendID);
 
+  
+
     return () => {
-      unsubscribe;
+      Fire.getMess(unsubscribe);
+     
     };
   }, []);
 
@@ -94,7 +114,7 @@ const Chat = ({route, navigation}) => {
           <View>
             <MaterialCommunity
               style={styles.imagePicker}
-              name="image-plus"
+              name="image"
               size={35}></MaterialCommunity>
           </View>
         )}
@@ -116,8 +136,27 @@ const Chat = ({route, navigation}) => {
       </Send>
     );
   };
-  const renderComposer = props => {
-    return <Composer {...props} textInputStyle={styles.composer}></Composer>;
+  const renderComposer = () => {
+    return (
+      <View style={styles.composerView}>
+        <View>
+          <MaterialCommunity
+            style={styles.imagePicker}
+            name="image"
+            size={35}></MaterialCommunity>
+        </View>
+        <View>
+          <TextInput style={styles.composer}></TextInput>
+        </View>
+
+        <View style={{marginBottom: 10, marginRight: 8}}>
+          <MaterialCommunity
+            style={styles.sendButton}
+            name="send-circle"
+            size={35}></MaterialCommunity>
+        </View>
+      </View>
+    );
   };
 
   const renderBubble = props => {
@@ -129,7 +168,17 @@ const Chat = ({route, navigation}) => {
           imageUri={currentMessage?.image}></ChatImageView>
       );
     }
-    return <Bubble {...props} />;
+    return (
+      <View>
+        <Bubble
+          {...props}
+          wrapperStyle={{
+            left: {
+              backgroundColor: '#ebecec',
+            },
+          }}></Bubble>
+      </View>
+    );
   };
   const closeImage = () => {
     setImageUri('');
@@ -152,16 +201,13 @@ const Chat = ({route, navigation}) => {
       },
     );
   };
-  const onSend = messages => {
-    messages.forEach(item => {
+  const onSend = () => {
+   
       const message = [
         {
-          _id: item._id,
-          createdAt: item.createdAt,
-          text: item.text,
-          user: item.user
-            ? item.user
-            : {
+          
+          text: text,
+          user: {
                 _id: userID,
                 name: userName,
                 avatar: 'data:image/png;base64,' + userPhotoURL,
@@ -169,14 +215,17 @@ const Chat = ({route, navigation}) => {
           image: base64Code ? 'data:image/png;base64,' + base64Code : '',
         },
       ];
-      Fire.send(message, friendID);
+       Fire.send(message,friendID);
       setImageUri('');
       setText('');
-    });
+
+  
   };
+  
+  
 
   return (
-    <>
+    <View style={{flex: 1}}>
       {imageUri ? (
         <Animatable.View
           duration={800}
@@ -188,34 +237,81 @@ const Chat = ({route, navigation}) => {
           </TouchableOpacity>
         </Animatable.View>
       ) : null}
+      <FlatList
+        data={messages.sort((mess1, mess2) => {
+          if (new Date(mess1.createdAt) > new Date(mess2.createdAt)) {
+            return -1;
+          }
+          if (new Date(mess1.createdAt) < new Date(mess2.createdAt)) {
+            return 1;
+          }
+          return 0;
+        })}
+        inverted
+        showsVerticalScrollIndicator={false}
+        bounces
+        keyExtractor={(item, index) => item._id}
+        renderItem={({item}) => {
+          return <MessageItem userID={userID} item={item}></MessageItem>;
+        }}></FlatList>
+      <View style={styles.composerView}>
+        <View>
+          <MaterialCommunity onPress={handlePickImage}
+            style={styles.imagePicker}
+            name="image"
+            size={30}></MaterialCommunity>
+        </View>
+        <View>
+          <TextInput value={text} onEndEditing={()=>setText('')} onChangeText = {(text) =>setText(text)} style={styles.composer}></TextInput>
+        </View>
 
-      <GiftedChat
-        showAvatarForEveryMessage={true}
-        renderBubble={renderBubble}
-        text={text}
-        placeholder="....."
-        onInputTextChanged={text => setText(text)}
-        messages={messages}
-        alwaysShowSend
-        disableComposer={imageUri ? true : false}
-        onSend={messages => onSend(messages)}
-        renderActions={renderActions}
-        renderSend={renderSend}
-        renderComposer={renderComposer}
-        user={{
-          _id: userID,
-          name: userName,
-          avatar: 'data:image/png;base64,' + userPhotoURL,
-        }}></GiftedChat>
-    
-    </>
+        <View style={{ marginRight: 12}}>
+          <MaterialCommunity onPress={onSend}
+            style={styles.sendButton}
+            name="send-circle"
+            size={35}></MaterialCommunity>
+        </View>
+      </View>
+      
+      
+      {/* <GiftedChat
+          showAvatarForEveryMessage={true}
+          renderBubble={renderBubble}
+          isKeyboardInternallyHandled={false}
+          text={text}
+          placeholder="....."
+          onInputTextChanged={text => setText(text)}
+          messages={messages}
+          alwaysShowSend
+          disableComposer={imageUri ? true : false}
+          onSend={messages => onSend(messages)}
+          renderActions={renderActions}
+          renderSend={renderSend}
+          renderComposer={renderComposer}
+         
+          user={{
+            _id: userID,
+            name: userName,
+            avatar: 'data:image/png;base64,' + userPhotoURL,
+          }}></GiftedChat> */}
+    </View>
   );
 };
 const styles = StyleSheet.create({
+  composerView: {
+    width: width,
+    height: height / 12,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+    elevation: 12,
+  },
   composer: {
+    width: width / 2,
     position: 'relative',
-    marginTop: 5,
-    marginBottom: 5,
+    marginTop: 7,
+    marginBottom: 7,
     marginLeft: 40,
     paddingLeft: 15,
     backgroundColor: '#d0e6fc',
@@ -228,9 +324,7 @@ const styles = StyleSheet.create({
   imagePicker: {
     width: 50,
     color: '#C576F6',
-    position: 'absolute',
-    bottom: -27,
-    left: 10,
+    left: 30,
   },
   image: {
     borderRadius: 10,

@@ -11,13 +11,16 @@ import {
   Modal
 } from 'react-native';
 import Fire from '../Database/Fire';
+import * as LocalDatabase from '../Database/Local';
 import Feather from 'react-native-vector-icons/Feather';
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
 import {checkInvalidEmail} from '../Asset/Contants';
 import {checkInvalidPassword} from '../Asset/Contants';
+
 import Main from './Main';
 import { set } from 'react-native-reanimated';
+import { ActivityIndicator } from 'react-native';
 const {width, height} = Dimensions.get('window');
 
 const Login = (props) => {
@@ -29,8 +32,11 @@ const Login = (props) => {
     secureTextEntry: true,
     invalidEmail: false,
     invalidPassword: false,
+    isLogin:false,
+
 
   });
+  const [error,setError] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const showModal = () => {
     setModalVisible(true);
@@ -40,16 +46,37 @@ const Login = (props) => {
   };
   const handleLogin = () => {
     if (data.email != '' && data.password != '') {
-      
-      props.SignIn(data.email,data.password);   
-     
-      if(props.auth.isLoginSuccess != undefined){
-      
-        if(props.auth.isLoginSuccess === false){
-          showModal();
-         
-        }
-      }
+      setData({...data,isLogin:true})
+      Fire.signIn(data.email.toLowerCase(),data.password).then(result =>{
+           if(result !=null){
+            setData({...data,isLogin:false})
+            if(result.code === "auth/user-not-found"){
+              setError("Tài khoản không tồn tại!");
+              showModal();
+            } 
+             if(result.code === "auth/wrong-password"){
+              setError("Mật khẩu không đúng");
+              showModal();
+            }
+            if(result.code === "auth/too-many-requests"){
+              setError("Tài khoản đã bị khóa do nhập sai nhiều lần!");
+              showModal();
+            }
+            if(result.user != undefined){
+              LocalDatabase.getUid().then(uid =>{
+                if(uid == undefined){
+                  LocalDatabase.saveUid(result.user.uid);
+                 }else{
+                  LocalDatabase.updateUid(result.user.uid);
+                 }
+            });
+              
+
+              
+            }
+           }
+
+      })
     }
   };
   
@@ -99,7 +126,7 @@ const Login = (props) => {
   };
 
   const navigateRegister = () => {
-    props.navigation.navigate('RegisterContainer');
+    props.navigation.navigate('Register');
   };
   return (
     <View style={styles.container}>
@@ -150,6 +177,10 @@ const Login = (props) => {
             <Text style={styles.errMessage}>Mật khẩu không hợp lệ! (vd: Abc12345678)</Text>
           </Animatable.View>
         ) : null}
+        
+          {
+             data.isLogin ?  <ActivityIndicator size={23} style={{padding:10}} color="green"></ActivityIndicator>: null
+          }
 
         <View style={styles.buttonView}>
        
@@ -160,6 +191,8 @@ const Login = (props) => {
               <Text style={styles.signInButtonText}>Đăng Nhập</Text>
             </LinearGradient>
           </TouchableOpacity>
+        
+         
           <View style={styles.signUpAction}>
             <Text style={styles.signUpTitle}>Bạn chưa có tài khoản?</Text>
             <TouchableOpacity onPress={navigateRegister}>
@@ -178,7 +211,7 @@ const Login = (props) => {
             Ooops!
           </Text>
           <Text style={styles.modalMessage}>
-            Tài khoản hoặc mật khẩu không đúng!
+            {error}
           </Text>
         </View>
       </Modal>

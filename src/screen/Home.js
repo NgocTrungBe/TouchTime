@@ -32,8 +32,8 @@ const Home = props => {
       }}>
       <AppHeader photoURL={props.photoURL} {...props} ></AppHeader>
       <StatusBar backgroundColor="#F8F8FF" hidden={true}></StatusBar>
-      {/* <ChatList navigation={props.navigation}></ChatList> */}
-      <ChatListContainer navigation={props.navigation}></ChatListContainer>
+      <ChatList navigation={props.navigation}></ChatList>
+      {/* <ChatListContainer navigation={props.navigation}></ChatListContainer> */}
       
     </View>
   );

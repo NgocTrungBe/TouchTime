@@ -1,13 +1,10 @@
 import React, {Component} from 'react';
 import {useState} from 'react';
 import {View} from 'react-native';
-
-import Main from '../screen/Main';
-import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 
-import LoginContainer from '../redux/Containers/AuthContainer/LoginContainer';
-import RegisterContainer from '../redux/Containers/AuthContainer/RegisterContainer';
+import Login from '../screen/Login';
+import Register from '../screen/Register';
 
 
 const authStack = createStackNavigator();
@@ -18,8 +15,8 @@ const AuthStack = () => {
       <authStack.Navigator screenOptions={{
           headerShown:false
       }}>
-          <authStack.Screen name="LoginContainer" component={LoginContainer}></authStack.Screen>
-          <authStack.Screen name="RegisterContainer" component={RegisterContainer}></authStack.Screen>
+          <authStack.Screen name="Login" component={Login}></authStack.Screen>
+          <authStack.Screen name="Register" component={Register}></authStack.Screen>
 
       </authStack.Navigator>
   );

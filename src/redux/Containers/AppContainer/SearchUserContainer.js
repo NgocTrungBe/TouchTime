@@ -30,12 +30,12 @@ const mapDisPatchToProps = (dispatch,props) =>{
         SearchUser: (email) =>{
             dispatch(Actions.searchUserRequest(email));
         },
-        AddFriend:(userID)=>{
-            dispatch(Actions.addFriend(userID));
+        AddFriend:(userID,userName,email,avatar)=>{
+            dispatch(Actions.addFriend(userID,userName,email,avatar));;
         }
 
     }
 }
 
 
-export default connect(mapStateToProps,mapDisPatchToProps)(SearchUserContainer);
+ export default connect(mapStateToProps,mapDisPatchToProps)(SearchUserContainer);

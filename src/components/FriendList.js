@@ -14,7 +14,6 @@ const {width, height} = Dimensions.get('window');
 const FriendList = (props) => {
   const [refreshing, setRefreshing] = useState(false);
   const [isActive, setIsActive] = useState();
-
   useEffect(() => {
    props.GetFriend();
   }, []);
@@ -22,7 +21,7 @@ const FriendList = (props) => {
   const handleRefresh = () => {
      setRefreshing(true);
      setTimeout(() => {
-      props.GetFriend();
+      props.GetFriend(userID);
       setRefreshing(false);
     }, 1000);
   };
@@ -33,13 +32,13 @@ const FriendList = (props) => {
         <FlatList 
           showsVerticalScrollIndicator={false}
           data={props.appData.friendList}
-          keyExtractor={item => item.id}
+          keyExtractor={(item ,index)=> item.data.friendID}
           refreshing={refreshing}
           onRefresh={handleRefresh}
           renderItem={({item}) => {
             return (
               <FriendListItem
-                key={item.key}
+                key={item.data.friendID}
                 friend={item}
                 navigation={props.navigation}></FriendListItem>
             );
@@ -53,8 +52,7 @@ const styles = StyleSheet.create({
 
   wrapper:{
     width:width,
-    height:height/1.437,
-    backgroundColor:'#F8F8FF',
+    height: height / 1.25,
   }
  
 });

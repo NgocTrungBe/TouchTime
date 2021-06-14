@@ -19,6 +19,7 @@ const ChatImageView = ({imageUri, text}) => {
         style={{
           width: '100%',
           height: '100%',
+          borderRadius:30,
           resizeMode: 'stretch',
         }}
         source={{uri: imageUri}}></Image>

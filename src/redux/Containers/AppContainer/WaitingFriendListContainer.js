@@ -1,4 +1,5 @@
 import React, {Component, useState} from 'react';
+import { Avatar } from 'react-native-elements/dist/avatar/Avatar';
 import {connect} from 'react-redux';
 import WaitingFriendList from '../../../components/WaitingFriendList';
 import * as Actions from '../../Actions/AppActions'; 
@@ -25,8 +26,8 @@ const mapDisPatchToProps = (dispatch,props) =>{
         GetWaitingFriend:()=>{
             dispatch(Actions.getWaitingFriendRequest());
         },
-        AcceptFriend:(friendID)=>{
-               dispatch(Actions.acceptFriendRequest(friendID));
+        AcceptFriend:(friendID,userName,email,avatar)=>{
+               dispatch(Actions.acceptFriendRequest(friendID,userName,email,avatar));
         },
         DeleteFriend:(friendID)=>{
             dispatch(Actions.deleteWaitingFriendRequest(friendID));

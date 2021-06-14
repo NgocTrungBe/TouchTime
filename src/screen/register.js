@@ -7,67 +7,76 @@ import {
   Dimensions,
   TouchableOpacity,
   StatusBar,
-  Modal
+  Modal,
 } from 'react-native';
 import Fire from '../Database/Fire';
+import LocalDatabase from '../Database/Local';
 import Feather from 'react-native-vector-icons/Feather';
 import * as Animatable from 'react-native-animatable';
 import {checkInvalidEmail} from '../Asset/Contants';
 import {checkInvalidPassword} from '../Asset/Contants';
 import LinearGradient from 'react-native-linear-gradient';
+import { truncate } from 'lodash';
 const {width, height} = Dimensions.get('window');
 
-const Register = ({navigation,SignUp,signUpData}) => {
+const Register = ({navigation, SignUp, signUpData}) => {
   const [data, setData] = useState({
     email: '',
     password: '',
-    confirmPassword:'',
+    confirmPassword: '',
     check_textInputChange: false,
     secureTextEntry: true,
     confirmSecureTextEntry: true,
     invalidEmail: false,
     invalidPassword: false,
-    isCorrectConfirmPassword:false
+    isCorrectConfirmPassword: false,
+    isRegister:false,
+
 
   });
-
+  
   const [modalVisible, setModalVisible] = useState(false);
-  const [signUpTitle,setSignUpTitle] = useState('');
+  const [signUpTitle, setSignUpTitle] = useState('');
   const [signUpMessage,setSignUpMessage] = useState('');
+  
   const showModal = () => {
     setModalVisible(true);
     setTimeout(() => {
       setModalVisible(false);
     }, 1200);
   };
+  
   const handleRegister = () => {
     if (data.email != '' && data.password != '') {
-      SignUp(data.email, data.password);
-      if(signUpData != undefined){
-        if(signUpData.isSignUpSuccess ==true ){
-          setSignUpTitle("Ooops!");
-          setSignUpTitle("Đăng ký thành công");
-          showModal();
-        }
-        else{
-          setSignUpTitle("Ooops!");
-          if(signUpData.error.code == "auth/email-already-in-use"){
-            setSignUpMessage("Email này đã được sử dụng!")
-            
+      setData({...data,isRegister:true})
+      Fire.signUp(data.email.toLowerCase(), data.password).then(result => {
+        if (result != undefined) {
+          setData({...data,isRegister:false})
+          if (result.code == 'auth/email-already-in-use') {
+            setSignUpTitle('Ooops!');
+            setSignUpMessage('Email này đã được sử dụng!');
+            showModal();
           }
-          if(signUpData.error.code == "auth/invalid-email"){
-            setSignUpMessage("Email này không đúng")
+           if (result.code == 'auth/invalid-email') {
+            setSignUpTitle('Ooops!');
+            setSignUpMessage('Email này không đúng!');
+            showModal();
           }
-        
-          showModal();
-        }
-         
-      }
+          
+          if(result.user != undefined){
+            Fire.createUser(result.user.uid,"",data.email.toLowerCase(),"");
+            LocalDatabase.saveUid(result.user.uid);
+            setSignUpTitle('Ok!');
+            setSignUpTitle('Đăng ký thành công!');
+            showModal();
+          }
 
+          
+        }
+      });
     }
   };
 
- 
   const handleEmailChange = val => {
     const isChecked = checkInvalidEmail(val);
     if (val.length !== 0) {
@@ -75,7 +84,8 @@ const Register = ({navigation,SignUp,signUpData}) => {
         ...data,
         email: val,
         check_textInputChange: true,
-        invalidEmail:isChecked
+        invalidEmail: isChecked,
+
       });
     } else {
       setData({
@@ -83,6 +93,7 @@ const Register = ({navigation,SignUp,signUpData}) => {
         email: val,
         check_textInputChange: false,
         invalidEmail: false,
+      
       });
     }
   };
@@ -94,33 +105,35 @@ const Register = ({navigation,SignUp,signUpData}) => {
         password: val,
         secureTextEntry: true,
         invalidPassword: isChecked,
+        
       });
-
     } else {
       setData({
         ...data,
         password: val,
         secureTextEntry: false,
         invalidPassword: false,
+      
       });
     }
-  }
+  };
   const handleConfirmPasswordChange = val => {
     if (val.length !== 0) {
-      if(val == data.password){
+      if (val == data.password) {
         setData({
           ...data,
           confirmPassword: val,
           confirmSecureTextEntry: true,
-          isCorrectConfirmPassword:false
+          isCorrectConfirmPassword: false,
+          
         });
-      }
-      else{
+      } else {
         setData({
           ...data,
           confirmPassword: val,
           confirmSecureTextEntry: true,
-          isCorrectConfirmPassword:true
+          isCorrectConfirmPassword: true,
+         
         });
       }
     } else {
@@ -128,8 +141,8 @@ const Register = ({navigation,SignUp,signUpData}) => {
         ...data,
         confirmPassword: val,
         confirmSecureTextEntry: false,
-
-        isCorrectConfirmPassword:true
+        isCorrectConfirmPassword: true,
+       
       });
     }
   };
@@ -145,6 +158,7 @@ const Register = ({navigation,SignUp,signUpData}) => {
       confirmSecureTextEntry: !data.confirmSecureTextEntry,
     });
   };
+
   const backToLogin = () => {
     navigation.goBack();
   };
@@ -188,7 +202,7 @@ const Register = ({navigation,SignUp,signUpData}) => {
             autoCapitalize="none"></TextInput>
           <TouchableOpacity onPress={updateSecureTextEntry}>
             {data.secureTextEntry ? (
-                <Feather size={20} name="eye-off"></Feather>
+              <Feather size={20} name="eye-off"></Feather>
             ) : (
               <Feather size={20} name="eye"></Feather>
             )}
@@ -210,7 +224,7 @@ const Register = ({navigation,SignUp,signUpData}) => {
             autoCapitalize="none"></TextInput>
           <TouchableOpacity onPress={updateConfirmSecureTextEntry}>
             {data.confirmSecureTextEntry ? (
-                <Feather size={20} name="eye-off"></Feather>
+              <Feather size={20} name="eye-off"></Feather>
             ) : (
               <Feather size={20} name="eye"></Feather>
             )}
@@ -222,35 +236,29 @@ const Register = ({navigation,SignUp,signUpData}) => {
           </Animatable.View>
         ) : null}
 
+        {
+             data.isRegister ?  <ActivityIndicator size={23} style={{padding:10}} color="green"></ActivityIndicator>: null
+          }
         <View style={styles.buttonView}>
           <TouchableOpacity onPress={handleRegister}>
-          <LinearGradient
-            style={styles.signUpButton}
-            colors={['#C576F6', '#C576F6', '#C576F6']}>
-            <Text style={styles.signUpButtonText}>Tạo Tài Khoản</Text>
-          </LinearGradient>
+            <LinearGradient
+              style={styles.signUpButton}
+              colors={['#C576F6', '#C576F6', '#C576F6']}>
+              <Text style={styles.signUpButtonText}>Tạo Tài Khoản</Text>
+            </LinearGradient>
           </TouchableOpacity>
           <View style={styles.backAction}>
-            <Feather  color='#ea2a2a' size={18} name="chevrons-left"></Feather>
+            <Feather color="#ea2a2a" size={18} name="chevrons-left"></Feather>
             <TouchableOpacity onPress={backToLogin}>
               <Text style={styles.backButtonText}>Hủy</Text>
             </TouchableOpacity>
           </View>
-         
-         
         </View>
       </Animatable.View>
-      <Modal
-        animationType="fadeInUpBig"
-        transparent
-        visible={modalVisible}>
-        <View style={styles.modal} >
-        <Text style={styles.modalTitle}>
-            {signUpTitle}
-          </Text>
-          <Text style={styles.modalMessage}>
-            {signUpMessage}
-          </Text>
+      <Modal animationType="fadeInUpBig" transparent visible={modalVisible}>
+        <View style={styles.modal}>
+          <Text style={styles.modalTitle}>{signUpTitle}</Text>
+          <Text style={styles.modalMessage}>{signUpMessage}</Text>
         </View>
       </Modal>
     </View>
@@ -268,7 +276,7 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
   },
   footer: {
-    height:height/1.4,
+    height: height / 1.4,
     backgroundColor: '#fff',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
@@ -329,14 +337,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
   },
-  backAction:{
-    marginTop:25,
-    flexDirection:"row",
-    alignItems:"center"
+  backAction: {
+    marginTop: 25,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 
   backButtonText: {
-    marginLeft:5,
+    marginLeft: 5,
     color: '#ea2a2a',
     fontSize: 18,
     fontWeight: '700',
@@ -346,28 +354,26 @@ const styles = StyleSheet.create({
     marginTop: 5,
     color: 'red',
   },
-  modal:{
-    marginTop:height/3,
-    marginLeft:width/8,
-    width:width/1.3,
-    height:200,
-    alignItems:"center",
-    borderRadius:10,
-    backgroundColor:"#ffffff",
-    elevation:10
-    
+  modal: {
+    marginTop: height / 3,
+    marginLeft: width / 8,
+    width: width / 1.3,
+    height: 200,
+    alignItems: 'center',
+    borderRadius: 10,
+    backgroundColor: '#ffffff',
+    elevation: 10,
   },
-  modalTitle:{
-    marginTop:20,
-     color:"#ad69d4",
-     fontSize:28,
-     fontWeight:"bold"
+  modalTitle: {
+    marginTop: 20,
+    color: '#ad69d4',
+    fontSize: 28,
+    fontWeight: 'bold',
   },
-  modalMessage:{
-    marginTop:50,
-    fontSize:16,
-    color:"#ad69d4",
-  }
- 
+  modalMessage: {
+    marginTop: 50,
+    fontSize: 16,
+    color: '#ad69d4',
+  },
 });
 export default Register;

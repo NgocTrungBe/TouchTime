@@ -20,3 +20,10 @@ export const ACCEPT_FRIEND = "ACCEPT_FRIEND";
 export const DELETE_WAITING_FRIEND = "DELETE_WAITING_FRIEND";
 export const GET_CHAT_LIST = "GET_CHAT_LIST";
 export const SET_TABS_VISIBLE = "SET_TABS_VISIBLE";
+
+
+// Chat
+export const REGISTER_ROOM = "REGISTER_ROOM";
+export const FIND_ROOM = "FIND_ROOM";
+export const SEND_MESSAGE = "SEND_MESSAGE";
+export const GET_MESSAGE = "GET_MESSAGE";
