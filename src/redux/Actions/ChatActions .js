@@ -110,11 +110,22 @@ export const sendMessage = (message, friendID, userData, friendData, roomKey) =>
             image: message.image,
         };
         chatRef.push(messageData);
-        Fire.updateRoomsDetail(roomKey, message.text, message.user.name);
+        updateRoomsDetail(roomKey, message.text, message.user.name);
 
 
     }
 
+}
+
+const updateRoomsDetail = (roomKey, text, sender) => {
+
+    const roomDetailRef = database().ref('roomsDetail/' + roomKey);
+    roomDetailRef.update({
+        text: text,
+        sender: sender,
+        timestamp: firebase.database.ServerValue.TIMESTAMP,
+    })
+    roomDetailRef.off();
 }
 
 const registerRoom = (dispatch, userID, friendID, message, userData, friendData) => {
@@ -139,8 +150,15 @@ const registerRoom = (dispatch, userID, friendID, message, userData, friendData)
 }
 
 const registerRoomDetail = (roomKey, text, sender, userData, friendData) => {
-
-
-    Fire.createRoomDetail(roomKey, text, sender, userData, friendData);
-
+    const roomDetailRef = database().ref('roomsDetail/' + roomKey);
+    if (roomKey) {
+        roomDetailRef.set({
+            text: text,
+            sender: sender,
+            timestamp: firebase.database.ServerValue.TIMESTAMP,
+            userData: userData,
+            friendData: friendData
+        });
+    }
+    roomDetailRef.off();
 }
