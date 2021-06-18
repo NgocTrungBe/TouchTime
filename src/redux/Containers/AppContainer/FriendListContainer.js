@@ -22,8 +22,8 @@ const mapStateToProps =(state) =>{
 
 const mapDisPatchToProps = (dispatch,props) =>{
     return {
-        GetFriend:()=>{
-            dispatch(Actions.getFriendRequest());
+        getAllFriend:()=>{
+            dispatch(Actions.getAllFriend());
         }
 
     }

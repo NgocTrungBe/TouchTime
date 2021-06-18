@@ -11,16 +11,16 @@ import Feather from 'react-native-vector-icons/Feather';
 import Fire from '../Database/Fire';
 const {width, height} = Dimensions.get('window');
 
-const WaitingFriendListItem = ({AcceptFriend,DeleteFriend,friend,currentUserName,currentUserEmail,currentUserAvatar}) => {
+const WaitingFriendListItem = ({acceptFriend,deleteFriend,friend,currentUserName,currentUserEmail,currentUserAvatar}) => {
   return (
-    <View key={friend.id} style={styles.friendView}>
+    <View key={friend.key} style={styles.friendView}>
       <Avatar
         rounded
         size={65}
-        source={{uri: 'data:image/png;base64,' + friend.avatar}}></Avatar>
+        source={{uri: 'data:image/png;base64,' + friend.data.avatar}}></Avatar>
       <View style={styles.content}>
         <View style={styles.titleView}>
-          <Text style={styles.userName}>{friend.userName}</Text>
+          <Text style={styles.userName}>{friend.data.userName}</Text>
           <Text numberOfLines={1} lineBreakMode="tail" style={styles.title}> đã gửi yêu cầu kết bạn</Text>
         </View>
 
@@ -28,14 +28,14 @@ const WaitingFriendListItem = ({AcceptFriend,DeleteFriend,friend,currentUserName
           <TouchableOpacity
             style={styles.acceptButton}
             onPress={() => {
-              AcceptFriend(friend.friendID, currentUserName,currentUserEmail,currentUserAvatar);
+              acceptFriend(friend.key,friend.data.friendID, currentUserName,currentUserEmail,currentUserAvatar);
             }}>
             <Text style={styles.acceptBtnTitle}>Xác Nhận</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.deleteButton}
             onPress={() => {
-              DeleteFriend(friend.friendID);
+              DeleteFriend(friend.data.friendID);
             }}>
             <Text style={styles.deleteBtnTitle}>Xóa</Text>
           </TouchableOpacity>
@@ -46,7 +46,7 @@ const WaitingFriendListItem = ({AcceptFriend,DeleteFriend,friend,currentUserName
 };
 
 const styles = StyleSheet.create({
-  // waiting friend
+ 
   friendView: {
     marginTop: 10,
     width: width / 0.8,

@@ -1,14 +1,9 @@
 import { Avatar } from 'react-native-elements/dist/avatar/Avatar';
 import * as ActionTypes from '../Contants/ActionTypes';
-
+import database from '@react-native-firebase/database';
 import Fire from '../../Database/Fire';
 
 
-// export const getUser = (user) => {
-//     return {
-//         type: ActionTypes.
-//     }
-// }
 
 export const searchUserRequest = (email) => {
     return (dispatch) => {
@@ -28,63 +23,157 @@ export const searchUser = (user) => {
         user
     }
 }
-export const addFriend = (userID, userName, email, avatar) => {
-
-    return {
-        type: ActionTypes.ADD_FRIEND,
-        userID,
-        userName,
-        email,
-        avatar
-    }
-}
-
-export const getWaitingFriendRequest = () => {
-    return (dispatch) => {
-        return Fire.getWaitingFriend().then(waitingFriendList => {
-            dispatch(getWaitingFriend(waitingFriendList))
-        });
-    }
-}
-export const getWaitingFriend = (waitingFriendList) => {
-    return {
-        type: ActionTypes.GET_WAITING_FRIEND,
-        waitingFriendList
-    }
-}
-
-
-export const getFriendRequest = () => {
-    return (dispatch) => {
-        return Fire.getAllFriend().then(friendList => {
-            dispatch(getFriend(friendList))
-        });
-    }
-}
-export const getFriend = (friendList) => {
-    return {
-        type: ActionTypes.GET_FRIEND,
-        friendList
-    }
-}
-
-
-export const acceptFriendRequest = (friendID, userName, email, avatar) => {
+export const addFriend = (friendID, userName, email, avatar) => {
 
     return (dispatch) => {
-        return Fire.getKeyWaitingFriend(friendID).then((waitingFriendKey) => {
-            Fire.acceptWaitingFriend(waitingFriendKey, friendID, userName, email, avatar).then((result) => {
-                if (result == true) {
-                    dispatch(getWaitingFriendRequest());
-                    dispatch(getFriendRequest());
+        const userID = Fire.getUid();
+        if (friendID && userID) {
+            const friendRef = database().ref('users/' + friendID + '/listFriend');
+            const friend = {
+                friendID: userID,
+                userName: userName,
+                email: email,
+                avatar: avatar,
+                isActive: "false",
+            };
+            friendRef.push(friend);
+            dispatch({
+                type: ActionTypes.ADD_FRIEND
+            })
+        }
+    }
+
+}
+
+
+export const getWaitingFriend = () => {
+    return (dispatch) => {
+        const userID = Fire.getUid();
+        if (userID) {
+            database().ref('users/' + userID).on('value', snapshot => {
+                const friendList = [];
+                const data = snapshot.val().listFriend;
+                for (let id in data) {
+                    if (data[id].isActive === "false") {
+                        friendList.push({ key: id, data: data[id] })
+                    }
                 }
+                dispatch({
+                    type: ActionTypes.GET_WAITING_FRIEND,
+                    waitingFriendList: friendList
+                })
             });
+        }
+
+    }
+}
+
+
+
+const getFriendData = (snapshot, dispatch) => {
+    const userID = Fire.getUid();
+
+    if (userID != null) {
+        database().ref('users/' + userID).on('value', childSnapshot => {
+            const data = [];
+            const friendList = childSnapshot.val().listFriend;
+            for (let id in friendList) {
+                if (friendList[id].isActive == "true") {
+                    if (snapshot) {
+                        snapshot.forEach((item) => {
+                            if (friendList[id].friendID === item.key) {
+                                data.push({ data: friendList[id], isOnline: item.val() });
+                            }
+                        })
+                    } else {
+                        data.push({ data: friendList[id], isOnline: false });
+                    }
+                    continue;
+                } else {
+                    break;
+                }
+            }
+            dispatch({
+                type: ActionTypes.GET_ONLINE_FRIEND,
+                onlineFriendList: data
+            })
+
         });
     }
 }
-export const acceptFriend = () => {
-    return {
-        type: ActionTypes.ACCEPT_FRIEND,
+
+export const getOnlineFriend = () => {
+    return (dispatch) => {
+        database().ref('Online').on('value', snapshot => {
+            if (snapshot.val()) {
+                getFriendData(snapshot, dispatch);
+            }
+
+        })
+
+    }
+}
+
+
+export const getAllFriend = () => {
+    return (dispatch) => {
+        const userID = Fire.getUid();
+
+        if (userID) {
+            database().ref('users/' + userID).on('value', snapshot => {
+                const data = [];
+                const friendList = snapshot.val().listFriend;
+                for (let id in friendList) {
+                    if (friendList[id].isActive == "true") {
+
+                        data.push({ key: id, data: friendList[id] });
+
+                    } else {
+
+                        break;
+                    }
+                }
+                dispatch({
+                    type: ActionTypes.GET_ALL_FRIEND,
+                    friendList: data
+                })
+
+            });
+        }
+
+    }
+}
+
+
+
+export const acceptFriendRequest = (key, friendID, userName, email, avatar) => {
+
+    return (dispatch) => {
+
+        const userID = Fire.getUid();
+        if (userID) {
+
+            const userRef = database().ref(
+                'users/' + userID + '/listFriend/' + key,
+            );
+
+            userRef.update({
+                    isActive: 'true',
+                })
+                .then(() => {
+                    const friendRef = database().ref('users/' + friendID + '/listFriend');
+                    const friend = {
+                        friendID: userID,
+                        userName: userName,
+                        email: email,
+                        avatar: avatar,
+                        isActive: "true",
+                    };
+                    friendRef.push(friend);
+                });
+
+        }
+
     }
 }
 
@@ -102,32 +191,5 @@ export const deleteWaitingFriendRequest = (friendID) => {
 export const deleteWaitingFriend = () => {
     return {
         type: ActionTypes.DELETE_WAITING_FRIEND,
-    }
-}
-
-// export const getChatListRequest = (userID) => {
-//     return (dispatch) => {
-
-
-//         Fire.getLastMess(userID, lastMessData => {
-//             dispatch(getChatList(lastMessData))
-//         })
-
-
-//     }
-
-// }
-
-// export const getChatList = (chatList) => {
-//     return {
-//         type: ActionTypes.GET_CHAT_LIST,
-//         chatList
-//     }
-// }
-
-export const setTabsVisible = (isOpenDrawer) => {
-    return {
-        type: ActionTypes.GET_CHAT_LIST,
-        isOpenDrawer
     }
 }

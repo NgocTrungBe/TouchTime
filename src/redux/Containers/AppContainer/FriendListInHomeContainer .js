@@ -18,13 +18,15 @@ class FriendListInHomeContainer extends Component {
    };
 }
 const mapStateToProps =(state) =>{
-    return state;
+    return {
+        onlineFriendList: state.appData.onlineFriendList
+    };
  }
 
 const mapDisPatchToProps = (dispatch,props) =>{
     return {
-        GetFriend:()=>{
-            dispatch(Actions.getFriendRequest());
+        getOnlineFriend:()=>{
+            dispatch(Actions.getOnlineFriend());
         }
 
     }

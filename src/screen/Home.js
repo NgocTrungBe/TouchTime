@@ -1,9 +1,8 @@
 import React, {Component, useEffect, useLayoutEffect, useState} from 'react';
-import {View, StatusBar, Dimensions, Text} from 'react-native';
+import {View, StatusBar, Dimensions, Text,BackHandler} from 'react-native';
 import {connect} from 'react-redux';
 import * as Actions from '../redux/Actions/AppActions';
 import AppHeader from '../components/AppHeader';
-import ChatListContainer from '../redux/Containers/AppContainer/ChatListContainer';
 import FriendListInHomeContainer from '../redux/Containers/AppContainer/FriendListInHomeContainer ';
 import ChatList from '../components/ChatList';
 import Fire from '../Database/Fire';
@@ -15,11 +14,31 @@ const Home = props => {
 
  
 
-  const onBackPress = () => {
-    BackHandler.exitApp();
-    return true;
-  };
+ 
+//   const onBackPress = () => {
 
+//       console.log(true)
+//       //BackHandler.exitApp();
+//       return true;
+    
+//     // else{
+//     //   props.navigation.back(null);
+//     //   return false;
+//     // }
+   
+   
+//   };
+
+// useEffect(() => {
+ 
+//   BackHandler.addEventListener('hardwareBackPress', onBackPress); 
+//   return () => {
+//     console.log("haha unmounted")
+//    BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+
+//     // && unLocalSubscribe;
+//   };
+// }, []);
 
 
   return (
@@ -33,7 +52,7 @@ const Home = props => {
       <AppHeader photoURL={props.photoURL} {...props} ></AppHeader>
       <StatusBar backgroundColor="#F8F8FF" hidden={true}></StatusBar>
       <ChatList navigation={props.navigation}></ChatList>
-      {/* <ChatListContainer navigation={props.navigation}></ChatListContainer> */}
+    
       
     </View>
   );

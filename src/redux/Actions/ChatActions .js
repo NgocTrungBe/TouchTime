@@ -1,133 +1,146 @@
 import { Avatar } from 'react-native-elements/dist/avatar/Avatar';
 import * as ActionTypes from '../Contants/ActionTypes';
-
+import database from '@react-native-firebase/database';
+import firebase from '@react-native-firebase/app';
 import Fire from '../../Database/Fire';
+import { flatMap } from 'lodash';
 
 
-// export const getUser = (user) => {
-//     return {
-//         type: ActionTypes.
-//     }
-// }
 
-export const searchUserRequest = (email) => {
+
+
+export const clearData = () => {
     return (dispatch) => {
-        return Fire.SearchUser(email).then(result => {
-            if (result != null) {
-                dispatch(searchUser(result));
+        dispatch({
+            type: ActionTypes.CLEAR_DATA,
+        })
+    }
+}
+export const findRoomByUser = (friendID) => {
+    const userID = Fire.getUid();
+    return (dispatch) => {
+        const roomsRef = database().ref('rooms');
+        roomsRef.on('value', snapshot => {
+            const rooms = snapshot.val();
+            let roomKey = null;
+            if (snapshot.val() === null) {
+                dispatch({
+                    type: ActionTypes.FETCH_ROOM_ERROR,
+                })
+                return;
+
             } else {
-                dispatch(searchUser([]));
+                for (let id in rooms) {
+                    if (
+                        (rooms[id].userID.includes(userID) &&
+                            rooms[id].friendID.includes(friendID)) ||
+                        (rooms[id].userID.includes(friendID) &&
+                            rooms[id].friendID.includes(userID))
+                    ) {
+                        roomKey = id;
+
+                    }
+                    if (roomKey != null) {
+                        break;
+                    }
+                }
+                if (roomKey != null) {
+                    dispatch({
+                        type: ActionTypes.FETCH_ROOM_SUCCESS,
+                        roomKey
+                    })
+                    getMessages(dispatch, roomKey)
+
+                } else {
+                    dispatch({
+                        type: ActionTypes.FETCH_ROOM_ERROR,
+                    })
+                }
+
+
             }
+
         });
+
     }
 }
-export const searchUser = (user) => {
+export const getMessages = (dispatch, roomKey) => {
 
-    return {
-        type: ActionTypes.SEARCH_USER,
-        user
-    }
-}
-export const addFriend = (userID, userName, email, avatar) => {
+    const chatRef = database().ref('messages/' + roomKey);
+    chatRef.on('value', snapshot => {
 
-    return {
-        type: ActionTypes.ADD_FRIEND,
-        userID,
-        userName,
-        email,
-        avatar
-    }
-}
+        const messages = [];
+        snapshot.forEach(message => {
+            const msg = message.val();
+            messages.push({
+                _id: message.key,
+                createdAt: new Date(msg.timestamp),
+                text: msg.text,
+                user: msg.user,
+                image: msg.image
 
-export const getWaitingFriendRequest = () => {
-    return (dispatch) => {
-        return Fire.getWaitingFriend().then(waitingFriendList => {
-            dispatch(getWaitingFriend(waitingFriendList))
+            })
         });
-    }
-}
-export const getWaitingFriend = (waitingFriendList) => {
-    return {
-        type: ActionTypes.GET_WAITING_FRIEND,
-        waitingFriendList
-    }
-}
-
-
-export const getFriendRequest = () => {
-    return (dispatch) => {
-        return Fire.getAllFriend().then(friendList => {
-            dispatch(getFriend(friendList))
+        messages.sort((a, b) => {
+            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
         });
-    }
-}
-export const getFriend = (friendList) => {
-    return {
-        type: ActionTypes.GET_FRIEND,
-        friendList
-    }
+        dispatch({
+            type: ActionTypes.FETCH_MESSAGE,
+            messages
+        });
+    });
+
 }
 
+export const sendMessage = (message, friendID, userData, friendData, roomKey) => {
 
-export const acceptFriendRequest = (friendID, userName, email, avatar) => {
+    const userID = Fire.getUid();
 
     return (dispatch) => {
-        return Fire.getKeyWaitingFriend(friendID).then((waitingFriendKey) => {
-            Fire.acceptWaitingFriend(waitingFriendKey, friendID, userName, email, avatar).then((result) => {
-                if (result == true) {
-                    dispatch(getWaitingFriendRequest());
-                    dispatch(getFriendRequest());
-                }
-            });
-        });
-    }
-}
-export const acceptFriend = () => {
-    return {
-        type: ActionTypes.ACCEPT_FRIEND,
-    }
-}
 
-export const deleteWaitingFriendRequest = (friendID) => {
-    return (dispatch) => {
-        return Fire.getKeyWaitingFriend(friendID).then((waitingFriendKey) => {
-            Fire.deleteWaitingFriend(waitingFriendKey).then((result) => {
-                if (result == true) {
-                    dispatch(getWaitingFriendRequest());
-                }
-            });
-        });
+        if (roomKey === null) {
+            roomKey = registerRoom(dispatch, userID, friendID, message, userData, friendData);
+        }
+
+        const chatRef = database().ref('messages/' + roomKey);
+        const messageData = {
+            text: message.text,
+            timestamp: firebase.database.ServerValue.TIMESTAMP,
+            user: message.user,
+            image: message.image,
+        };
+        chatRef.push(messageData);
+        Fire.updateRoomsDetail(roomKey, message.text, message.user.name);
+
+
     }
-}
-export const deleteWaitingFriend = () => {
-    return {
-        type: ActionTypes.DELETE_WAITING_FRIEND,
-    }
+
 }
 
-// export const getChatListRequest = (userID) => {
-//     return (dispatch) => {
+const registerRoom = (dispatch, userID, friendID, message, userData, friendData) => {
+
+    const db = database().ref('rooms');
+    const roomKey = db.push().key;
+    const update = {};
+    const room = {
+        userID: userID,
+        friendID: friendID,
+    };
+    update[`${roomKey}`] = room;
+    db.update(update);
+    registerRoomDetail(roomKey, message.text, message.user.name, userData, friendData)
+    dispatch({
+        type: ActionTypes.REGISTER_ROOM,
+        roomKey
+    })
+    return roomKey;
 
 
-//         Fire.getLastMess(userID, lastMessData => {
-//             dispatch(getChatList(lastMessData))
-//         })
+}
+
+const registerRoomDetail = (roomKey, text, sender, userData, friendData) => {
 
 
-//     }
+    Fire.createRoomDetail(roomKey, text, sender, userData, friendData);
 
-// }
-
-// export const getChatList = (chatList) => {
-//     return {
-//         type: ActionTypes.GET_CHAT_LIST,
-//         chatList
-//     }
-// }
-
-export const setTabsVisible = (isOpenDrawer) => {
-    return {
-        type: ActionTypes.GET_CHAT_LIST,
-        isOpenDrawer
-    }
 }

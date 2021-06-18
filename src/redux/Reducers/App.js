@@ -12,9 +12,10 @@ const initialState = {
     friendList: [
 
     ],
-    chatList: [
+    onlineFriendList: [
 
     ]
+
 }
 
 const appReducer = (state = initialState, action) => {
@@ -26,13 +27,10 @@ const appReducer = (state = initialState, action) => {
             }
             return searchState;
         case "ADD_FRIEND":
-            if (action.userID != '') {
-                Fire.addFriend(action.userID, action.userName, action.email, action.avatar);
-                return {
-                    ...state,
-                    searchData: {
+            return {
+                ...state,
+                searchData: {
 
-                    }
                 }
             }
         case "GET_WAITING_FRIEND":
@@ -41,13 +39,19 @@ const appReducer = (state = initialState, action) => {
                 waitingFriendList: action.waitingFriendList
             }
 
-        case "GET_FRIEND":
+        case "GET_ONLINE_FRIEND":
+
+            return {
+                ...state,
+                onlineFriendList: action.onlineFriendList
+            }
+
+        case "GET_ALL_FRIEND":
 
             return {
                 ...state,
                 friendList: action.friendList
             }
-
 
 
         case "ACCEPT_FRIEND":
@@ -56,18 +60,8 @@ const appReducer = (state = initialState, action) => {
         case "DELETE_WAITING_FRIEND":
             return state;
 
-        case "GET_CHAT_LIST":
 
-            return {
-                ...state,
-                chatList: action.chatList
-            }
-        case "SET_TABS_VISIBLE":
 
-            return {
-                ...state,
-                visible: !action.isOpenDrawer
-            }
 
         default:
             return state;

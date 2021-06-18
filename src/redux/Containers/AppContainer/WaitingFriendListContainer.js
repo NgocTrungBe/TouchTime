@@ -23,11 +23,11 @@ const mapStateToProps =(state) =>{
 
 const mapDisPatchToProps = (dispatch,props) =>{
     return {
-        GetWaitingFriend:()=>{
-            dispatch(Actions.getWaitingFriendRequest());
+        getWaitingFriend:()=>{
+            dispatch(Actions.getWaitingFriend());
         },
-        AcceptFriend:(friendID,userName,email,avatar)=>{
-               dispatch(Actions.acceptFriendRequest(friendID,userName,email,avatar));
+        acceptFriend:(key,friendID,userName,email,avatar)=>{
+               dispatch(Actions.acceptFriendRequest(key,friendID,userName,email,avatar));
         },
         DeleteFriend:(friendID)=>{
             dispatch(Actions.deleteWaitingFriendRequest(friendID));

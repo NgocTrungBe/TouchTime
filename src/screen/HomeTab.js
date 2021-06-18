@@ -28,34 +28,24 @@ const HomeTabs = props => {
   const [friendQuality, setFriendQuality] = useState('');
   const [waitingAcceptFriend, setWaitingAcceptFriend] = useState('');
 
-  useEffect(() => {
+  
 
+  
 
-    // const userID = Fire.getUid();
-    // const userRef = database().ref('users/' + userID);
+ useEffect(() => {
+
+   
     
-    //     userRef.on('value', snapshot => {
-    //         if (snapshot != 'null') {
-    //             const friendList = Fire.getFriendId(snapshot.val()).length;
-    //             const waitingAcceptFriend = Fire.getWaitingFriendId(snapshot.val())
-    //                 .length;
-    //                 setUserName(snapshot.val().userName);
-    //                         setEmail(snapshot.val().email);
-    //                         setPhotoURL('data:image/png;base64,' + snapshot.val().photoURL);
-    //                         setFriendQuality(friendList);
-    //                         setWaitingAcceptFriend(waitingAcceptFriend);
-    //         }
-    //     });
-      // Fire.getUserInfo().then(userData => {
-      //     if (userData != 'null') {
-      //         setUserName(userData.userName);
-      //         setEmail(userData.email);
-      //         setPhotoURL('data:image/png;base64,' + userData.photoURL);
-      //         setFriendQuality(userData.friendList);
-      //         setWaitingAcceptFriend(userData.acceptWaitingFriend);
-      //     }
-      // })
-
+    const unsubscribe =  Fire.getUserInfo().then(userData => {
+          if (userData != 'null') {
+              setPhotoURL('data:image/png;base64,' + userData.photoURL);
+             
+          }
+    })
+  
+    return ()=>{
+      unsubscribe;
+    }
   }, [])
 
   return (

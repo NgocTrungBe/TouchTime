@@ -26,10 +26,14 @@ const FriendProfile = ({route,navigation}) => {
   const [waitingQuality,setWaitingQuality]= useState(0);
 
   useLayoutEffect(()=>{
-          Fire.getFriendQuality(friend.data.friendID).then(result=>{
+         const unsubscribe = Fire.getFriendQuality(friend.data.friendID).then(result=>{
              setFriendQuality(result.friendQuality);
              setWaitingQuality(result.waitingQuality);
           })
+
+          return () =>{
+            unsubscribe;
+          }
   },[friend.data.friendID]);
   const showAlert = () => {
     return Alert.alert('!!!', 'Bạn có muốn đăng xuất không?', [
@@ -50,16 +54,15 @@ const FriendProfile = ({route,navigation}) => {
   };
   const deleteFriend = () =>{
     const userID = Fire.getUid();
-    Fire.getUserKeyInFriend(userID,friend.data.id).then((userKey) => {
-      Fire.deleteUserInFriend(userKey, friend.data.id);
+    Fire.getUserKeyInFriend(userID,friend.data.friendID).then((userKey) => {
+      Fire.deleteUserInFriend(userKey, friend.data.friendID);
     });
-    Fire.getKeyWaitingFriend(friend.data.id).then((friendKey) => {
-      Fire.deleteFriendInUser(friendKey, userID).then(result =>{
+    Fire.deleteFriendInUser(friend.key, userID).then(result =>{
             if(result ==true){
               navigation.pop();
             }
-      });
     });
+  
 
 
     
@@ -92,10 +95,10 @@ const FriendProfile = ({route,navigation}) => {
               </View>
             </TouchableOpacity>
             <TouchableOpacity style={styles.headerButton}   onPress={() =>
-            navigation.navigate('Chat', {
+            navigation.navigate('ChatContainer', {
             friendUserName: friend.data.userName,
-            friendAvatar: 'data:image/png;base64,' + friend.data.photoURL,
-            friendID: friend.data.id,
+            friendAvatar: 'data:image/png;base64,' + friend.data.avatar,
+            friendID: friend.data.friendID,
           })
         }>
               <View style={styles.headerButtonWrapper}>

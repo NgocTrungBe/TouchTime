@@ -14,6 +14,7 @@ import {
   Animated,
   Platform,
   KeyboardAvoidingView,
+  ActivityIndicator,
 } from 'react-native';
 import database from '@react-native-firebase/database';
 import ChatHeader from '../components/ChatHeader';
@@ -29,8 +30,6 @@ import {
   MessageImage,
   MessageText,
   Time,
-
-
 } from 'react-native-gifted-chat';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {Avatar} from 'react-native-elements';
@@ -44,12 +43,12 @@ import {FlatList, TouchableOpacity} from 'react-native-gesture-handler';
 import {guidGenerator} from '../Asset/Ultils';
 import ChatImageView from '../components/ChatImageView';
 import MessageItem from '../components/MessageItem';
-import { Keyboard } from 'react-native';
+import {Keyboard} from 'react-native';
 
 const {width, height} = Dimensions.get('window');
 
-const Chat = ({route, navigation}) => {
-  const {friendUserName, friendAvatar, friendID} = route.params;
+const Chat = props => {
+  const {friendUserName, friendAvatar, friendID} = props.route.params;
   const [messages, setMessages] = useState([]);
   const [userID, setUserID] = useState();
   const [userName, setUserName] = useState();
@@ -57,20 +56,24 @@ const Chat = ({route, navigation}) => {
   const [userPhotoURL, setUserPhotoURL] = useState();
   const [imageUri, setImageUri] = useState();
   const [base64Code, setBase64Code] = useState();
+  const [imageWidth, setImageWidth] = useState();
+  const [imageHeight, setImageHeight] = useState();
   const [isShowActions, setIsShowActions] = useState(false);
   const [text, setText] = useState('');
+  
 
   useLayoutEffect(() => {
-    navigation.setOptions({
+    props.navigation.setOptions({
       title: '',
       headerLeft: () => (
         <ChatHeader
           userName={friendUserName}
           photoURL={friendAvatar}
-          navigation={navigation}
+          navigation={props.navigation}
         />
       ),
     });
+
     const unGetUser = Fire.getUserInfo().then(userData => {
       if (userData != 'null') {
         setUserID(userData.userID);
@@ -79,107 +82,19 @@ const Chat = ({route, navigation}) => {
         setUserPhotoURL(userData.photoURL);
       }
     });
-    return ()=>{
-      unGetUser
-    }
-  }, [navigation]);
-
-  useEffect(() => {
-  
-
-    // const unsubscribe = Fire.getMess(message => {
-
-    //   setMessages(previousMessages =>
-    //     GiftedChat.append(previousMessages, message),
-    //   );
-    // }, friendID);
-
-    const unsubscribe = Fire.getMess(message => {
-      setMessages(message);
-    }, friendID);
-
-  
 
     return () => {
-      Fire.getMess(unsubscribe);
-     
+      unGetUser;
     };
-  }, []);
+  }, [props.navigation]);
 
-  const renderActions = props => {
-    return (
-      <Actions
-        {...props}
-        icon={() => (
-          <View>
-            <MaterialCommunity
-              style={styles.imagePicker}
-              name="image"
-              size={35}></MaterialCommunity>
-          </View>
-        )}
-        optionTintColor="red"
-        onSend={message => Fire.send(message, friendID)}
-        onPressActionButton={() => handlePickImage()}
-      />
-    );
-  };
-  const renderSend = props => {
-    return (
-      <Send {...props}>
-        <View style={{marginBottom: 10, marginRight: 8}}>
-          <MaterialCommunity
-            style={styles.sendButton}
-            name="send-circle"
-            size={35}></MaterialCommunity>
-        </View>
-      </Send>
-    );
-  };
-  const renderComposer = () => {
-    return (
-      <View style={styles.composerView}>
-        <View>
-          <MaterialCommunity
-            style={styles.imagePicker}
-            name="image"
-            size={35}></MaterialCommunity>
-        </View>
-        <View>
-          <TextInput style={styles.composer}></TextInput>
-        </View>
-
-        <View style={{marginBottom: 10, marginRight: 8}}>
-          <MaterialCommunity
-            style={styles.sendButton}
-            name="send-circle"
-            size={35}></MaterialCommunity>
-        </View>
-      </View>
-    );
-  };
-
-  const renderBubble = props => {
-    const {currentMessage} = props;
-    if (currentMessage.image) {
-      return (
-        <ChatImageView
-          text={currentMessage.text}
-          imageUri={currentMessage?.image}></ChatImageView>
-      );
+  useEffect(() => {
+    const unsubscribe = props.findRoomByUser(friendID);
+    return ()=>{
+      unsubscribe;
+      props.clearData();
     }
-    return (
-      <View>
-        <Bubble
-          {...props}
-          wrapperStyle={{
-            left: {
-              backgroundColor: '#ebecec',
-            },
-          }}></Bubble>
-      </View>
-    );
-  };
+  }, []);
   const closeImage = () => {
     setImageUri('');
     setText('');
@@ -193,36 +108,44 @@ const Chat = ({route, navigation}) => {
         includeBase64: true,
       },
       response => {
+       
         if (response.didCancel != true) {
           setImageUri(response.uri);
-          setBase64Code(response.base64);
+          setBase64Code('data:image/png;base64,'+response.base64);
+          setImageWidth(response.width);
+          setImageHeight(response.height);
           setText('Hình ảnh');
         }
       },
     );
   };
   const onSend = () => {
-   
-      const message = [
-        {
-          
-          text: text,
-          user: {
-                _id: userID,
-                name: userName,
-                avatar: 'data:image/png;base64,' + userPhotoURL,
-              },
-          image: base64Code ? 'data:image/png;base64,' + base64Code : '',
-        },
-      ];
-       Fire.send(message,friendID);
-      setImageUri('');
-      setText('');
+    const userData = {
+      id: userID,
+      userName: userName,
+      photoURL: 'data:image/png;base64,'+  userPhotoURL,
+    };
 
-  
+    const friendData = {
+      id: friendID,
+      userName: friendUserName,
+      photoURL: friendAvatar,
+    };
+
+    const message = {
+      text: text,
+      user: {
+        _id: userID,
+        name: userName,
+        avatar: 'data:image/png;base64,' + userPhotoURL,
+      },
+      image: base64Code && imageWidth && imageHeight  ? {uri:base64Code,width:imageWidth ,height:imageHeight}: '',
+    };
+
+    props.sendMessage(message, friendID, userData, friendData, props.roomKey);
+    setImageUri('');
+    setText('');
   };
-  
-  
 
   return (
     <View style={{flex: 1}}>
@@ -232,68 +155,54 @@ const Chat = ({route, navigation}) => {
           animation="bounceIn"
           style={styles.imageView}>
           <Image style={styles.image} source={{uri: imageUri}}></Image>
-          <TouchableOpacity onPress={closeImage}>
-            <Feather size={30} style={styles.closeImage} name="x"></Feather>
+          <TouchableOpacity style={styles.closeImage} onPress={closeImage}>
+            <Feather size={30} style={{color: "red"}} name="x"></Feather>
           </TouchableOpacity>
         </Animatable.View>
       ) : null}
-      <FlatList
-        data={messages.sort((mess1, mess2) => {
-          if (new Date(mess1.createdAt) > new Date(mess2.createdAt)) {
-            return -1;
-          }
-          if (new Date(mess1.createdAt) < new Date(mess2.createdAt)) {
-            return 1;
-          }
-          return 0;
-        })}
-        inverted
-        showsVerticalScrollIndicator={false}
-        bounces
-        keyExtractor={(item, index) => item._id}
-        renderItem={({item}) => {
-          return <MessageItem userID={userID} item={item}></MessageItem>;
-        }}></FlatList>
+
+      {props.loading ? (
+        <View style={styles.containerIndicator}>
+          <ActivityIndicator size={23} color="green"></ActivityIndicator>
+        </View>
+      ) : (
+        <FlatList
+          data={props.messages}
+          inverted
+          showsVerticalScrollIndicator={false}
+          bounces
+          keyExtractor={(item, index) => item._id}
+          renderItem={({item,index}) => {
+            return <MessageItem navigation={props.navigation} messageData={props.messages} friendUserName={friendUserName} userID={userID} item={item} index={index}></MessageItem>;
+          }}></FlatList>
+      )}
+
       <View style={styles.composerView}>
         <View>
-          <MaterialCommunity onPress={handlePickImage}
+          <MaterialCommunity
+            onPress={handlePickImage}
             style={styles.imagePicker}
             name="image"
             size={30}></MaterialCommunity>
         </View>
         <View>
-          <TextInput value={text} onEndEditing={()=>setText('')} onChangeText = {(text) =>setText(text)} style={styles.composer}></TextInput>
+          <TextInput
+            value={text}
+            onEndEditing={() => setText('')}
+            onChangeText={text => setText(text)}
+            style={styles.composer}></TextInput>
         </View>
 
-        <View style={{ marginRight: 12}}>
-          <MaterialCommunity onPress={onSend}
+        <View style={{marginRight: 12}}>
+          <MaterialCommunity
+            onPress={onSend}
             style={styles.sendButton}
             name="send-circle"
             size={35}></MaterialCommunity>
         </View>
       </View>
-      
-      
-      {/* <GiftedChat
-          showAvatarForEveryMessage={true}
-          renderBubble={renderBubble}
-          isKeyboardInternallyHandled={false}
-          text={text}
-          placeholder="....."
-          onInputTextChanged={text => setText(text)}
-          messages={messages}
-          alwaysShowSend
-          disableComposer={imageUri ? true : false}
-          onSend={messages => onSend(messages)}
-          renderActions={renderActions}
-          renderSend={renderSend}
-          renderComposer={renderComposer}
-         
-          user={{
-            _id: userID,
-            name: userName,
-            avatar: 'data:image/png;base64,' + userPhotoURL,
-          }}></GiftedChat> */}
+
+     
     </View>
   );
 };
@@ -330,23 +239,35 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: 60,
     height: 60,
+    borderWidth:0.2,
+    borderColor: 'brown',
   },
   closeImage: {
+    width:30,
     marginLeft: 10,
+  
     color: 'red',
+    zIndex:20,
+ 
   },
   imageView: {
     position: 'relative',
+    zIndex:20,
     top: height - height / 3.2,
     alignItems: 'center',
     flexDirection: 'row',
     left: 20,
-    width: 60,
+    width: 100,
     height: 60,
-    borderColor: '#ffffff',
     marginBottom: 10,
-
-    elevation: 20,
+    borderRadius: 10,
+    backgroundColor:"#ffffff",
+      elevation: 20,
+  },
+  containerIndicator: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 export default Chat;

@@ -25,7 +25,7 @@ const Profile = () => {
   const [waitingAcceptFriend, setWaitingAcceptFriend] = useState();
 
   useEffect(() => {
-    Fire.getUserInfo().then(userData => {
+   const unsubscribe = Fire.getUserInfo().then(userData => {
       if (userData != 'null') {
         setUserName(userData.userName);
         setEmail(userData.email);
@@ -34,6 +34,9 @@ const Profile = () => {
         setWaitingAcceptFriend(userData.waitingAcceptFriend);
       }
     });
+    return () =>{
+      unsubscribe;
+    }
   }, []);
 
   const showAlert = () =>{

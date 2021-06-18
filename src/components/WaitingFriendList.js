@@ -23,7 +23,7 @@ const WaitingFriendList = (props) => {
       setCurrentUserEmail(user.email);
       setCurrentUserAvatar(user.photoURL);
     })
-    props.GetWaitingFriend();
+    props.getWaitingFriend();
 
    return ()=>{
      unsubscribe;
@@ -46,16 +46,16 @@ const WaitingFriendList = (props) => {
             data={props.appData.waitingFriendList}
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            keyExtractor={item => item.friendID}
+            keyExtractor={item => item.key}
             renderItem={({item}) => {
               return (
                 <WaitingFriendListItem
-                 AcceptFriend={props.AcceptFriend}  
-                 DeleteFriend ={props.DeleteFriend}
+                 acceptFriend={props.acceptFriend}  
+                 deleteFriend ={props.deleteFriend}
                  currentUserName={currentUserName}
                  currentUserEmail={currentUserEmail}
                  currentUserAvatar={currentUserAvatar}
-                  key={item.friendID}
+                  key={item.key}
                   friend={item}
                 
                    navigation={props.navigation}

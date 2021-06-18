@@ -68,7 +68,7 @@ const SearchFriend = props => {
                       <TouchableOpacity
                         style={styles.addFriendButton}
                         onPress={() => {
-                          props.AddFriend(user.user.id,currentUserName,currentUserEmail,currentUserAvatar);
+                          props.addFriend(user.user.id,currentUserName,currentUserEmail,currentUserAvatar);
                           setIsSendRequest(true);
                         }}>
                         <Text style={styles.buttonTitle}>Kết bạn</Text>

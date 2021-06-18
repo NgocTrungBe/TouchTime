@@ -14,16 +14,19 @@ export const UPDATE_USER = "UPDATE_USER";
 
 export const SEARCH_USER = "SEARCH_USER";
 export const ADD_FRIEND = "ADD_FRIEND";
-export const GET_FRIEND = "GET_FRIEND";
+export const GET_ONLINE_FRIEND = "GET_ONLINE_FRIEND";
+export const GET_ALL_FRIEND = "GET_ALL_FRIEND";
 export const GET_WAITING_FRIEND = "GET_WAITING_FRIEND";
 export const ACCEPT_FRIEND = "ACCEPT_FRIEND";
 export const DELETE_WAITING_FRIEND = "DELETE_WAITING_FRIEND";
-export const GET_CHAT_LIST = "GET_CHAT_LIST";
 export const SET_TABS_VISIBLE = "SET_TABS_VISIBLE";
 
 
 // Chat
+export const GET_CHAT_LIST = "GET_CHAT_LIST";
 export const REGISTER_ROOM = "REGISTER_ROOM";
-export const FIND_ROOM = "FIND_ROOM";
+export const FETCH_ROOM_SUCCESS = "FETCH_ROOM_SUCCESS";
+export const FETCH_ROOM_ERROR = "FETCH_ROOM_ERROR";
 export const SEND_MESSAGE = "SEND_MESSAGE";
-export const GET_MESSAGE = "GET_MESSAGE";
+export const FETCH_MESSAGE = "FETCH_MESSAGE";
+export const CLEAR_DATA = "CLEAR_DATA";

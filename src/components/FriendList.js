@@ -15,13 +15,13 @@ const FriendList = (props) => {
   const [refreshing, setRefreshing] = useState(false);
   const [isActive, setIsActive] = useState();
   useEffect(() => {
-   props.GetFriend();
+   props.getAllFriend();
   }, []);
 
   const handleRefresh = () => {
      setRefreshing(true);
      setTimeout(() => {
-      props.GetFriend(userID);
+      props.getAllFriend();
       setRefreshing(false);
     }, 1000);
   };
@@ -32,13 +32,13 @@ const FriendList = (props) => {
         <FlatList 
           showsVerticalScrollIndicator={false}
           data={props.appData.friendList}
-          keyExtractor={(item ,index)=> item.data.friendID}
+          keyExtractor={(item ,index)=> item.key}
           refreshing={refreshing}
           onRefresh={handleRefresh}
           renderItem={({item}) => {
             return (
               <FriendListItem
-                key={item.data.friendID}
+                key={item.key}
                 friend={item}
                 navigation={props.navigation}></FriendListItem>
             );

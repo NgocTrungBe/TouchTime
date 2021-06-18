@@ -19,9 +19,9 @@ const FriendListItem = ({friend, navigation}) => {
     <View >
       <TouchableOpacity
         style={styles.item}
-        key={friend.data.friendID}
+        key={friend.key}
         onPress={() =>
-          navigation.navigate('Chat', {
+          navigation.navigate('ChatContainer', {
             friendUserName: friend.data.userName,
             friendAvatar: 'data:image/png;base64,' + friend.data.avatar,
             friendID: friend.data.friendID,

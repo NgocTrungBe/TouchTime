@@ -19,7 +19,8 @@ const FriendListInHome = props => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    props.GetFriend();
+  
+    const unsubscribe =  props.getOnlineFriend();
     // const userID = Fire.getUid();
 
     // const unsubscribe = Fire.getAllFriend(userID).then(data => {
@@ -27,15 +28,15 @@ const FriendListInHome = props => {
     //   setData(data);
     // });
 
-    // return () => {
-    //   unsubscribe;
-    // };
+    return () => {
+      unsubscribe;
+    };
   }, []);
 
   const handleRefresh = () => {
     setRefreshing(true);
     setTimeout(() => {
-      props.GetFriend();
+      props.getOnlineFriend();
       setRefreshing(false);
     }, 1000);
   };
@@ -44,7 +45,15 @@ const FriendListInHome = props => {
       <FlatList
         horizontal
         showsHorizontalScrollIndicator={false}
-        data={props.appData.friendList}
+        data={props.onlineFriendList.sort(item=>{
+          if(item.isOnline == true){
+            return -1;
+          }
+          if(item.isOnline == false){
+            return 1;
+          }
+          
+        })}
         keyExtractor={(item,index) => item + index}
         refreshing={refreshing}
         onRefresh={handleRefresh}

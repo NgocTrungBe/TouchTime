@@ -10,6 +10,7 @@ import {
   ScrollView,
   SectionList,
   TextInput,
+  BackHandler,
 } from 'react-native';
 import {Avatar} from 'react-native-elements';
 import Feather from 'react-native-vector-icons/Feather';
@@ -25,30 +26,49 @@ import FriendListInHome from './FriendListInHome';
 const {width, height} = Dimensions.get('window');
 
 const ChatItem = ({users, navigation}) => {
+  const [lastMess, setLastMess] = useState(users.text);
+
+  const setLastMessText = () => {
+    setLastMess(users.text);
+  };
   return (
     <View key={users.id}>
       <TouchableOpacity
         style={styles.item}
-        onPress={() =>
-          navigation.navigate('Chat', {
+        onPress={() => {
+          navigation.navigate('ChatContainer', {
             friendUserName: users.user.userName,
-            friendAvatar: 'data:image/png;base64,' + users.user.avatar,
+            friendAvatar: users.user.avatar,
             friendID: users.user.id,
-          })
-        }>
+          });
+          setLastMessText();
+        }}>
         <View style={styles.wrapper}>
           <Image
             resizeMode="cover"
             style={styles.avatar}
             source={{
-              uri: 'data:image/png;base64,' + users.user.avatar,
+              uri: users.user.avatar,
             }}></Image>
           <View style={styles.content}>
-            <Text style={styles.userName}>{users.user.userName}</Text>
+            <Text
+              style={[
+                styles.userName,
+                {fontWeight: users.text != lastMess ? 'bold' : '900',
+                 height:users.text != lastMess ? 25 : 20},
+              ]}>
+              {users.user.userName}
+            </Text>
             <Text
               numberOfLines={1}
               lineBreakMode="tail"
-              style={styles.lastMess}>
+              style={[
+                styles.lastMess,
+                {
+                  color: users.text != lastMess ? '#060606' : 'grey',
+                  fontWeight: users.text != lastMess ? 'bold' : '500',
+                },
+              ]}>
               {users.user.userName.includes(users.sender)
                 ? users.sender.slice(users.sender.lastIndexOf(' ')) +
                   ':' +
@@ -68,7 +88,6 @@ const ChatItem = ({users, navigation}) => {
                   ? '0' + new Date(users.timestamp).getMinutes()
                   : new Date(users.timestamp).getMinutes())}
           </Text>
-          <View style={styles.dot}></View>
         </View>
       </TouchableOpacity>
     </View>
@@ -83,26 +102,47 @@ const ChatList = props => {
   const [keyWord, setKeyWord] = useState('');
   const [roomData, setRoomData] = useState([]);
   const [messages, setMessages] = useState([]);
+  const [isOnline, setIsOnline] = useState(true);
+
+  const onBackPress = () => {
+    // console.log(true)
+    // //BackHandler.exitApp();
+    // return true;
+
+    if (props.navigation && props.navigation.get.length > 1) {
+      props.navigation.pop();
+      return true; //avoid closing the app
+    }
+    return false;
+  };
+
+  // useEffect(() => {
+
+  // BackHandler.addEventListener('hardwareBackPress', onBackPress);
+  // return () => {
+  // console.log("haha unmounted")
+  // BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+
+  // // && unLocalSubscribe;
+  // };
+  // }, []);
 
   useEffect(() => {
     const userID = Fire.getUid();
     const unsubscribe = Fire.getChatList(userID, data => {
-       setChatData(data) ;
-       setFilterData(data);
-    })
-
-   
+      setChatData(data);
+      setFilterData(data);
+    });
+    // BackHandler.addEventListener('hardwareBackPress', onBackPress);
     return () => {
-      console.log('unmouted chat list')
+      //console.log("unmounted")
+      //BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+      userID;
       unsubscribe;
       // && unLocalSubscribe;
     };
   }, []);
 
-  const getData = () => {
-    const userID = Fire.getUid();
-    props.GetChatList(userID);
-  };
   const handleRefresh = () => {
     setRefreshing(true);
     setTimeout(() => {
@@ -157,7 +197,8 @@ const ChatList = props => {
               </View>
             </View>
 
-            <FriendListInHomeContainer navigation={props.navigation}></FriendListInHomeContainer>
+            <FriendListInHomeContainer
+              navigation={props.navigation}></FriendListInHomeContainer>
             <View style={styles.messageTitle}>
               <Text style={styles.title}>Tin nhắn</Text>
             </View>
@@ -218,24 +259,21 @@ const styles = StyleSheet.create({
     fontSize: 17,
     height: 20,
     width: width / 2,
-    fontWeight: '900',
     fontFamily: 'AntDesign',
     color: '#300100',
-  
   },
   lastMess: {
     width: 200,
-    marginLeft: 20,
+    marginLeft:20,
     fontSize: 15,
-    color: 'grey',
   },
   time: {
-    position:"absolute",
-    right:10,
-    top:16,
+    position: 'absolute',
+    right: 10,
+    top: 16,
     width: width / 8,
     marginBottom: 20,
- 
+
     fontSize: 15,
     color: '#0606',
     fontWeight: 'bold',
@@ -248,7 +286,7 @@ const styles = StyleSheet.create({
     left: 53,
     width: 10,
     height: 10,
-    backgroundColor: 'green',
+
     borderRadius: 10,
   },
   messageTitle: {

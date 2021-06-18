@@ -27,11 +27,11 @@ const mapStateToProps =(state) =>{
 
 const mapDisPatchToProps = (dispatch,props) =>{
     return {
-        SearchUser: (email) =>{
+        searchUser: (email) =>{
             dispatch(Actions.searchUserRequest(email));
         },
-        AddFriend:(userID,userName,email,avatar)=>{
-            dispatch(Actions.addFriend(userID,userName,email,avatar));;
+        addFriend:(friendID,userName,email,avatar)=>{
+            dispatch(Actions.addFriend(friendID,userName,email,avatar));;
         }
 
     }

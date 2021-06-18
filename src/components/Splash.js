@@ -13,14 +13,12 @@ const Splash = ({navigation}) => {
     getFirstRunApp().then(result =>{
          if(result === "true"){
             setTimeout(() => {
-                setIsLoader(false);
                 navigation.navigate('Start');
                 updateFirstRunApp("false")
              }, 800);
          }
          if(result === "false"){
             setTimeout(() => {
-              setIsLoader(false);
               navigation.navigate("Routes");
            }, 800);
        }
@@ -54,7 +52,6 @@ const Splash = ({navigation}) => {
       const data = await AsyncStorage.getItem('IS_FIRST_RUN_APP');
       if(data == null){
         setFirstRunApp("true");
-         //await AsyncStorage.setItem('IS_FIRST_RUN_APP',"true");
          const IS_FIRST_RUN_APP = await AsyncStorage.getItem('IS_FIRST_RUN_APP');
          return IS_FIRST_RUN_APP;
 
@@ -70,12 +67,11 @@ const Splash = ({navigation}) => {
   }
   return (
     <View style={styles.wrapper}>
-      {isLoader ? (
-        <ActivityIndicator
-          style={styles.indicator}
-          size="large"
-          color="white"></ActivityIndicator>
-      ) : null}
+        <View style={styles.logoView}>
+            <Text style={styles.logo}>t</Text>
+          
+        </View>
+        <Text style={styles.title}>Touch time</Text>
     </View>
   );
 };
@@ -83,13 +79,34 @@ const Splash = ({navigation}) => {
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
-    backgroundColor: '#ad69d4',
-  },
-  indicator: {
-    flex: 1,
+    backgroundColor: '#ffffff',
     justifyContent: 'center',
     alignItems: 'center',
   },
+  logoView: {
+    position:"relative",
+    backgroundColor:"#ad69d4",
+    width:60,
+    height:60,
+    borderRadius:30,
+    alignItems:"center"
+   
+  },
+  logo:{
+     position:"absolute",
+     top:-10,
+     color:"#ffffff",
+     fontSize:58,
+     fontFamily:"Octicons",
+     fontWeight:"bold"
+  },
+  title:{
+    marginTop:20,
+    fontFamily:"Octicons",
+    fontSize:18,
+    fontWeight:"bold",
+    color:"#C576F6"
+  }
 });
 
 export default Splash;

@@ -3,74 +3,48 @@ import * as localDatabase from '../../Database/Local';
 
 const initialState = {
 
-    searchData: {
-
-    },
-    waitingFriendList: [
-
-    ],
-    friendList: [
+    loading: true,
+    roomKey: null,
+    messages: [
 
     ],
-    chatList: [
 
-    ]
 }
 
-const appReducer = (state = initialState, action) => {
+const chatReducer = (state = initialState, action) => {
 
     switch (action.type) {
-        case "SEARCH_USER":
-            const searchState = {...state,
-                searchData: action.user
-            }
-            return searchState;
-        case "ADD_FRIEND":
-            if (action.userID != '') {
-                Fire.addFriend(action.userID, action.userName, action.email, action.avatar);
-                return {
-                    ...state,
-                    searchData: {
+        case "FETCH_MESSAGE":
+            return {...state,
+                messages: action.messages,
+                loading: false
+            };
 
-                    }
-                }
+        case "CLEAR_DATA":
+            return {
+                ...initialState,
+                loading: false
             }
-        case "GET_WAITING_FRIEND":
+        case "FETCH_ROOM_SUCCESS":
+            return {
+                ...initialState,
+                loading: false,
+                roomKey: action.roomKey
+            }
+        case "FETCH_ROOM_ERROR":
+            return {
+                ...initialState,
+                loading: false,
+            }
+        case "REGISTER_ROOM":
             return {
                 ...state,
-                waitingFriendList: action.waitingFriendList
+                roomKey: action.roomKey
             }
 
-        case "GET_FRIEND":
-
-            return {
-                ...state,
-                friendList: action.friendList
-            }
-
-
-
-        case "ACCEPT_FRIEND":
-            return {...state };
-
-        case "DELETE_WAITING_FRIEND":
-            return state;
-
-        case "GET_CHAT_LIST":
-
-            return {
-                ...state,
-                chatList: action.chatList
-            }
-        case "SET_TABS_VISIBLE":
-
-            return {
-                ...state,
-                visible: !action.isOpenDrawer
-            }
 
         default:
             return state;
     }
 }
-export default appReducer;
+export default chatReducer;

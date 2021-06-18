@@ -1,7 +1,5 @@
 import React, {Component} from 'react';
 import {useState,useEffect} from 'react';
-import {FlatList, View, StyleSheet, Dimensions} from 'react-native';
-
 import {NavigationContainer} from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -19,6 +17,8 @@ import HomeTabs from './HomeTab';
 import AppHeader from '../components/AppHeader';
 import Profile from './Profile';
 import FriendProfile from './FriendProfile';
+import ChatContainer from '../redux/Containers/AppContainer/ChatContainer';
+import ChatImageCarousel from '../components/ChatImageCarousel';
 
 
 const main = createStackNavigator();
@@ -28,13 +28,15 @@ const main = createStackNavigator();
 const Main = ({navigation}) => {
 
 
+
   return (
     <main.Navigator  screenOptions={{animationEnabled:false}}>
       <main.Screen name="Home" component={HomeTabs} options={{
       headerShown:false  ,
       }}/>
      
-      <main.Screen  name = "Chat"  component={Chat} />
+      <main.Screen  name = "ChatContainer"  component={ChatContainer} />
+      <main.Screen name ="ChatImageCarousel" component={ChatImageCarousel} options={{headerShown:false}}></main.Screen>
     
       <main.Screen
        options={{

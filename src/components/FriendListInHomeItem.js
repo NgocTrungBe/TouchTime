@@ -17,7 +17,7 @@ const FriendListInHomeItem = ({friend, navigation}) => {
       style={styles.button}
       key={friend.data.id}
       onPress={() =>
-        navigation.navigate('Chat', {
+        navigation.navigate('ChatContainer', {
           friendUserName: friend.data.userName,
           friendAvatar: 'data:image/png;base64,' + friend.data.avatar,
           friendID: friend.data.friendID,
@@ -30,7 +30,9 @@ const FriendListInHomeItem = ({friend, navigation}) => {
           source={{
             uri: 'data:image/png;base64,' + friend.data.avatar,
           }}></Image>
-        <View style={styles.dot}></View>
+         {
+           friend.isOnline ?  <View style={styles.dot}></View> :null
+         }
       </View>
     </TouchableOpacity>
   );
@@ -61,11 +63,11 @@ const styles = StyleSheet.create({
     position:"absolute",
     borderWidth:1,
     borderColor:"#ffffff",
+    backgroundColor:"green",
     top:45,
     left:67,
     width:10,
     height:10,
-    backgroundColor:"green",
     borderRadius:10
   }
 });
