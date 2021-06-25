@@ -245,7 +245,6 @@ const styles = StyleSheet.create({
   closeImage: {
     width:30,
     marginLeft: 10,
-  
     color: 'red',
     zIndex:20,
  

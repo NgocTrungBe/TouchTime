@@ -9,16 +9,6 @@ import Feather from 'react-native-vector-icons/Feather';
 const {width, height} = Dimensions.get('window');
 
 const ChatHeader = ({navigation, photoURL, userName}) => {
-  const [isOpenMenu, setIsOpenMenu] = useState(false);
-  const showFriendProfile = () => {
-    setIsOpenMenu();
-  };
-  const handleOpenMenu = () => {
-    setIsOpenMenu(true);
-    // setTimeout(()=>{
-    //    setIsOpenMenu(false);
-    // },1000)
-  };
   return (
     <View style={styles.Header}>
       <View style={styles.leftHeader}>
@@ -29,14 +19,10 @@ const ChatHeader = ({navigation, photoURL, userName}) => {
           onPress={() => {
             navigation.navigate('Home');
           }}></Feather>
- 
-          <Avatar rounded size={40} source={{uri: photoURL}}></Avatar>
-          <Text style={styles.userName}>{userName.split(' ').slice(-1)}</Text>
-       
-       
+
+        <Avatar rounded size={40} source={{uri: photoURL}}></Avatar>
+        <Text style={styles.userName}>{userName.split(' ').slice(-1)}</Text>
       </View>
-     
-      
     </View>
   );
 };
@@ -77,7 +63,6 @@ const styles = StyleSheet.create({
     marginRight: 20,
     color: '#ffffff',
   },
-
 });
 
 export default ChatHeader;

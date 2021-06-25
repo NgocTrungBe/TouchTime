@@ -26,12 +26,6 @@ const middleware = [thunk];
 const MainStack = createStackNavigator();
 const store = createStore(rootReducer, applyMiddleware(...middleware));
 const App = () => {
-    
-
-
-  
-
- 
     return (
       
          <Provider store={store}>

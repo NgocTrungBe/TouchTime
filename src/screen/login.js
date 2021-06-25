@@ -268,8 +268,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     borderBottomWidth: 0.5,
     borderBottomColor: '#ad69d4',
-    //borderColor: 'blue',
-    // /borderRadius: 5,
   },
   buttonView: {
     marginTop: 50,

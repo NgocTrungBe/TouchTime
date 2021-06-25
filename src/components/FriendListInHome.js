@@ -21,13 +21,6 @@ const FriendListInHome = props => {
   useEffect(() => {
   
     const unsubscribe =  props.getOnlineFriend();
-    // const userID = Fire.getUid();
-
-    // const unsubscribe = Fire.getAllFriend(userID).then(data => {
-    //   console.log(data.length)
-    //   setData(data);
-    // });
-
     return () => {
       unsubscribe;
     };
@@ -70,7 +63,6 @@ const FriendListInHome = props => {
 };
 const styles = StyleSheet.create({
   wrapper: {
-    //   flex:1,
     width: width,
     height: 90,
     marginTop: 20,

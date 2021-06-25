@@ -10,12 +10,9 @@ const {width, height} = Dimensions.get('window');
 const HomeSearchView = (props) => {
   const [email, setEmail] = useState();
 
-  const Search = () => {
-    // props.SearchUser(email);
-   
+  const Search = () => {  
     if(email){
       Fire.SearchUser(email).then(user =>{
-        // console.log(user)
         if(user.length > 0){
           props.searchFriend(user);
         }

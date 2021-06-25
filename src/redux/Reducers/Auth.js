@@ -12,13 +12,9 @@ const authReducer = (state = initialState, action) => {
 
 
         case "LOG_OUT":
-
-            // const newState = {...state,
-            //     user: action.user,
-            //     isLoginSuccess: false;
-            // }
-            // return newState;
-            return state;
+            return {
+                ...initialState
+            };
 
 
         case "UPDATE_USER":

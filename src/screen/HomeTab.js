@@ -28,37 +28,24 @@ const HomeTabs = props => {
   const [friendQuality, setFriendQuality] = useState('');
   const [waitingAcceptFriend, setWaitingAcceptFriend] = useState('');
 
-  
+  useEffect(() => {
+    const unsubscribe = Fire.getUserInfo().then(userData => {
+      if (userData != 'null') {
+        setPhotoURL('data:image/png;base64,' + userData.photoURL);
+      }
+    });
 
-  
-
- useEffect(() => {
-
-   
-    
-    const unsubscribe =  Fire.getUserInfo().then(userData => {
-          if (userData != 'null') {
-              setPhotoURL('data:image/png;base64,' + userData.photoURL);
-             
-          }
-    })
-  
-    return ()=>{
+    return () => {
       unsubscribe;
-    }
-  }, [])
+    };
+  }, []);
 
   return (
     <tab.Navigator
       tabBarOptions={{
         showLabel: false,
         style: {
-          // position:'absolute',
-          // bottom:15,
-          // left:10,
-          // right:10,
           height: 60,
-          //borderRadius:10,
           elevation: 8,
           backgroundColor: '#ffffff',
         },

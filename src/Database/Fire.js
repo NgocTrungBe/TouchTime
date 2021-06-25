@@ -285,13 +285,6 @@ class Fire {
 
 
 
-
-
-
-
-
-
-
     checkFirstLogin = () => {
         const userID = this.getUid();
         const userRef = database().ref('users/' + userID);

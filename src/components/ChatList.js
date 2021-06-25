@@ -105,9 +105,7 @@ const ChatList = props => {
   const [isOnline, setIsOnline] = useState(true);
 
   const onBackPress = () => {
-    // console.log(true)
-    // //BackHandler.exitApp();
-    // return true;
+  
 
     if (props.navigation && props.navigation.get.length > 1) {
       props.navigation.pop();
@@ -116,16 +114,6 @@ const ChatList = props => {
     return false;
   };
 
-  // useEffect(() => {
-
-  // BackHandler.addEventListener('hardwareBackPress', onBackPress);
-  // return () => {
-  // console.log("haha unmounted")
-  // BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-
-  // // && unLocalSubscribe;
-  // };
-  // }, []);
 
   useEffect(() => {
     const userID = Fire.getUid();
@@ -133,13 +121,11 @@ const ChatList = props => {
       setChatData(data);
       setFilterData(data);
     });
-    // BackHandler.addEventListener('hardwareBackPress', onBackPress);
     return () => {
-      //console.log("unmounted")
-      //BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+  
       userID;
       unsubscribe;
-      // && unLocalSubscribe;
+   
     };
   }, []);
 

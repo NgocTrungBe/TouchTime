@@ -15,26 +15,28 @@ import * as Animatable from 'react-native-animatable';
 import {FlatList} from 'react-native-gesture-handler';
 import Fire from '../Database/Fire';
 import {Alert} from 'react-native';
-import { result } from 'lodash';
+import {result} from 'lodash';
 
 const {width, height} = Dimensions.get('window');
 
-const FriendProfile = ({route,navigation}) => {
+const FriendProfile = ({route, navigation}) => {
   const {friend} = route.params;
   const [modalVisible, setModalVisible] = useState(false);
-  const [friendQuality,setFriendQuality]= useState(0);
-  const [waitingQuality,setWaitingQuality]= useState(0);
+  const [friendQuality, setFriendQuality] = useState(0);
+  const [waitingQuality, setWaitingQuality] = useState(0);
 
-  useLayoutEffect(()=>{
-         const unsubscribe = Fire.getFriendQuality(friend.data.friendID).then(result=>{
-             setFriendQuality(result.friendQuality);
-             setWaitingQuality(result.waitingQuality);
-          })
+  useLayoutEffect(() => {
+    const unsubscribe = Fire.getFriendQuality(friend.data.friendID).then(
+      result => {
+        setFriendQuality(result.friendQuality);
+        setWaitingQuality(result.waitingQuality);
+      },
+    );
 
-          return () =>{
-            unsubscribe;
-          }
-  },[friend.data.friendID]);
+    return () => {
+      unsubscribe;
+    };
+  }, [friend.data.friendID]);
   const showAlert = () => {
     return Alert.alert('!!!', 'Bạn có muốn đăng xuất không?', [
       {
@@ -52,27 +54,27 @@ const FriendProfile = ({route,navigation}) => {
   const showModal = () => {
     setModalVisible(true);
   };
-  const deleteFriend = () =>{
+  const deleteFriend = () => {
     const userID = Fire.getUid();
-    Fire.getUserKeyInFriend(userID,friend.data.friendID).then((userKey) => {
+    Fire.getUserKeyInFriend(userID, friend.data.friendID).then(userKey => {
       Fire.deleteUserInFriend(userKey, friend.data.friendID);
     });
-    Fire.deleteFriendInUser(friend.key, userID).then(result =>{
-            if(result ==true){
-              navigation.pop();
-            }
+    Fire.deleteFriendInUser(friend.key, userID).then(result => {
+      if (result == true) {
+        navigation.pop();
+      }
     });
-  
-
-
-    
   };
   return (
     <View style={styles.wrapper}>
       <ScrollView>
         <View style={styles.avatarView}>
           <View style={styles.avatar}>
-            <Image style={styles.avatarImage} source={{uri:'data:image/png;base64,' +friend.data.avatar}}></Image>
+            <Image
+              style={styles.avatarImage}
+              source={{
+                uri: 'data:image/png;base64,' + friend.data.avatar,
+              }}></Image>
           </View>
           <View style={styles.infoView}>
             <Text style={styles.userName}>{friend.data.userName}</Text>
@@ -94,13 +96,15 @@ const FriendProfile = ({route,navigation}) => {
                 </Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.headerButton}   onPress={() =>
-            navigation.navigate('ChatContainer', {
-            friendUserName: friend.data.userName,
-            friendAvatar: 'data:image/png;base64,' + friend.data.avatar,
-            friendID: friend.data.friendID,
-          })
-        }>
+            <TouchableOpacity
+              style={styles.headerButton}
+              onPress={() =>
+                navigation.navigate('ChatContainer', {
+                  friendUserName: friend.data.userName,
+                  friendAvatar: 'data:image/png;base64,' + friend.data.avatar,
+                  friendID: friend.data.friendID,
+                })
+              }>
               <View style={styles.headerButtonWrapper}>
                 <MaterialIcon
                   style={{fontSize: 20, color: '#0e92d0'}}
@@ -131,9 +135,7 @@ const FriendProfile = ({route,navigation}) => {
                 <MaterialIcon
                   style={{fontSize: 25, color: 'red'}}
                   name="group-add"></MaterialIcon>
-                <Text style={styles.quality}>
-                  {waitingQuality}
-                </Text>
+                <Text style={styles.quality}>{waitingQuality}</Text>
               </View>
             </View>
 
@@ -151,15 +153,15 @@ const FriendProfile = ({route,navigation}) => {
                 </View>
               </TouchableOpacity>
             </View>
-          
+
             <View style={styles.item}>
-              <TouchableOpacity style={styles.button} onPress={()=>{
-                navigation.pop();
-              }}>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => {
+                  navigation.pop();
+                }}>
                 <View style={styles.buttonView}>
-                  <Feather
-                    style={styles.icon}
-                    name="chevron-left"></Feather>
+                  <Feather style={styles.icon} name="chevron-left"></Feather>
                   <Text style={styles.title}>Trở lại</Text>
                 </View>
               </TouchableOpacity>
@@ -169,28 +171,35 @@ const FriendProfile = ({route,navigation}) => {
         </View>
       </ScrollView>
 
-     {
-       modalVisible ?   <Animatable.View animation="fadeInUpBig" duration={500} style={styles.bottomModal}>
-      <TouchableOpacity style={styles.bottomModalButton} onPress={deleteFriend}>
-                <MaterialIcon
-                  style={{fontSize: 23, color: 'grey'}}
-                  name="person"></MaterialIcon>
-                <Text
-                  style={{
-                    marginLeft: 10,
-                    fontSize: 17,
-                    fontWeight: 'bold',
-                    color: '#060606',
-                  }}>
-                  Hủy kết bạn
-                </Text>
-            </TouchableOpacity>
-            <Feather style={styles.closeModalButton} name="x" onPress={()=>{
-                setModalVisible(false)
+      {modalVisible ? (
+        <Animatable.View
+          animation="fadeInUpBig"
+          duration={500}
+          style={styles.bottomModal}>
+          <TouchableOpacity
+            style={styles.bottomModalButton}
+            onPress={deleteFriend}>
+            <MaterialIcon
+              style={{fontSize: 23, color: 'grey'}}
+              name="person"></MaterialIcon>
+            <Text
+              style={{
+                marginLeft: 10,
+                fontSize: 17,
+                fontWeight: 'bold',
+                color: '#060606',
+              }}>
+              Hủy kết bạn
+            </Text>
+          </TouchableOpacity>
+          <Feather
+            style={styles.closeModalButton}
+            name="x"
+            onPress={() => {
+              setModalVisible(false);
             }}></Feather>
-      </Animatable.View> :null
-     }
-    
+        </Animatable.View>
+      ) : null}
     </View>
   );
 };
@@ -200,28 +209,27 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#ffffff',
   },
-  bottomModal:{
-        position:'relative',
-        width:width,
-        height:100,
-        justifyContent:'center',
-        alignItems:'center',
-        backgroundColor:"#fff",
-        elevation:20,
-        borderTopLeftRadius:20,
-        borderTopRightRadius:20,
-  }, 
-  bottomModalButton:{
-    flexDirection:'row',
-    width:"80%",
+  bottomModal: {
+    position: 'relative',
+    width: width,
+    height: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    elevation: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
   },
-  closeModalButton:{
-    position:'absolute',
-    top:20,
-    right:20,
-    color:'#040404',
-    fontSize:25,
-   
+  bottomModalButton: {
+    flexDirection: 'row',
+    width: '80%',
+  },
+  closeModalButton: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    color: '#040404',
+    fontSize: 25,
   },
   avatarView: {
     padding: 20,
@@ -229,7 +237,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     backgroundColor: '#ffffff',
-
   },
   avatar: {
     width: 100,

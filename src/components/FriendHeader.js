@@ -42,21 +42,12 @@ const FriendHeader = (props) => {
 const styles = StyleSheet.create({
   Header: {
     width: width,
-    height: height / 9,
-
-    // width: width/1.1,
-    // height: height / 8,
- 
+    height: height / 9, 
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    // borderWidth:0.5,
-    // borderStyle:"solid",
     borderColor:'#ad69d4',
     backgroundColor: '#F8F8FF',
-   
-    // borderBottomLeftRadius:20,
-    // borderBottomRightRadius:20,
      
   },
   leftHeader: {

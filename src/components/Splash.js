@@ -9,7 +9,6 @@ const Splash = ({navigation}) => {
   const [isLoader, setIsLoader] = useState(true);
  
   useEffect(() => {
-    //Fire.signOut();
     getFirstRunApp().then(result =>{
          if(result === "true"){
             setTimeout(() => {
